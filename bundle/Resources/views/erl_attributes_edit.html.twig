@@ -1,0 +1,18 @@
+
+{% block integer_relation_attribute_edit %}
+    <label><input class="ez-data-source__input form-control" type="number" value="{{ value }}"{% if definition.required %} required="required"{% endif %}></label>
+{% endblock %}
+
+{% block string_relation_attribute_edit %}
+    <label><input class="ez-data-source__input form-control" type="text" value="{{ value }}"{% if definition.required %} required="required"{% endif %}></label>
+{% endblock %}
+
+{% block selection_relation_attribute_edit %}
+    <label>
+        <select class="ez-data-source__input form-control"{% if definition.settings.multiple %} multiple="multiple"{% endif %}{% if definition.required %} required="required"{% endif %}>
+            {% for index,option in definition.settings.options %}
+                <option value="{{ index }}"{% if index in value %} selected="selected"{% endif %}>{{ option }}</option>
+            {% endfor %}
+        </select>
+    </label>
+{% endblock %}

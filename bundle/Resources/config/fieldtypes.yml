@@ -1,0 +1,31 @@
+services:
+    IntProg\EnhancedRelationListBundle\Core\FieldType\Type:
+        parent: ezpublish.fieldType
+        arguments:
+            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer'
+        tags:
+            - {name: ezpublish.fieldType, alias: intprogenhancedrelationlist}
+
+    IntProg\EnhancedRelationListBundle\Core\FieldType\SearchField:
+        tags:
+            - {name: ezpublish.fieldType.indexable, alias: intprogenhancedrelationlist}
+
+    IntProg\EnhancedRelationListBundle\Core\FieldType\Converter:
+        tags:
+            - {name: ezpublish.storageEngine.legacy.converter, alias: intprogenhancedrelationlist}
+
+    IntProg\EnhancedRelationListBundle\Core\FieldType\Mapper:
+        arguments:
+            - '@ezpublish.api.service.content_type'
+        tags:
+            - { name: ez.fieldFormMapper.definition, fieldType: intprogenhancedrelationlist }
+            - { name: ez.fieldFormMapper.value, fieldType: intprogenhancedrelationlist }
+
+    intprog.erl.ezadminui.component.javascripts:
+         parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
+         public: false
+         arguments:
+             - '@twig'
+             - '@@IntProgEnhancedRelationList/admin/javascripts.html.twig'
+         tags:
+             - { name: ezplatform.admin_ui.component, group: 'script-body' }

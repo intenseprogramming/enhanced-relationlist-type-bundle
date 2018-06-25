@@ -1,0 +1,86 @@
+{% trans_default_domain 'enhancedrelationllist_attribute' %}
+
+{%- block intprogenhancedrelationlist_widget -%}
+    {% set limit = limit|default(0) %}
+    {% set default_location = default_location|default(0) %}
+    {% set allowed_content_type_identifiers = allowed_content_type_identifiers|default([]) %}
+    {% import _self as enhanced_relation_list_macros %}
+
+    {% include '@EzPlatformAdminUi/parts/table_header.html.twig' with {
+        headerText: 'field_definition.attribute.table_head'|trans,
+        tools: enhanced_relation_list_macros.head_buttons(limit)
+    } %}
+    <input type="hidden" class="relation-json" name="{{ full_name }}" value="{{ value|escape }}">
+    <table class="relation-root-table table mb-0" data-form-root="{{ full_name }}">
+        <thead>
+        <tr>
+            <th/>
+            <th>{{ 'field_definition.attribute.table.head.relation'|trans }}</th>
+            {% for attributeDefinition in form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions %}
+                <th>
+                    {% if attributeDefinition.name[form.parent.vars.languageCode] is defined %}
+                        {{ attributeDefinition.name[form.parent.vars.languageCode] }}
+                    {% else %}
+                        {{ attributeDefinition.name|first }}
+                    {% endif %}
+                    {% if attributeDefinition.required %}*{% endif %}
+                </th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody class="ez-relations__list" data-limit="{{ limit }}" data-default-location="{{ default_location }}"
+               data-allowed-content-types="{{ allowed_content_type_identifiers|join(',') }}">
+        {% for index,relation in array_data %}
+            <tr class="ez-relations__item">
+                <td>
+                    <label>
+                        <input class="erl-remove-control" type="checkbox" data-index="{{ index }}">
+                    </label>
+                </td>
+                <td data-value-path="{{ index }}.contentId">
+                    {{ ez_content_name(relation.vars.content) }}
+                    <input type="hidden" value="{{ relation.contentId }}">
+                </td>
+                {% for identifier,attribute in relation.attributes %}
+                    <td data-value-path="{{ index }}.attributes.{{ identifier }}">
+                        {{ erl_render_attribute_input(
+                            form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions[identifier],
+                            attribute
+                        ) }}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="input-attributes-layout" style="display: none;">
+        {% for identifier,attributeDefinition in form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions %}
+            <div class="input-element-wrapper" data-value-path="%index%.attributes.{{ identifier }}">
+                {{ erl_render_attribute_input(
+                    attributeDefinition,
+                    null
+                ) }}
+            </div>
+        {% endfor %}
+    </div>
+{%- endblock -%}
+
+{% macro head_buttons(limit) %}
+    <button
+            {% if limit == 1 %}
+                data-udw-config="{{ ez_udw_config('single', {}) }}"
+            {% else %}
+                data-udw-config="{{ ez_udw_config('multiple', {}) }}"
+            {% endif %}
+            type="button" class="ez-relations__table-action--create btn btn-primary">
+        <svg class="ez-icon">
+            <use xlink:href="/bundles/ezplatformadminui/img/ez-icons.svg#create"/>
+        </svg>
+    </button>
+    <button type="button" class="ez-relations__table-action--remove btn btn-primary" disabled="">
+        <svg class="ez-icon">
+            <use xlink:href="/bundles/ezplatformadminui/img/ez-icons.svg#trash"/>
+        </svg>
+    </button>
+{% endmacro %}

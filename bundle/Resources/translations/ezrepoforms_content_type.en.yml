@@ -1,0 +1,5 @@
+intprogenhancedrelationlist.name: Content relations (enhanced)
+field_definition.intprogenhancedrelationlist.selection_default_location: Default browse location
+field_definition.intprogenhancedrelationlist.selection_content_types: Allowed content types
+field_definition.intprogenhancedrelationlist.attributes: Attributes
+field_definition.intprogenhancedrelationlist.selection_limit: Selection limit

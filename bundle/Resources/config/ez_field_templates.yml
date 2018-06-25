@@ -1,0 +1,10 @@
+system:
+    default:
+        fielddefinition_edit_templates:
+            -
+                template: "IntProgEnhancedRelationListBundle:ContentType:field_types.html.twig"
+                priority: 1
+        field_templates:
+            -
+                template: "IntProgEnhancedRelationListBundle::content_fields.html.twig"
+                priority: 1

@@ -1,0 +1,94 @@
+{% trans_default_domain 'enhancedrelationlist_definition_attribute' %}
+
+{%- block intprogenhancedrelationlist_definition_attributes_widget -%}
+    <div class="ez-card__header ez-card__header--secondary d-flex justify-content-between"
+         style="border-radius: 0.25rem 0.25rem 0 0; padding: 0.75rem 1.25rem 0.5rem 1.25rem;">
+        <div class="p-2">
+            {{ 'field_definition.attribute_definition.table_head'|trans }}
+        </div>
+        <div class="form-inline">
+            <div class="ez-card__field-control mr-2">
+                <select id="ezrepoforms_contenttype_update_fieldTypeSelection"
+                        {#name="ezrepoforms_contenttype_update[fieldTypeSelection]"#}
+                        class="ez-field-selection form-control">
+                    <option value="integer">Integer</option>
+                    <option value="string">String</option>
+                    <option value="selection">Selection</option>
+                </select>
+                <button type="submit" id="ezrepoforms_contenttype_update_addFieldDefinition"
+                        {#name="ezrepoforms_contenttype_update[addFieldDefinition]"#}
+                        class="btn btn-primary btn">{{ 'field_definition.attribute_difinition.add_attribute'|trans }}</button>
+            </div>
+
+            <button type="button" title="Delete Content field definition" class="btn btn-danger" data-toggle="modal"
+                    data-target="#delete-content-type-modal">
+                <svg class="ez-icon">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ asset('bundles/ezplatformadminui/img/ez-icons.svg') }}#trash"></use>
+                </svg>
+            </button>
+
+            <div class="modal fade ez-modal ez-modal--send-to-trash" id="delete-content-type-modal" tabindex="-1"
+                 role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Please confirm</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Do you want to delete selected field definitions?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" id="ezrepoforms_contenttype_update_removeFieldDefinition"
+                                    {#name="ezrepoforms_contenttype_update[removeFieldDefinition]"#}
+                                    class="btn btn-danger btn">Delete
+                            </button>
+                            <button type="button" class="btn btn-secondary btn--no" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" name="{{ full_name }}" value="">
+
+    <table class="table ez-table--list" style="margin-bottom: 0;">
+        <thead>
+        <tr>
+            <th style="width: 25%;">{{ 'field_definition.attribute_definition.col.name'|trans }}</th>
+            <th style="width: 25%;">{{ 'field_definition.attribute_definition.col.type'|trans }}</th>
+            <th style="width: 25%;">{{ 'field_definition.attribute_definition.col.settings'|trans }}</th>
+            <th style="width: 10%;">{{ 'field_definition.attribute_definition.col.required'|trans }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <label for="{{ id }}_name" style="width: 100%;">
+                    <input type="text" id="{{ id }}_name"{# name="{{ full_name }}[name]"#} class="form-control" value="">
+                </label>
+            </td>
+            <td>
+                <label for="{{ id }}_type" style="width: 100%;">
+                    <select id="{{ id }}_type"
+                            {#name="{{ full_name }}[type]"#} class="form-control">
+                        <option value="content" selected="selected">Content</option>
+                        <option value="metadata">Metadata</option>
+                        <option value="internal">Internal</option>
+                        <option value="status">Status</option>
+                    </select>
+                </label>
+            </td>
+            <td>no input</td>
+            <td>
+                <label class="ez-data-source__label is-checked" style="width: 100%;">
+                    <input type="checkbox" id="{{ id }}_required" {#name="{{ full_name }}[required]"#} value="1">
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{%- endblock -%}

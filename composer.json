@@ -1,0 +1,33 @@
+{
+  "name": "intprog/enhanced-relationlist-type-bundle",
+  "description": "This bundle contains the enhanced relation list field type for eZ Platform version 2.",
+  "homepage": "http://www.intense-programming.com",
+  "type": "ezplatform-bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "IntenseProgramming",
+      "homepage": "http://www.intense-programming.de"
+    }
+  ],
+  "require": {
+    "php": "~7.1",
+    "ezsystems/ezpublish-kernel": "~7.0",
+    "ezsystems/ezplatform-admin-ui": "~1.1",
+    "erusev/parsedown": "~1.7"
+  },
+  "require-dev": {
+    "sebastian/phpcpd": "~2.0",
+    "phpmd/phpmd": "~2.4",
+    "leaphub/phpcs-symfony2-standard": "~2.0",
+    "phpunit/phpunit": "~7.0"
+  },
+  "autoload": {
+    "psr-4": {"IntProg\\EnhancedRelationListBundle\\": "bundle/"}
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  }
+}

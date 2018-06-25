@@ -1,0 +1,3 @@
+form_themes:
+    - 'IntProgEnhancedRelationListBundle:Content:content_edit.html.twig'
+    - 'IntProgEnhancedRelationListBundle:ContentType:enhanced_relation_list_attributes.html.twig'

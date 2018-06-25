@@ -1,0 +1,12 @@
+services:
+    IntProg\EnhancedRelationListBundle\Service\AttributeConverter\Integer:
+        tags:
+            - { name: int.prog.erl.relation.attribute, identifier: integer }
+
+    IntProg\EnhancedRelationListBundle\Service\AttributeConverter\Selection:
+        tags:
+            - { name: int.prog.erl.relation.attribute, identifier: selection }
+
+    IntProg\EnhancedRelationListBundle\Service\AttributeConverter\TextLine:
+        tags:
+            - { name: int.prog.erl.relation.attribute, identifier: string }

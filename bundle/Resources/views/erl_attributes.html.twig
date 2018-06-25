@@ -1,0 +1,14 @@
+
+{% block integer_relation_attribute %}
+    {{ attribute.value }}
+{% endblock %}
+
+{% block string_relation_attribute %}
+    {{ attribute.value }}
+{% endblock %}
+
+{% block selection_relation_attribute %}
+    {% for index in attribute.selection %}
+        {{ definition.settings.options[index] }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+{% endblock %}

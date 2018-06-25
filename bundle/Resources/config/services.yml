@@ -1,0 +1,8 @@
+services:
+    IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer:
+        arguments:
+            - []
+
+    IntProg\EnhancedRelationListBundle\Templating\Twig\Extension\RelationAttributeExtension:
+        tags:
+            - { name: twig.extension }

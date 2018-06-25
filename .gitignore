@@ -1,0 +1,5 @@
+# development
+/.idea
+/build
+/vendor
+composer.lock

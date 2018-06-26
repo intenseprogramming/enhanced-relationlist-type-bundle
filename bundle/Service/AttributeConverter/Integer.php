@@ -10,6 +10,7 @@
 
 namespace IntProg\EnhancedRelationListBundle\Service\AttributeConverter;
 
+use eZ\Publish\Core\FieldType\ValidationError;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\Integer as IntegerValue;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
@@ -41,5 +42,36 @@ class Integer extends RelationAttributeConverter
     public function fromHash($hash)
     {
         return new IntegerValue(['value' => $hash]);
+    }
+
+    public function validate(RelationAttributeBase $attribute, $definition)
+    {
+        $errors = [];
+
+        if ($attribute instanceof IntegerValue) {
+            if (!is_numeric($attribute->value)) {
+                $errors[] = new ValidationError('Value required to be numeric.');
+            } else {
+                $min = $definition['settings']['min'] ?? null;
+                $max = $definition['settings']['max'] ?? null;
+
+                if ($min !== null && $min > $attribute->value) {
+                    $errors[] = new ValidationError('Value required to be above %min%.', null, ['%min%' => $min]);
+                } elseif ($max !== null && $max < $attribute->value) {
+                    $errors[] = new ValidationError('Value required to be below %max%.', null, ['%max%' => $max]);
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    public function isEmpty(RelationAttributeBase $attribute)
+    {
+        if ($attribute instanceof IntegerValue) {
+            return !$attribute->value;
+        }
+
+        return true;
     }
 }

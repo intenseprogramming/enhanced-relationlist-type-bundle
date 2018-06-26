@@ -2,7 +2,7 @@ services:
     IntProg\EnhancedRelationListBundle\Core\FieldType\Type:
         parent: ezpublish.fieldType
         arguments:
-            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer'
+            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
         tags:
             - {name: ezpublish.fieldType, alias: intprogenhancedrelationlist}
 

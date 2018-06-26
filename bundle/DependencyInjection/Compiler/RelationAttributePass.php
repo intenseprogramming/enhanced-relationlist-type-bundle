@@ -32,7 +32,7 @@ class RelationAttributePass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->has('IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer')) {
+        if (!$container->has('IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository')) {
             return;
         }
 
@@ -46,7 +46,7 @@ class RelationAttributePass implements CompilerPassInterface
         }
 
         $definition = $container->findDefinition(
-            'IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer'
+            'IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
         );
         $definition->setArguments([$services]);
     }

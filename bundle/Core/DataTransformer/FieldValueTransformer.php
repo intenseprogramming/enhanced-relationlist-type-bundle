@@ -13,7 +13,7 @@ namespace IntProg\EnhancedRelationListBundle\Core\DataTransformer;
 use eZ\Publish\API\Repository\FieldType;
 use EzSystems\RepositoryForms\FieldType\DataTransformer\FieldValueTransformer as EzFieldValueTransformer;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
-use IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer;
+use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 
 /**
  * Class FieldValueTransformer.
@@ -28,7 +28,7 @@ class FieldValueTransformer extends EzFieldValueTransformer
 
     protected $configuration;
 
-    public function __construct(FieldType $fieldType, RelationAttributeTransformer $transformer, array $configuration)
+    public function __construct(FieldType $fieldType, RelationAttributeRepository $transformer, array $configuration)
     {
         parent::__construct($fieldType);
 

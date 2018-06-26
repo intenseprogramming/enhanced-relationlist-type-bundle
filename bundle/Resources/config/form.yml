@@ -4,13 +4,13 @@ services:
             - '@ezpublish.api.service.field_type'
             - '@ezpublish.api.service.content'
             - '@ezpublish.api.service.content_type'
-            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer'
+            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
         tags:
             - { name: form.type }
 
     IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListRowType:
         arguments:
             - '@ezpublish.api.service.content'
-            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer'
+            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
         tags:
             - { name: form.type }

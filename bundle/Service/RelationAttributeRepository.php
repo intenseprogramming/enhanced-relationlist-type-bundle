@@ -10,24 +10,25 @@
 
 namespace IntProg\EnhancedRelationListBundle\Service;
 
+use eZ\Publish\Core\FieldType\ValidationError;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeConverter;
 
 /**
- * Class RelationAttributeTransformer.
+ * Class RelationAttributeRepository.
  *
  * @package   IntProg\EnhancedRelationListBundle\Service
  * @author    Konrad, Steve <s.konrad@wingmail.net>
  * @copyright 2018 Intense Programming
  */
-class RelationAttributeTransformer
+class RelationAttributeRepository
 {
     /** @var array|RelationAttributeConverter[] $converters */
     protected $converters = [];
 
     /**
-     * RelationAttributeTransformer constructor.
+     * RelationAttributeRepository constructor.
      *
      * @param array|RelationAttributeConverter[] $converters
      */
@@ -49,5 +50,24 @@ class RelationAttributeTransformer
     public function toPersistentValue(RelationAttributeBase $attribute)
     {
         return $this->converters[$attribute->getTypeIdentifier()]->toHash($attribute);
+    }
+
+    public function validate(RelationAttributeBase $attribute, $identifier, $definition)
+    {
+        if ($definition['required'] ?? false) {
+            if ($this->converters[$attribute->getTypeIdentifier()]->isEmpty($attribute)) {
+                return [
+                    new ValidationError(
+                        'The attribute "%identifier%" is required.',
+                        null,
+                        [
+                            '%identifier%' => $identifier
+                        ]
+                    ),
+                ];
+            }
+        }
+
+        return $this->converters[$attribute->getTypeIdentifier()]->validate($attribute, $definition);
     }
 }

@@ -46,4 +46,18 @@ class Selection extends RelationAttributeConverter
 
         return new SelectionValue(['selection' => $hash]);
     }
+
+    public function validate(RelationAttributeBase $attribute, $definition)
+    {
+        return [];
+    }
+
+    public function isEmpty(RelationAttributeBase $attribute)
+    {
+        if ($attribute instanceof SelectionValue) {
+            return empty($attribute->selection);
+        }
+
+        return true;
+    }
 }

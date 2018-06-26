@@ -15,7 +15,8 @@ use eZ\Publish\API\Repository\ContentTypeService;
 use eZ\Publish\API\Repository\Exceptions\NotFoundException;
 use eZ\Publish\API\Repository\FieldTypeService;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldValueTransformer;
-use IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer;
+use IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
+use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,7 +39,7 @@ class EnhancedRelationListType extends AbstractType
     /** @var ContentTypeService $contentTypeService */
     protected $contentTypeService;
 
-    /** @var RelationAttributeTransformer $transformer */
+    /** @var RelationAttributeRepository $transformer */
     protected $transformer;
 
     /** @var FieldTypeService $fieldTypeService */
@@ -47,16 +48,16 @@ class EnhancedRelationListType extends AbstractType
     /**
      * EnhancedRelationListType constructor.
      *
-     * @param FieldTypeService             $fieldTypeService
-     * @param ContentService               $contentService
-     * @param ContentTypeService           $contentTypeService
-     * @param RelationAttributeTransformer $transformer
+     * @param FieldTypeService            $fieldTypeService
+     * @param ContentService              $contentService
+     * @param ContentTypeService          $contentTypeService
+     * @param RelationAttributeRepository $transformer
      */
     public function __construct(
         FieldTypeService $fieldTypeService,
         ContentService $contentService,
         ContentTypeService $contentTypeService,
-        RelationAttributeTransformer $transformer
+        RelationAttributeRepository $transformer
     )
     {
         $this->fieldTypeService   = $fieldTypeService;
@@ -104,6 +105,14 @@ class EnhancedRelationListType extends AbstractType
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        parent::buildView($view, $form, $options);
+    }
+
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $allowedContentTypeIdentifiers = [];
@@ -131,6 +140,14 @@ class EnhancedRelationListType extends AbstractType
             },
             json_decode($form->getNormData(), true)
         );
+
+        $data            = $form->getData();
+        $attributeErrors = [];
+        if ($data instanceof Value) {
+            $attributeErrors = $data->attributeErrors;
+        }
+
+        $view->vars['attribute_errors'] = $attributeErrors;
     }
 
     /**

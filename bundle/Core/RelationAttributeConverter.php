@@ -26,4 +26,8 @@ abstract class RelationAttributeConverter
     abstract public function toHash(RelationAttributeBase $attribute);
 
     abstract public function fromHash($hash);
+
+    abstract public function validate(RelationAttributeBase $attribute, $definition);
+
+    abstract public function isEmpty(RelationAttributeBase $attribute);
 }

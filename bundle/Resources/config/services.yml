@@ -1,5 +1,5 @@
 services:
-    IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer:
+    IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository:
         arguments:
             - []
 

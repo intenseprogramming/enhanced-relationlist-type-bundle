@@ -46,7 +46,7 @@ class RelationAttributeExtension extends Twig_Extension
             ),
             new Twig_SimpleFunction(
                 'erl_render_attribute_input',
-                function (Twig_Environment $environment, $attributeDefinition, $value, array $params = []) {
+                function (Twig_Environment $environment, $attributeDefinition, $value, $params) {
                     $this->attributeBlockRenderer = $environment;
 
                     return $this->renderAttributeInput($value, $attributeDefinition, $params);
@@ -98,12 +98,19 @@ class RelationAttributeExtension extends Twig_Extension
      */
     public function renderAttributeInput($value, array $attributeDefinition, $params)
     {
+        $errors = [];
+        if (isset($params['errors'])) {
+            $errors = $params['errors'];
+            unset($params['errors']);
+        }
+
         return $this->attributeBlockRenderer->load('IntProgEnhancedRelationListBundle::erl_attributes_edit.html.twig')->renderBlock(
             $attributeDefinition['type'] . '_relation_attribute_edit',
             [
                 'value'      => $value,
                 'definition' => $attributeDefinition,
                 'parameters' => $params,
+                'hasErrors'  => !empty($errors),
             ]
         );
     }

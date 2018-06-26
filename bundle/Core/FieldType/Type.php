@@ -10,7 +10,6 @@
 
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
-use eZ\Publish\API\Repository\Exceptions\InvalidArgumentException;
 use eZ\Publish\API\Repository\Values\Content\Relation as ApiRelation;
 use eZ\Publish\API\Repository\Values\ContentType\FieldDefinition;
 use eZ\Publish\Core\FieldType\FieldType;
@@ -21,7 +20,7 @@ use eZ\Publish\SPI\FieldType\Value as SpiValue;
 use eZ\Publish\SPI\Persistence\Content\FieldValue as PersistenceValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
-use IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer;
+use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 
 /**
  * Class Type.
@@ -32,7 +31,7 @@ use IntProg\EnhancedRelationListBundle\Service\RelationAttributeTransformer;
  */
 class Type extends FieldType implements Nameable
 {
-    /** @var RelationAttributeTransformer $relationAttributeTransformer */
+    /** @var RelationAttributeRepository $relationAttributeTransformer */
     protected $relationAttributeTransformer;
 
     protected $settingsSchema = [
@@ -62,9 +61,9 @@ class Type extends FieldType implements Nameable
     /**
      * Type constructor.
      *
-     * @param RelationAttributeTransformer $relationAttributeTransformer
+     * @param RelationAttributeRepository $relationAttributeTransformer
      */
-    public function __construct(RelationAttributeTransformer $relationAttributeTransformer)
+    public function __construct(RelationAttributeRepository $relationAttributeTransformer)
     {
         $this->relationAttributeTransformer = $relationAttributeTransformer;
     }
@@ -296,7 +295,25 @@ class Type extends FieldType implements Nameable
 
         // TODO: Check if content types of relations are allowed. Would be nice.
 
-        // TODO: Validate relation attributes.
+        $attributeErrors = [];
+        foreach ($attributeDefinitions as $identifier => $attributeDefinition) {
+            foreach ($value->relations as $index => $relation) {
+                $errors = $this->relationAttributeTransformer->validate(
+                    $relation->attributes[$identifier],
+                    $identifier,
+                    $attributeDefinition
+                );
+
+                if (!empty($errors)) {
+                    $attributeErrors[$index][$identifier] = $errors;
+                }
+            }
+        }
+
+        if (!empty($attributeErrors)) {
+            $validationErrors[]     = new ValidationError('Attributes did not validate.');
+            $value->attributeErrors = $attributeErrors;
+        }
 
         return $validationErrors;
     }

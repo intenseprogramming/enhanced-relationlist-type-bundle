@@ -45,7 +45,8 @@
                     <td data-value-path="{{ index }}.attributes.{{ identifier }}">
                         {{ erl_render_attribute_input(
                             form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions[identifier],
-                            attribute
+                            attribute,
+                            {errors: attribute_errors[index][identifier]|default([])}
                         ) }}
                     </td>
                 {% endfor %}
@@ -57,10 +58,7 @@
     <div class="input-attributes-layout" style="display: none;">
         {% for identifier,attributeDefinition in form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions %}
             <div class="input-element-wrapper" data-value-path="%index%.attributes.{{ identifier }}">
-                {{ erl_render_attribute_input(
-                    attributeDefinition,
-                    null
-                ) }}
+                {{ erl_render_attribute_input(attributeDefinition, null, []) }}
             </div>
         {% endfor %}
     </div>

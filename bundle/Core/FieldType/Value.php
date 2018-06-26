@@ -26,6 +26,9 @@ class Value extends BaseValue
     /** @var array|Relation[] $relations */
     public $relations;
 
+    /** @var array $attributeErrors Only used on edit to inject validation errors */
+    public $attributeErrors = [];
+
     /**
      * Value constructor.
      *

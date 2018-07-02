@@ -11,10 +11,11 @@
         tools: enhanced_relation_list_macros.head_buttons(limit)
     } %}
     <input type="hidden" class="relation-json" name="{{ full_name }}" value="{{ value|escape }}">
-    <table class="relation-root-table table mb-0" data-form-root="{{ full_name }}">
+    <table class="relation-root-table erl-table table mb-0" data-form-root="{{ full_name }}">
         <thead>
         <tr>
-            <th/>
+            <th class="erl-drag-column"/>
+            <th class="slim"/>
             <th>{{ 'field_definition.attribute.table.head.relation'|trans }}</th>
             {% for attributeDefinition in form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions %}
                 <th>
@@ -31,18 +32,23 @@
         <tbody class="ez-relations__list" data-limit="{{ limit }}" data-default-location="{{ default_location }}"
                data-allowed-content-types="{{ allowed_content_type_identifiers|join(',') }}">
         {% for index,relation in array_data %}
-            <tr class="ez-relations__item">
-                <td>
-                    <label>
+            <tr class="ez-relations__item erl-relation-item">
+                <td class="erl-drag-column erl-drag-handle">
+                    <i class="drag-icon"></i>
+                </td>
+                <td class="slim">
+                    <label class="slim-content">
                         <input class="erl-remove-control" type="checkbox" data-index="{{ index }}">
                     </label>
                 </td>
-                <td data-value-path="{{ index }}.contentId">
-                    {{ ez_content_name(relation.vars.content) }}
-                    <input type="hidden" value="{{ relation.contentId }}">
+                <td data-value-path="contentId">
+                    <div>
+                        {{ ez_content_name(relation.vars.content) }}
+                        <input type="hidden" value="{{ relation.contentId }}">
+                    </div>
                 </td>
                 {% for identifier,attribute in relation.attributes %}
-                    <td data-value-path="{{ index }}.attributes.{{ identifier }}">
+                    <td data-value-path="attributes.{{ identifier }}">
                         {{ erl_render_attribute_input(
                             form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions[identifier],
                             attribute,

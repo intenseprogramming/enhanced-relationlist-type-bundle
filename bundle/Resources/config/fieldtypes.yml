@@ -29,3 +29,12 @@ services:
              - '@@IntProgEnhancedRelationList/admin/javascripts.html.twig'
          tags:
              - { name: ezplatform.admin_ui.component, group: 'script-body' }
+
+    intprog.erl.ezadminui.component.stylesheets:
+         parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
+         public: false
+         arguments:
+             - "@twig"
+             - "@@IntProgEnhancedRelationList/admin/stylesheets.html.twig"
+         tags:
+             - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }

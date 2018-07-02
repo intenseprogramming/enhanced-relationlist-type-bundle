@@ -1,8 +1,10 @@
 (function (global, React, ReactDOM) {
     const SELECTOR_FIELD = '.ez-field-edit--intprogenhancedrelationlist';
     const SELECTOR_BTN_ADD = '.ez-relations__table-action--create';
-    const SELECTOR_ROW = '.ez-relations__item';
+    const SELECTOR_TABLE = '.relation-root-table';
     const SELECTOR_INPUT = '.relation-root-table input, .relation-root-table textarea, .relation-root-table select';
+    const SELECTOR_DRAG_HANDLE = '.erl-relation-item .erl-drag-handle';
+    const SELECTOR_INPUT_ROW = '.erl-relation-item';
 
     // class EzObjectRelationListValidator extends global.eZ.BaseFieldValidator {
     //     /**
@@ -36,7 +38,7 @@
     [
         ...document.querySelectorAll(SELECTOR_FIELD)
     ].forEach(fieldContainer => {
-        let itemIndex = fieldContainer.querySelectorAll(SELECTOR_ROW).length - 1;
+        let itemIndex = fieldContainer.querySelectorAll(SELECTOR_INPUT_ROW).length - 1;
 
         // const validator = new EzObjectRelationListValidator({
         //     classInvalid: 'is-invalid',
@@ -81,50 +83,55 @@
                     object = object[key];
                 }
             }
-            console.log(value);
             object[keys[keys.length - 1]] = value;
         };
         const updateJson = (item) => {
-            if (item !== undefined && !item.target.closest('td').getAttribute('data-value-path')) {
+            if (item !== undefined && item.target !== undefined && !item.target.closest('td').getAttribute('data-value-path')) {
                 return;
             }
 
-            const jsonValue = {};
+            const jsonValue = [];
 
-            fieldContainer.querySelectorAll(SELECTOR_INPUT).forEach(item => {
-                let valuePath = item.closest('td').getAttribute('data-value-path');
+            fieldContainer.querySelectorAll(SELECTOR_INPUT_ROW).forEach(item => {
+                let itemValue = {};
 
-                if (!valuePath) {
-                    return;
-                }
+                item.querySelectorAll(SELECTOR_INPUT).forEach(inputItem => {
+                    let valuePath = inputItem.closest('td').getAttribute('data-value-path');
 
-                let value = null;
+                    if (!valuePath) {
+                        return;
+                    }
 
-                switch (item.tagName.toLowerCase()) {
-                    case 'select':
-                        if (item.multiple) {
-                            value = [];
-                            let options = item && item.options;
-                            for (let i=0, iLen=options.length; i<iLen; i++) {
-                                if (options[i].selected) {
-                                    value.push(parseInt(options[i].value));
+                    let value = null;
+
+                    switch (inputItem.tagName.toLowerCase()) {
+                        case 'select':
+                            if (inputItem.multiple) {
+                                value = [];
+                                let options = inputItem && inputItem.options;
+                                for (let i=0, iLen=options.length; i<iLen; i++) {
+                                    if (options[i].selected) {
+                                        value.push(parseInt(options[i].value));
+                                    }
                                 }
+                                break;
                             }
+                            value = inputItem.value;
                             break;
-                        }
-                        value = item.value;
-                        break;
-                    case 'input':
-                        if (item.type === 'checkbox') {
+                        case 'input':
+                            if (inputItem.type === 'checkbox') {
+                                break;
+                            }
+                            value = inputItem.value;
                             break;
-                        }
-                        value = item.value;
-                        break;
-                    default:
-                        value = item.value;
-                }
+                        default:
+                            value = inputItem.value;
+                    }
 
-                setDeepValue(jsonValue, valuePath, value);
+                    setDeepValue(itemValue, valuePath, value);
+                });
+
+                jsonValue.push(itemValue);
             });
 
             jsonValueInput.value = JSON.stringify(jsonValue);
@@ -134,9 +141,7 @@
         const renderRows = (items) => items.forEach((...args) => relationsContainer.insertAdjacentHTML('beforeend', renderRow(...args)));
         const onConfirm = (items) => {
             renderRows(items);
-            attachRowsEventHandlers();
-
-            selectedItems = [...selectedItems, ...items.map(item => item.ContentInfo.Content._id)];
+            attachRowEventHandlers();
 
             closeUDW();
             updateAddBtnState();
@@ -151,13 +156,9 @@
                 return callback(false);
             }
 
-            const isAlreadySelected = !!selectedItems.find(id => id === item.ContentInfo.Content._id);
+            // TODO: add setting to enable/disabled duplicate selection.
 
-            if (!selectedItemsLimit) {
-                return callback(!isAlreadySelected);
-            }
-
-            const canSelect = (selectedItems.length + itemsCount) < selectedItemsLimit && !isAlreadySelected;
+            const canSelect = (fieldContainer.querySelectorAll(SELECTOR_INPUT_ROW).length + itemsCount) < selectedItemsLimit && !isAlreadySelected;
 
             callback(canSelect);
         };
@@ -193,7 +194,8 @@
             });
 
             return `
-                <tr class="ez-relations__item">
+                <tr class="ez-relations__item" draggable="true">
+                    <td class="drag-handle" />
                     <td><label><input type="checkbox" data-index="${itemIndex}"></label></td>
                     <td data-value-path="${itemIndex}.contentId">
                         ${item.ContentInfo.Content.Name}
@@ -213,7 +215,7 @@
                 return;
             }
 
-            const anySelected = findCheckboxes().some(item => item.checked === true);
+            const anySelected = findDeleteCheckboxes().some(item => item.checked === true);
             const methodName = anySelected ? 'removeAttribute' : 'setAttribute';
 
             trashBtn[methodName]('disabled', true);
@@ -229,21 +231,26 @@
                 input.closest('tr').remove();
             });
 
-            selectedItems = selectedItems.filter(item => !removedItems.includes(item));
-
             updateJson();
             updateAddBtnState();
         };
-        const findCheckboxes = () => {
+        const findDeleteCheckboxes = () => {
             return [...relationsContainer.querySelectorAll('.erl-remove-control[type="checkbox"]')];
         };
-        const attachRowsEventHandlers = () => {
+        const attachRowEventHandlers = () => {
             fieldContainer.querySelectorAll(SELECTOR_INPUT).forEach((item) => {item.addEventListener('change', updateJson);});
+            const dragger = tableDragger(
+                fieldContainer.querySelector(SELECTOR_TABLE),
+                {
+                    dragHandler: SELECTOR_DRAG_HANDLE,
+                    mode: 'row',
+                }
+            );
+            dragger.on('drop', updateJson)
         };
-        let selectedItems = [...fieldContainer.querySelectorAll(SELECTOR_ROW)].map(row => parseInt(row.dataset.contentId, 10));
 
         updateAddBtnState();
-        attachRowsEventHandlers();
+        attachRowEventHandlers();
 
         [
             ...fieldContainer.querySelectorAll(SELECTOR_BTN_ADD),

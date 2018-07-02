@@ -1,0 +1,52 @@
+
+table.erl-table {
+    background-color: transparent;
+    border-spacing: 0 2px !important;
+    border-collapse: separate;
+    table-layout: fixed;
+    margin-top: -2px;
+}
+table.erl-table th {
+    border-bottom: 0;
+}
+
+table.erl-table tr>td, table.erl-table tr>th {
+    background-color: #fff;
+}
+table.erl-table tr>td {
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #888;
+}
+table.erl-table tr .erl-drag-column {
+    width: 2em;
+    padding: 0;
+}
+table.erl-table tr .erl-drag-column.erl-drag-handle {
+    border-top-left-radius: 1em;
+    border-bottom-left-radius: 1em;
+    background-color: #ccc;
+    cursor: move;
+}
+table.erl-table tr .erl-drag-column.erl-drag-handle .drag-icon {
+    color: #333;
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 30">\
+        <path d="M 14 3 L 9 8 L 19 8 L 14 3 z\
+        M 4 11 L 4 12 L 24 12 L 24 11 L 4 11 z\
+        M 4 15 L 4 16 L 24 16 L 24 15 L 4 15 z\
+        M 4 19 L 4 20 L 24 20 L 24 19 L 4 19 z\
+        M 14 27 L 9 23 L 19 23 L 14 27 z"/>\
+    </svg>');
+}
+
+table.erl-table tr .slim {
+    width: 3em;
+    padding: 0;
+}
+table.erl-table tr .slim>.slim-content {
+    padding: 1em;
+}
+
+table.erl-table .form-control, table.erl-table label {
+    margin-bottom: 0;
+    width: 100%;
+}

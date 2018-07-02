@@ -8,3 +8,9 @@ system:
             -
                 template: "IntProgEnhancedRelationListBundle::content_fields.html.twig"
                 priority: 1
+        content_view:
+            element_simple_link:
+                default:
+                    controller: 'EzPlatformAdminUiBundle:ContentView:locationView'
+                    template: 'IntProgEnhancedRelationListBundle::simple_link.html.twig'
+                    match: true

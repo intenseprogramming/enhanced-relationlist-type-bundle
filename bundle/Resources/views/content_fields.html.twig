@@ -22,7 +22,9 @@
         <tbody>
         {% for relation in field.value.relations %}
             <tr>
-                <td>{{ render( controller( "ez_content:viewAction", {'contentId': relation.contentId, 'viewType': 'line', 'noLayout': 1} ) ) }}</td>
+                <td>
+                    {{ render(controller('ez_content:viewAction', {'contentId': relation.contentId, 'viewType': 'element_simple_link', 'layout': false})) }}
+                </td>
                 {% for identifier,definition in fieldSettings.attributeDefinitions %}
                     <td>
                         {{ erl_render_attribute(relation.attributes[identifier], definition) }}

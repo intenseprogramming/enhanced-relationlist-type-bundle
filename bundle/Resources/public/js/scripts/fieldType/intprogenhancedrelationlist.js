@@ -39,6 +39,7 @@
         ...document.querySelectorAll(SELECTOR_FIELD)
     ].forEach(fieldContainer => {
         let itemIndex = fieldContainer.querySelectorAll(SELECTOR_INPUT_ROW).length - 1;
+        let sortHandler = false;
 
         // const validator = new EzObjectRelationListValidator({
         //     classInvalid: 'is-invalid',
@@ -158,7 +159,7 @@
 
             // TODO: add setting to enable/disabled duplicate selection.
 
-            const canSelect = (fieldContainer.querySelectorAll(SELECTOR_INPUT_ROW).length + itemsCount) < selectedItemsLimit && !isAlreadySelected;
+            const canSelect = !selectedItemsLimit || (fieldContainer.querySelectorAll(SELECTOR_INPUT_ROW).length + itemsCount) < selectedItemsLimit;
 
             callback(canSelect);
         };
@@ -187,17 +188,19 @@
                 let valuePath = item.closest('.input-element-wrapper').getAttribute('data-value-path');
 
                 inputFields += `
-                    <td data-value-path="${valuePath.replace('%index%', itemIndex)}">
+                    <td data-value-path="${valuePath}">
                         ${item.innerHTML}
                     </td>
                 `;
             });
 
             return `
-                <tr class="ez-relations__item" draggable="true">
-                    <td class="drag-handle" />
-                    <td><label><input type="checkbox" data-index="${itemIndex}"></label></td>
-                    <td data-value-path="${itemIndex}.contentId">
+                <tr class="ez-relations__item erl-relation-item">
+                    <td class="erl-drag-column erl-drag-handle">
+                        <i class="drag-icon" />
+                    </td>
+                    <td class="slim"><label class="slim-content"><input type="checkbox"></label></td>
+                    <td data-value-path="contentId">
                         ${item.ContentInfo.Content.Name}
                         <input type="hidden" value="${item.ContentInfo.Content._id}">
                     </td>
@@ -239,14 +242,22 @@
         };
         const attachRowEventHandlers = () => {
             fieldContainer.querySelectorAll(SELECTOR_INPUT).forEach((item) => {item.addEventListener('change', updateJson);});
-            const dragger = tableDragger(
-                fieldContainer.querySelector(SELECTOR_TABLE),
-                {
-                    dragHandler: SELECTOR_DRAG_HANDLE,
-                    mode: 'row',
-                }
-            );
-            dragger.on('drop', updateJson)
+
+            if (sortHandler) {
+                sortHandler.destroy();
+            }
+
+            if (fieldContainer.querySelector(SELECTOR_TABLE).querySelectorAll(SELECTOR_DRAG_HANDLE).length) {
+                sortHandler = tableDragger(
+                    fieldContainer.querySelector(SELECTOR_TABLE),
+                    {
+                        dragHandler: SELECTOR_DRAG_HANDLE,
+                        mode: 'row',
+                        onlyBody: true
+                    }
+                );
+                sortHandler.on('drop', updateJson)
+            }
         };
 
         updateAddBtnState();

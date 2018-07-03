@@ -34,7 +34,7 @@
         {% for index,relation in array_data %}
             <tr class="ez-relations__item erl-relation-item">
                 <td class="erl-drag-column erl-drag-handle">
-                    <i class="drag-icon"></i>
+                    <i class="drag-icon" />
                 </td>
                 <td class="slim">
                     <label class="slim-content">
@@ -63,7 +63,7 @@
 
     <div class="input-attributes-layout" style="display: none;">
         {% for identifier,attributeDefinition in form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions %}
-            <div class="input-element-wrapper" data-value-path="%index%.attributes.{{ identifier }}">
+            <div class="input-element-wrapper" data-value-path="attributes.{{ identifier }}">
                 {{ erl_render_attribute_input(attributeDefinition, null, []) }}
             </div>
         {% endfor %}

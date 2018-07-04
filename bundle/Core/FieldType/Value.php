@@ -12,6 +12,7 @@ namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
 use eZ\Publish\Core\FieldType\Value as BaseValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
+use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Group;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
 
 /**
@@ -26,15 +27,19 @@ class Value extends BaseValue
     /** @var array|Relation[] $relations */
     public $relations;
 
+    /** @var array|Group[] $groups */
+    public $groups;
+
     /** @var array $attributeErrors Only used on edit to inject validation errors */
     public $attributeErrors = [];
 
     /**
      * Value constructor.
      *
-     * @param array $relations
+     * @param array|Relation[] $relations
+     * @param array|Group[]    $groups
      */
-    public function __construct(array $relations = [])
+    public function __construct(array $relations = [], array $groups = [])
     {
         $this->relations = [];
 
@@ -53,6 +58,8 @@ class Value extends BaseValue
 
             $this->relations[] = $relation;
         }
+
+        $this->groups = $groups;
     }
 
     /**

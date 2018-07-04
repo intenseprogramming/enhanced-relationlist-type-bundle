@@ -50,3 +50,7 @@ table.erl-table .form-control, table.erl-table label {
     margin-bottom: 0;
     width: 100%;
 }
+
+table.erl-table tr.erl-relation-group td {
+    background: #ddd;
+}

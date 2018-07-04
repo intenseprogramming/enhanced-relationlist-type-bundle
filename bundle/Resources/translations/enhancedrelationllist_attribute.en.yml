@@ -1,2 +1,4 @@
 field_definition.attribute.table_head: Relations
 field_definition.attribute.table.head.relation: Relation
+
+field.group.ungrouped: Ungrouped relations

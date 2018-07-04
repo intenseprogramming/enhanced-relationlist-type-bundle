@@ -50,14 +50,33 @@ class FieldValueTransformer extends EzFieldValueTransformer
         }
 
         $result = [];
-        foreach ($value->relations as $index => $relation) {
-            $result[$index] = [
+        foreach ($value->relations as $relation) {
+            $relationValue = [
                 'contentId'  => $relation->contentId,
                 'attributes' => [],
             ];
 
             foreach ($relation->attributes as $identifier => $attribute) {
-                $result[$index]['attributes'][$identifier] = $this->transformer->toPersistentValue($attribute);
+                $relationValue['attributes'][$identifier] = $this->transformer->toPersistentValue($attribute);
+            }
+
+            $result[] = $relationValue;
+        }
+
+        foreach ($value->groups as $groupName => $group) {
+            $result[] = ['group' => $groupName];
+
+            foreach ($group->relations as $relation) {
+                $relationValue = [
+                    'contentId'  => $relation->contentId,
+                    'attributes' => [],
+                ];
+
+                foreach ($relation->attributes as $identifier => $attribute) {
+                    $relationValue['attributes'][$identifier] = $this->transformer->toPersistentValue($attribute);
+                }
+
+                $result[] = $relationValue;
             }
         }
 
@@ -77,10 +96,21 @@ class FieldValueTransformer extends EzFieldValueTransformer
             return new Value();
         }
 
+        $groups    = [];
+        $relations = [];
+
         $value = json_decode($value, true);
 
-        $relations = [];
+        $activeGroup    = null;
+        $groupRelations = [];
         foreach ($value as $relation) {
+            if (isset($relation['group'])) {
+                $activeGroup                  = $relation['group'];
+                $groupRelations[$activeGroup] = [];
+
+                continue;
+            }
+
             foreach ($relation['attributes'] as $identifier => $attribute) {
                 $relation['attributes'][$identifier] = $this->transformer->fromPersistentValue(
                     $attribute,
@@ -88,9 +118,17 @@ class FieldValueTransformer extends EzFieldValueTransformer
                 );
             }
 
-            $relations[] = new Value\Relation($relation);
+            if ($activeGroup !== null) {
+                $groupRelations[$activeGroup][] = new Value\Relation($relation);
+            } else {
+                $relations[] = new Value\Relation($relation);
+            }
         }
 
-        return new Value($relations);
+        foreach ($groupRelations as $groupName => $groupedRelations) {
+            $groups[$groupName] = new Value\Group($groupedRelations);
+        }
+
+        return new Value($relations, $groups);
     }
 }

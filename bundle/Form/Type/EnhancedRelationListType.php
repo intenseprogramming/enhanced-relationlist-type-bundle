@@ -132,6 +132,10 @@ class EnhancedRelationListType extends AbstractType
 
         $view->vars['array_data'] = array_map(
             function ($relation) {
+                if (!isset($relation['contentId'])) {
+                    return $relation;
+                }
+
                 $relation['vars'] = [
                     'content' => $this->contentService->loadContent($relation['contentId']),
                 ];

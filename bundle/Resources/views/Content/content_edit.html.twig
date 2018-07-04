@@ -4,7 +4,10 @@
     {% set limit = limit|default(0) %}
     {% set default_location = default_location|default(0) %}
     {% set allowed_content_type_identifiers = allowed_content_type_identifiers|default([]) %}
+    {% set fieldSettings = form.parent.vars.data.fieldDefinition.fieldSettings %}
     {% import _self as enhanced_relation_list_macros %}
+
+    {# TODO: respect grouping configuration! #}
 
     {% include '@EzPlatformAdminUi/parts/table_header.html.twig' with {
         headerText: 'field_definition.attribute.table_head'|trans,
@@ -17,7 +20,7 @@
             <th class="erl-drag-column"/>
             <th class="slim"/>
             <th>{{ 'field_definition.attribute.table.head.relation'|trans }}</th>
-            {% for attributeDefinition in form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions %}
+            {% for attributeDefinition in fieldSettings.attributeDefinitions %}
                 <th>
                     {% if attributeDefinition.name[form.parent.vars.languageCode] is defined %}
                         {{ attributeDefinition.name[form.parent.vars.languageCode] }}
@@ -31,38 +34,23 @@
         </thead>
         <tbody class="ez-relations__list" data-limit="{{ limit }}" data-default-location="{{ default_location }}"
                data-allowed-content-types="{{ allowed_content_type_identifiers|join(',') }}">
-        {% for index,relation in array_data %}
-            <tr class="ez-relations__item erl-relation-item">
-                <td class="erl-drag-column erl-drag-handle">
-                    <i class="drag-icon" />
-                </td>
-                <td class="slim">
-                    <label class="slim-content">
-                        <input class="erl-remove-control" type="checkbox" data-index="{{ index }}">
-                    </label>
-                </td>
-                <td data-value-path="contentId">
-                    <div>
-                        {{ ez_content_name(relation.vars.content) }}
-                        <input type="hidden" value="{{ relation.contentId }}">
-                    </div>
-                </td>
-                {% for identifier,attribute in relation.attributes %}
-                    <td data-value-path="attributes.{{ identifier }}">
-                        {{ erl_render_attribute_input(
-                            form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions[identifier],
-                            attribute,
-                            {errors: attribute_errors[index][identifier]|default([])}
-                        ) }}
-                    </td>
-                {% endfor %}
-            </tr>
+        {% set relationIndex = 0 %}
+        {% for relation in array_data %}
+            {% if relation.contentId is defined %}
+                {{ enhanced_relation_list_macros.relation_row(relation, fieldSettings, relationIndex, attribute_errors) }}
+                {% set relationIndex = relationIndex + 1 %}
+            {% else %}
+                {{ enhanced_relation_list_macros.group_row(relation.group, fieldSettings, (relation.group in fieldSettings.groupSettings.groups)) }}
+            {% endif %}
+        {% endfor %}
+        {% for group in fieldSettings.groupSettings.groups if {group: group} not in array_data %}
+            {{ enhanced_relation_list_macros.group_row(group, fieldSettings, true) }}
         {% endfor %}
         </tbody>
     </table>
 
     <div class="input-attributes-layout" style="display: none;">
-        {% for identifier,attributeDefinition in form.parent.vars.data.fieldDefinition.fieldSettings.attributeDefinitions %}
+        {% for identifier,attributeDefinition in fieldSettings.attributeDefinitions %}
             <div class="input-element-wrapper" data-value-path="attributes.{{ identifier }}">
                 {{ erl_render_attribute_input(attributeDefinition, null, []) }}
             </div>
@@ -87,4 +75,66 @@
             <use xlink:href="/bundles/ezplatformadminui/img/ez-icons.svg#trash"/>
         </svg>
     </button>
+{% endmacro %}
+
+{% macro relation_row(relation, fieldSettings, index, attribute_errors) %}
+    <tr class="ez-relations__item erl-relation-item">
+        <td class="erl-drag-column erl-drag-handle">
+            <i class="drag-icon" />
+        </td>
+        <td class="slim">
+            <label class="slim-content">
+                <input class="erl-remove-control" type="checkbox">
+            </label>
+        </td>
+        <td data-value-path="contentId">
+            <div>
+                {{ ez_content_name(relation.vars.content) }}
+                <input type="hidden" value="{{ relation.contentId }}">
+            </div>
+        </td>
+        {% for identifier,attribute in relation.attributes %}
+            <td data-value-path="attributes.{{ identifier }}">
+                {{ erl_render_attribute_input(
+                    fieldSettings.attributeDefinitions[identifier],
+                    attribute,
+                    {errors: attribute_errors[index][identifier]|default([])}
+                ) }}
+            </td>
+        {% endfor %}
+    </tr>
+{% endmacro %}
+
+{% macro group_row(group, fieldSettings, system) %}
+    <tr class="ez-relations__group erl-relation-group">
+        {% if not fieldSettings.groupSettings.positionsFixed %}
+            <td class="erl-drag-column erl-drag-handle">
+                <i class="drag-icon" />
+            </td>
+        {% else %}
+            <td> </td>
+        {% endif %}
+        <td class="slim">
+            <label class="slim-content">
+                <input class="erl-remove-control" type="checkbox">
+            </label>
+        </td>
+        <td>
+            Group name:
+        </td>
+        {% for attribute in fieldSettings.attributeDefinitions %}
+            {% if loop.first %}
+                <td data-value-path="group">
+                    <label>
+                        <input type="text"
+                               {% if system %}disabled="disabled"{% endif %}
+                               class="ez-data-source__input form-control erl-group-name-input"
+                               value="{{ group }}">
+                    </label>
+                </td>
+            {% else %}
+                <td> </td>
+            {% endif %}
+        {% endfor %}
+    </tr>
 {% endmacro %}

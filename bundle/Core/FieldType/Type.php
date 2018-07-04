@@ -19,6 +19,7 @@ use eZ\Publish\SPI\FieldType\Nameable;
 use eZ\Publish\SPI\FieldType\Value as SpiValue;
 use eZ\Publish\SPI\Persistence\Content\FieldValue as PersistenceValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
+use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Group;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 
@@ -47,6 +48,28 @@ class Type extends FieldType implements Nameable
             'type'    => 'int',
             'default' => 0,
         ],
+        'groupSettings'         => [
+            'positionsFixed' => [
+                'type'    => 'bool',
+                'default' => [],
+            ],
+            'extendable'     => [
+                'type'    => 'bool',
+                'default' => [],
+            ],
+            'nameable'       => [
+                'type'    => 'bool',
+                'default' => [],
+            ],
+            'allowUngrouped' => [
+                'type'    => 'bool',
+                'default' => [],
+            ],
+            'groups'         => [
+                'type'    => 'array',
+                'default' => [],
+            ],
+        ]
     ];
 
     protected $validatorConfigurationSchema = [
@@ -147,6 +170,25 @@ class Type extends FieldType implements Nameable
             $hash[] = $subHash;
         }
 
+        foreach ($value->groups as $groupName => $group) {
+            foreach ($group->relations as $relation) {
+                $subHash = [
+                    'contentId'  => $relation->contentId,
+                    'attributes' => [],
+                    'group'      => $groupName,
+                ];
+
+                foreach ($relation->attributes as $identifier => $attribute) {
+                    $subHash['attributes'][$identifier] = [
+                        'value' => $this->relationAttributeTransformer->toPersistentValue($attribute),
+                        'type'  => $attribute->getTypeIdentifier(),
+                    ];
+                }
+
+                $hash[] = $subHash;
+            }
+        }
+
         return $hash;
     }
 
@@ -161,12 +203,18 @@ class Type extends FieldType implements Nameable
     {
         if (!empty($fieldValue->data)) {
             $relations = [];
+            $groups    = [];
 
+            $groupRelations = [];
             foreach ($fieldValue->data as $datum) {
                 $relation = [
                     'contentId'  => $datum['contentId'],
                     'attributes' => [],
                 ];
+
+                if (isset($datum['group'])) {
+                    $relation['group'] = $datum['group'];
+                }
 
                 foreach ($datum['attributes'] as $identifier => $attribute) {
                     $relation['attributes'][$identifier] =
@@ -176,10 +224,21 @@ class Type extends FieldType implements Nameable
                         );
                 }
 
-                $relations[] = new Relation($relation);
+                if (isset($relation['group'])) {
+                    $groupName = $relation['group'];
+                    unset($relation['group']);
+
+                    $groupRelations[$groupName][] = new Relation($relation);
+                } else {
+                    $relations[] = new Relation($relation);
+                }
             }
 
-            return new Value($relations);
+            foreach ($groupRelations as $groupName => $groupedRelations) {
+                $groups[$groupName] = new Group($groupedRelations);
+            }
+
+            return new Value($relations, $groups);
         }
 
         return $this->getEmptyValue();
@@ -238,12 +297,29 @@ class Type extends FieldType implements Nameable
         $validationErrors = [];
 
         foreach ((array) $fieldSettings as $settingsIdentifier => $setting) {
+            if ($settingsIdentifier == 'groupSettings') {
+                foreach ($setting as $groupSettingIdentifier => $groupSetting) {
+                    if (!isset($this->settingsSchema['groupSettings'][$groupSettingIdentifier])) {
+                        $validationErrors[] = new ValidationError(
+                            "Setting '%setting%' in group settings is unknown",
+                            null,
+                            [
+                                'setting' => $groupSettingIdentifier,
+                            ],
+                            "[$groupSettingIdentifier]"
+                        );
+                    }
+                }
+
+                continue;
+            }
+
             if (!isset($this->settingsSchema[$settingsIdentifier])) {
                 $validationErrors[] = new ValidationError(
-                    "Validator '%validator%' is unknown",
+                    "Setting '%setting%' is unknown",
                     null,
                     [
-                        'validator' => $settingsIdentifier,
+                        'setting' => $settingsIdentifier,
                     ],
                     "[$settingsIdentifier]"
                 );
@@ -295,9 +371,10 @@ class Type extends FieldType implements Nameable
 
         // TODO: Check if content types of relations are allowed. Would be nice.
 
+        $relationIndex   = 0;
         $attributeErrors = [];
-        foreach ($attributeDefinitions as $identifier => $attributeDefinition) {
-            foreach ($value->relations as $index => $relation) {
+        foreach ($value->relations as $relation) {
+            foreach ($attributeDefinitions as $identifier => $attributeDefinition) {
                 $errors = $this->relationAttributeTransformer->validate(
                     $relation->attributes[$identifier],
                     $identifier,
@@ -305,8 +382,28 @@ class Type extends FieldType implements Nameable
                 );
 
                 if (!empty($errors)) {
-                    $attributeErrors[$index][$identifier] = $errors;
+                    $attributeErrors[$relationIndex][$identifier] = $errors;
                 }
+            }
+
+            $relationIndex++;
+        }
+
+        foreach ($value->groups as $group) {
+            foreach ($group->relations as $relation) {
+                foreach ($attributeDefinitions as $identifier => $attributeDefinition) {
+                    $errors = $this->relationAttributeTransformer->validate(
+                        $relation->attributes[$identifier],
+                        $identifier,
+                        $attributeDefinition
+                    );
+
+                    if (!empty($errors)) {
+                        $attributeErrors[$relationIndex][$identifier] = $errors;
+                    }
+                }
+
+                $relationIndex++;
             }
         }
 

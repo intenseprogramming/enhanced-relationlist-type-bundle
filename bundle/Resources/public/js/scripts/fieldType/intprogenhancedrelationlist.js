@@ -3,8 +3,8 @@
     const SELECTOR_BTN_ADD = '.ez-relations__table-action--create';
     const SELECTOR_TABLE = '.relation-root-table';
     const SELECTOR_INPUT = '.relation-root-table input, .relation-root-table textarea, .relation-root-table select';
-    const SELECTOR_DRAG_HANDLE = '.erl-relation-item .erl-drag-handle';
-    const SELECTOR_INPUT_ROW = '.erl-relation-item';
+    const SELECTOR_DRAG_HANDLE = '.erl-relation-item .erl-drag-handle, .erl-relation-group .erl-drag-handle';
+    const SELECTOR_INPUT_ROW = '.erl-relation-item, .erl-relation-group';
 
     // class EzObjectRelationListValidator extends global.eZ.BaseFieldValidator {
     //     /**
@@ -139,7 +139,10 @@
         };
         fieldContainer.querySelectorAll(SELECTOR_INPUT).forEach((item) => {item.addEventListener('change', updateJson);});
         const closeUDW = () => ReactDOM.unmountComponentAtNode(udwContainer);
-        const renderRows = (items) => items.forEach((...args) => relationsContainer.insertAdjacentHTML('beforeend', renderRow(...args)));
+        const renderRows = (items) => {
+            // TODO: insert before first group if unmapped is allowed and insert after before second group if not.
+            items.forEach((...args) => relationsContainer.insertAdjacentHTML('beforeend', renderRow(...args)));
+        };
         const onConfirm = (items) => {
             renderRows(items);
             attachRowEventHandlers();

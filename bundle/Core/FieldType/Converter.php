@@ -45,6 +45,10 @@ class Converter implements ConverterInterface
                 $relationNode = $doc->createElement('relation');
                 $relationNode->setAttribute('content-id', $datum['contentId']);
 
+                if (isset($datum['group'])) {
+                    $relationNode->setAttribute('group', $datum['group']);
+                }
+
                 foreach ($datum['attributes'] as $identifier => $attribute) {
                     $attributeNode = $doc->createElement('attribute', json_encode($attribute['value']));
                     $attributeNode->setAttribute('identifier', $identifier);
@@ -84,8 +88,13 @@ class Converter implements ConverterInterface
         foreach ($dom->getElementsByTagName('relation') as $relationNode) {
             $relation = [
                 'contentId'  => $relationNode->getAttribute('content-id'),
+                'group'      => null,
                 'attributes' => [],
             ];
+
+            if ($relationNode->hasAttribute('group')) {
+                $relation['group'] = $relationNode->getAttribute('group');
+            }
 
             /** @var DOMElement $attribute */
             foreach ($relationNode->getElementsByTagName('attribute') as $attribute) {
@@ -152,6 +161,15 @@ class Converter implements ConverterInterface
             $settings->appendChild($node);
         }
 
+        $node = $doc->createElement('group_setting');
+        $node->setAttribute('position_fixed', $fieldSettings['groupSettings']['positionsFixed'] ? 1 : 0);
+        $node->setAttribute('extendable', $fieldSettings['groupSettings']['extendable'] ? 1 : 0);
+        $node->setAttribute('nameable', $fieldSettings['groupSettings']['nameable'] ? 1 : 0);
+        $node->setAttribute('allow_ungrouped', $fieldSettings['groupSettings']['allowUngrouped'] ? 1 : 0);
+        $node->setAttribute('groups', json_encode($fieldSettings['groupSettings']['groups'] ?? []));
+
+        $settings->appendChild($node);
+
         foreach ($fieldValidators['relationValidator']['allowedContentTypes'] as $contentTypeId) {
             $attributeDefinition = $doc->createElement('allowed_content_type');
             $attributeDefinition->setAttribute('content-type-id', $contentTypeId);
@@ -180,6 +198,13 @@ class Converter implements ConverterInterface
             'attributeDefinitions'  => [],
             'defaultBrowseLocation' => null,
             'selectionLimit'        => 0,
+            'groupSettings'         => [
+                'positionsFixed' => false,
+                'extendable'     => true,
+                'nameable'       => true,
+                'allowUngrouped' => true,
+                'groups'         => [],
+            ]
         ];
 
         $fieldDef->fieldTypeConstraints->validators = [
@@ -230,6 +255,35 @@ class Converter implements ConverterInterface
             $selectionLimit->hasAttribute('value')
         ) {
             $fieldSettings['selectionLimit'] = $selectionLimit->getAttribute('value');
+        }
+
+        if (
+            $dom->getElementsByTagName('group_setting')->length &&
+            ($groupSettingElement = $dom->getElementsByTagName('group_setting')->item(0))
+        ) {
+            if ($groupSettingElement->hasAttribute('position_fixed')) {
+                $fieldSettings['groupSettings']['positionsFixed'] =
+                    !!$groupSettingElement->getAttribute('position_fixed');
+            }
+            if ($groupSettingElement->hasAttribute('extendable')) {
+                $fieldSettings['groupSettings']['extendable'] =
+                    !!$groupSettingElement->getAttribute('extendable');
+            }
+            if ($groupSettingElement->hasAttribute('nameable')) {
+                $fieldSettings['groupSettings']['nameable'] =
+                    !!$groupSettingElement->getAttribute('nameable');
+            }
+            if ($groupSettingElement->hasAttribute('allow_ungrouped')) {
+                $fieldSettings['groupSettings']['allowUngrouped'] =
+                    !!$groupSettingElement->getAttribute('allow_ungrouped');
+            }
+            if ($groupSettingElement->hasAttribute('groups')) {
+                $groups = json_decode($groupSettingElement->getAttribute('groups'));
+
+                if (is_array($groups)) {
+                    $fieldSettings['groupSettings']['groups'] = $groups;
+                }
+            }
         }
 
         // read validators configuration from storage

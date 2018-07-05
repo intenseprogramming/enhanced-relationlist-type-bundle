@@ -1,6 +1,7 @@
 (function (global, React, ReactDOM) {
     const SELECTOR_FIELD = '.ez-field-edit--intprogenhancedrelationlist';
     const SELECTOR_BTN_ADD = '.ez-relations__table-action--create';
+    const SELECTOR_BTN_ADD_GROUP = '.ez-relations__table-action--add-group';
     const SELECTOR_TABLE = '.relation-root-table';
     const SELECTOR_INPUT = '.relation-root-table input, .relation-root-table textarea, .relation-root-table select';
     const SELECTOR_DRAG_HANDLE = '.erl-relation-item .erl-drag-handle, .erl-relation-group .erl-drag-handle';
@@ -38,7 +39,6 @@
     [
         ...document.querySelectorAll(SELECTOR_FIELD)
     ].forEach(fieldContainer => {
-        let itemIndex = fieldContainer.querySelectorAll(SELECTOR_INPUT_ROW).length - 1;
         let sortHandler = false;
 
         // const validator = new EzObjectRelationListValidator({
@@ -60,7 +60,10 @@
         //         }
         //     ]
         // });
+        const relationsRootTable = fieldContainer.querySelector(SELECTOR_TABLE);
         const jsonValueInput = fieldContainer.querySelector('input.relation-json');
+        const attributesLayout = relationsRootTable.getAttribute('data-attributes-layout');
+        const groupLayout = relationsRootTable.getAttribute('data-group-layout');
         const udwContainer = document.getElementById('react-udw');
         const token = document.querySelector('meta[name="CSRF-Token"]').content;
         const siteaccess = document.querySelector('meta[name="SiteAccess"]').content;
@@ -107,17 +110,12 @@
 
                     switch (inputItem.tagName.toLowerCase()) {
                         case 'select':
-                            if (inputItem.multiple) {
-                                value = [];
-                                let options = inputItem && inputItem.options;
-                                for (let i=0, iLen=options.length; i<iLen; i++) {
-                                    if (options[i].selected) {
-                                        value.push(parseInt(options[i].value));
-                                    }
+                            value = [];
+                            inputItem.querySelectorAll('option:checked').forEach(option => {
+                                if (option.hasAttribute('value')) {
+                                    value.push(parseInt(option.value));
                                 }
-                                break;
-                            }
-                            value = inputItem.value;
+                            });
                             break;
                         case 'input':
                             if (inputItem.type === 'checkbox') {
@@ -140,7 +138,6 @@
         fieldContainer.querySelectorAll(SELECTOR_INPUT).forEach((item) => {item.addEventListener('change', updateJson);});
         const closeUDW = () => ReactDOM.unmountComponentAtNode(udwContainer);
         const renderRows = (items) => {
-            // TODO: insert before first group if unmapped is allowed and insert after before second group if not.
             items.forEach((...args) => relationsContainer.insertAdjacentHTML('beforeend', renderRow(...args)));
         };
         const onConfirm = (items) => {
@@ -183,20 +180,15 @@
                 canSelectContent
             }, config)), udwContainer);
         };
+        const addGroup = (event) => {
+            event.preventDefault();
+
+            relationsContainer.insertAdjacentHTML('beforeend', `${groupLayout}`);
+            attachRowEventHandlers();
+            updateAddBtnState();
+            updateJson();
+        };
         const renderRow = (item) => {
-            itemIndex++;
-
-            let inputFields = '';
-            fieldContainer.querySelectorAll('.input-attributes-layout .input-element-wrapper').forEach(item => {
-                let valuePath = item.closest('.input-element-wrapper').getAttribute('data-value-path');
-
-                inputFields += `
-                    <td data-value-path="${valuePath}">
-                        ${item.innerHTML}
-                    </td>
-                `;
-            });
-
             return `
                 <tr class="ez-relations__item erl-relation-item">
                     <td class="erl-drag-column erl-drag-handle">
@@ -207,7 +199,7 @@
                         ${item.ContentInfo.Content.Name}
                         <input type="hidden" value="${item.ContentInfo.Content._id}">
                     </td>
-                    ${inputFields}
+                    ${attributesLayout}
                 </tr>
             `;
         };
@@ -250,9 +242,9 @@
                 sortHandler.destroy();
             }
 
-            if (fieldContainer.querySelector(SELECTOR_TABLE).querySelectorAll(SELECTOR_DRAG_HANDLE).length) {
+            if (relationsRootTable.querySelectorAll(SELECTOR_DRAG_HANDLE).length) {
                 sortHandler = tableDragger(
-                    fieldContainer.querySelector(SELECTOR_TABLE),
+                    relationsRootTable,
                     {
                         dragHandler: SELECTOR_DRAG_HANDLE,
                         mode: 'row',
@@ -270,6 +262,10 @@
             ...fieldContainer.querySelectorAll(SELECTOR_BTN_ADD),
             ...fieldContainer.querySelectorAll('.ez-relations__cta-btn')
         ].forEach(btn => btn.addEventListener('click', openUDW, false));
+
+        [
+            ...fieldContainer.querySelectorAll(SELECTOR_BTN_ADD_GROUP)
+        ].forEach(btn => btn.addEventListener('click', addGroup, false));
 
         trashBtn.addEventListener('click', removeItem, false);
         relationsContainer.addEventListener('change', updateTrashBtnState, false);

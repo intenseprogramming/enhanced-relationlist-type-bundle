@@ -1,3 +1,4 @@
+{% trans_default_domain 'enhancedrelationllist_attribute' %}
 
 {% block integer_relation_attribute_edit %}
     <label>
@@ -22,6 +23,9 @@
         <select class="ez-data-source__input form-control{% if hasErrors %} is-invalid{% endif %}"
                 {% if definition.settings.multiple %} multiple="multiple"{% endif %}
                 {% if definition.required %} required="required"{% endif %}>
+            {% if not definition.required %}
+                <option>{{ 'field.edit.selection.none'|trans }}</option>
+            {% endif %}
             {% for index,option in definition.settings.options %}
                 <option value="{{ index }}"{% if index in value %} selected="selected"{% endif %}>{{ option }}</option>
             {% endfor %}

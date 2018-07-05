@@ -28,7 +28,9 @@ class Integer extends RelationAttributeBase
     {
         parent::__construct($properties);
 
-        $this->value = (int) $this->value;
+        if (is_numeric($this->value)) {
+            $this->value = (int) $this->value;
+        }
     }
 
     /**

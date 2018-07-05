@@ -63,7 +63,7 @@ class FieldValueTransformer extends EzFieldValueTransformer
             $result[] = $relationValue;
         }
 
-        foreach ($value->groups as $groupName => $group) {
+        foreach ($value->groups ?? [] as $groupName => $group) {
             $result[] = ['group' => $groupName];
 
             foreach ($group->relations as $relation) {

@@ -59,7 +59,13 @@ class Value extends BaseValue
             $this->relations[] = $relation;
         }
 
-        $this->groups = $groups;
+        foreach ($groups as $groupName => $group) {
+            if (!($group instanceof Group)) {
+                $group = new Group($group);
+            }
+
+            $this->groups[$groupName] = $group;
+        }
     }
 
     /**

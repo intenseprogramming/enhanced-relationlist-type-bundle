@@ -38,27 +38,33 @@ class Converter implements ConverterInterface
     public function toStorageValue(FieldValue $value, StorageFieldValue $storageFieldValue)
     {
         $doc      = new DOMDocument('1.0', 'utf-8');
-        $treeNode = $doc->createElement('relations');
+        $treeNode = $doc->createElement('relation-list');
 
-        if (is_array($value->data) && $value->data) {
-            foreach ($value->data as $datum) {
-                $relationNode = $doc->createElement('relation');
-                $relationNode->setAttribute('content-id', $datum['contentId']);
+        if (is_array($value->data['relations'] ?? false) && !empty($value->data['relations'])) {
+            $relationsNode = $doc->createElement('relations');
 
-                if (isset($datum['group'])) {
-                    $relationNode->setAttribute('group', $datum['group']);
-                }
-
-                foreach ($datum['attributes'] as $identifier => $attribute) {
-                    $attributeNode = $doc->createElement('attribute', json_encode($attribute['value']));
-                    $attributeNode->setAttribute('identifier', $identifier);
-                    $attributeNode->setAttribute('type', $attribute['type']);
-
-                    $relationNode->appendChild($attributeNode);
-                }
-
-                $treeNode->appendChild($relationNode);
+            foreach ($value->data['relations'] as $relation) {
+                $relationsNode->appendChild($this->createRelationElement($doc, $relation));
             }
+
+            $treeNode->appendChild($relationsNode);
+        }
+
+        if (is_array($value->data['groups'] ?? false) && !empty($value->data['groups'])) {
+            $groupsNode = $doc->createElement('groups');
+
+            foreach ($value->data['groups'] as $groupName => $group) {
+                $groupNode = $doc->createElement('group');
+                $groupNode->setAttribute('name', $groupName);
+
+                foreach ($group as $relation) {
+                    $groupNode->appendChild($this->createRelationElement($doc, $relation));
+                }
+
+                $groupsNode->appendChild($groupNode);
+            }
+
+            $treeNode->appendChild($groupsNode);
         }
 
         $doc->appendChild($treeNode);
@@ -82,30 +88,36 @@ class Converter implements ConverterInterface
             return;
         }
 
-        $fieldValue->data = [];
+        $fieldValue->data = [
+            'relations' => [],
+            'groups'    => [],
+        ];
 
-        /** @var DOMElement $relationNode */
-        foreach ($dom->getElementsByTagName('relation') as $relationNode) {
-            $relation = [
-                'contentId'  => $relationNode->getAttribute('content-id'),
-                'group'      => null,
-                'attributes' => [],
-            ];
-
-            if ($relationNode->hasAttribute('group')) {
-                $relation['group'] = $relationNode->getAttribute('group');
-            }
-
-            /** @var DOMElement $attribute */
-            foreach ($relationNode->getElementsByTagName('attribute') as $attribute) {
-                $relation['attributes'][$attribute->getAttribute('identifier')] = [
-                    'type'  => $attribute->getAttribute('type'),
-                    'value' => json_decode($attribute->textContent, true),
-                ];
-            }
-
-            $fieldValue->data[] = $relation;
+        if (
+            ($relations = $dom->getElementsByTagName('relations')) &&
+            $relations->length == 1
+        ) {
+            foreach ($relations->item(0)->getElementsByTagName('relation') as $relationNode) {
+                $fieldValue->data['relations'][] = $this->resolveRelationElement($relationNode);
+            };
         }
+
+        if (
+            ($groups = $dom->getElementsByTagName('groups')) &&
+            $groups->length > 0
+        ) {
+            /** @var DOMElement $group */
+            foreach ($groups->item(0)->getElementsByTagName('group') as $group) {
+                $groupName = $group->getAttribute('name');
+                $fieldValue->data['groups'][$groupName] = [];
+
+                foreach ($group->getElementsByTagName('relation') as $relation) {
+                    $fieldValue->data['groups'][$groupName][] = $this->resolveRelationElement($relation);
+                }
+            }
+        }
+
+        return;
     }
 
     /**
@@ -164,7 +176,6 @@ class Converter implements ConverterInterface
         $node = $doc->createElement('group_setting');
         $node->setAttribute('position_fixed', $fieldSettings['groupSettings']['positionsFixed'] ? 1 : 0);
         $node->setAttribute('extendable', $fieldSettings['groupSettings']['extendable'] ? 1 : 0);
-        $node->setAttribute('nameable', $fieldSettings['groupSettings']['nameable'] ? 1 : 0);
         $node->setAttribute('allow_ungrouped', $fieldSettings['groupSettings']['allowUngrouped'] ? 1 : 0);
         $node->setAttribute('groups', json_encode($fieldSettings['groupSettings']['groups'] ?? []));
 
@@ -204,7 +215,7 @@ class Converter implements ConverterInterface
                 'nameable'       => true,
                 'allowUngrouped' => true,
                 'groups'         => [],
-            ]
+            ],
         ];
 
         $fieldDef->fieldTypeConstraints->validators = [
@@ -269,10 +280,6 @@ class Converter implements ConverterInterface
                 $fieldSettings['groupSettings']['extendable'] =
                     !!$groupSettingElement->getAttribute('extendable');
             }
-            if ($groupSettingElement->hasAttribute('nameable')) {
-                $fieldSettings['groupSettings']['nameable'] =
-                    !!$groupSettingElement->getAttribute('nameable');
-            }
             if ($groupSettingElement->hasAttribute('allow_ungrouped')) {
                 $fieldSettings['groupSettings']['allowUngrouped'] =
                     !!$groupSettingElement->getAttribute('allow_ungrouped');
@@ -305,5 +312,55 @@ class Converter implements ConverterInterface
     public function getIndexColumn()
     {
         return 'sort_key_string';
+    }
+
+    /**
+     * Creates a dom element containing the relation information.
+     *
+     * @param DOMDocument $document The dom document to create the element.
+     * @param array       $relation The relation in array form.
+     *
+     * @return DOMElement
+     */
+    protected function createRelationElement(DOMDocument $document, array $relation)
+    {
+        $relationNode = $document->createElement('relation');
+        $relationNode->setAttribute('content-id', $relation['contentId']);
+
+        foreach ($relation['attributes'] as $identifier => $attribute) {
+            $attributeNode = $document->createElement('attribute', json_encode($attribute['value']));
+            $attributeNode->setAttribute('identifier', $identifier);
+            $attributeNode->setAttribute('type', $attribute['type']);
+
+            $relationNode->appendChild($attributeNode);
+        }
+
+        return $relationNode;
+    }
+
+    /**
+     * Parses a dom element created by "createRelationElement" and returns the original value.
+     *
+     * @param DOMElement $element The dom element from the stored xml.
+     *
+     * @return array
+     */
+    protected function resolveRelationElement(DOMElement $element)
+    {
+        $relation = [
+            'contentId'  => $element->getAttribute('content-id'),
+            'group'      => null,
+            'attributes' => [],
+        ];
+
+        /** @var DOMElement $attribute */
+        foreach ($element->getElementsByTagName('attribute') as $attribute) {
+            $relation['attributes'][$attribute->getAttribute('identifier')] = [
+                'type'  => $attribute->getAttribute('type'),
+                'value' => json_decode($attribute->textContent, true),
+            ];
+        }
+
+        return $relation;
     }
 }

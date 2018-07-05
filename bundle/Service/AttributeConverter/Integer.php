@@ -49,6 +49,10 @@ class Integer extends RelationAttributeConverter
         $errors = [];
 
         if ($attribute instanceof IntegerValue) {
+            if ($this->isEmpty($attribute)) {
+                return [];
+            }
+
             if (!is_numeric($attribute->value)) {
                 $errors[] = new ValidationError('Value required to be numeric.');
             } else {
@@ -69,7 +73,7 @@ class Integer extends RelationAttributeConverter
     public function isEmpty(RelationAttributeBase $attribute)
     {
         if ($attribute instanceof IntegerValue) {
-            return !$attribute->value;
+            return $attribute->value === null || $attribute->value === '';
         }
 
         return true;

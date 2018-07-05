@@ -57,10 +57,6 @@ class Type extends FieldType implements Nameable
                 'type'    => 'bool',
                 'default' => [],
             ],
-            'nameable'       => [
-                'type'    => 'bool',
-                'default' => [],
-            ],
             'allowUngrouped' => [
                 'type'    => 'bool',
                 'default' => [],
@@ -136,8 +132,18 @@ class Type extends FieldType implements Nameable
             $hash = json_decode($hash, true);
         }
 
-        if (is_array($hash)) {
-            return new Value($hash);
+        if (is_array($hash['relations'] ?? false) || is_array($hash['groups'] ?? false)) {
+            $relations = [];
+            if (is_array($hash['relations'] ?? false)) {
+                $relations = $hash['relations'];
+            }
+
+            $groups = [];
+            if (is_array($hash['groups'] ?? false)) {
+                $groups = $hash['groups'];
+            }
+
+            return new Value($relations, $groups);
         }
 
         return $this->getEmptyValue();
@@ -152,7 +158,10 @@ class Type extends FieldType implements Nameable
      */
     public function toHash(SpiValue $value)
     {
-        $hash = [];
+        $hash = [
+            'relations' => [],
+            'groups'    => [],
+        ];
 
         foreach ($value->relations as $relation) {
             $subHash = [
@@ -167,15 +176,16 @@ class Type extends FieldType implements Nameable
                 ];
             }
 
-            $hash[] = $subHash;
+            $hash['relations'][] = $subHash;
         }
 
-        foreach ($value->groups as $groupName => $group) {
+        foreach ($value->groups ?? [] as $groupName => $group) {
+            $hash['groups'][$groupName] = [];
+
             foreach ($group->relations as $relation) {
                 $subHash = [
                     'contentId'  => $relation->contentId,
                     'attributes' => [],
-                    'group'      => $groupName,
                 ];
 
                 foreach ($relation->attributes as $identifier => $attribute) {
@@ -185,7 +195,7 @@ class Type extends FieldType implements Nameable
                     ];
                 }
 
-                $hash[] = $subHash;
+                $hash['groups'][$groupName][] = $subHash;
             }
         }
 
@@ -201,41 +211,52 @@ class Type extends FieldType implements Nameable
      */
     public function fromPersistenceValue(PersistenceValue $fieldValue)
     {
-        if (!empty($fieldValue->data)) {
+        if (is_array($fieldValue->data) && !empty($fieldValue->data)) {
             $relations = [];
             $groups    = [];
 
-            $groupRelations = [];
-            foreach ($fieldValue->data as $datum) {
-                $relation = [
-                    'contentId'  => $datum['contentId'],
-                    'attributes' => [],
-                ];
+            if (is_array($fieldValue->data['relations'] ?? false) && !empty($fieldValue->data['relations'])) {
+                foreach ($fieldValue->data['relations'] as $datum) {
+                    $relation = [
+                        'contentId'  => $datum['contentId'],
+                        'attributes' => [],
+                    ];
 
-                if (isset($datum['group'])) {
-                    $relation['group'] = $datum['group'];
-                }
+                    foreach ($datum['attributes'] as $identifier => $attribute) {
+                        $relation['attributes'][$identifier] =
+                            $this->relationAttributeTransformer->fromPersistentValue(
+                                $attribute['value'],
+                                $attribute['type']
+                            );
+                    }
 
-                foreach ($datum['attributes'] as $identifier => $attribute) {
-                    $relation['attributes'][$identifier] =
-                        $this->relationAttributeTransformer->fromPersistentValue(
-                            $attribute['value'],
-                            $attribute['type']
-                        );
-                }
-
-                if (isset($relation['group'])) {
-                    $groupName = $relation['group'];
-                    unset($relation['group']);
-
-                    $groupRelations[$groupName][] = new Relation($relation);
-                } else {
                     $relations[] = new Relation($relation);
                 }
             }
 
-            foreach ($groupRelations as $groupName => $groupedRelations) {
-                $groups[$groupName] = new Group($groupedRelations);
+            if (is_array($fieldValue->data['groups'] ?? false) && !empty($fieldValue->data['groups'])) {
+                foreach ($fieldValue->data['groups'] as $groupName => $group) {
+                    $groupRelations = [];
+
+                    foreach ($group as $datum) {
+                        $relation = [
+                            'contentId'  => $datum['contentId'],
+                            'attributes' => [],
+                        ];
+
+                        foreach ($datum['attributes'] as $identifier => $attribute) {
+                            $relation['attributes'][$identifier] =
+                                $this->relationAttributeTransformer->fromPersistentValue(
+                                    $attribute['value'],
+                                    $attribute['type']
+                                );
+                        }
+
+                        $groupRelations[] = new Relation($relation);
+                    }
+
+                    $groups[$groupName] = new Group($groupRelations);
+                }
             }
 
             return new Value($relations, $groups);
@@ -343,18 +364,6 @@ class Type extends FieldType implements Nameable
     {
         $validationErrors = [];
 
-        $selectionLimit = $fieldDefinition->getFieldSettings()['selectionLimit'];
-        if ($selectionLimit && $selectionLimit < count($value->relations)) {
-            new ValidationError(
-                'Only %allowed% relation(s) allowed. %given% given.',
-                null,
-                [
-                    '%allowed%' => $selectionLimit,
-                    '%given%'   => count($value->relations),
-                ]
-            );
-        }
-
         $attributeDefinitions = $fieldDefinition->getFieldSettings()['attributeDefinitions'];
 
         foreach ($value->relations as $relation) {
@@ -373,6 +382,11 @@ class Type extends FieldType implements Nameable
 
         $relationIndex   = 0;
         $attributeErrors = [];
+
+        if (!$fieldDefinition->getFieldSettings()['groupSettings']['allowUngrouped'] && !empty($value->relations)) {
+            $validationErrors[] = new ValidationError('Ungrouped relations are not allowed.');
+        }
+
         foreach ($value->relations as $relation) {
             foreach ($attributeDefinitions as $identifier => $attributeDefinition) {
                 $errors = $this->relationAttributeTransformer->validate(
@@ -407,6 +421,18 @@ class Type extends FieldType implements Nameable
             }
         }
 
+        $selectionLimit = $fieldDefinition->getFieldSettings()['selectionLimit'];
+        if ($selectionLimit && $selectionLimit < $relationIndex) {
+            new ValidationError(
+                'Only %allowed% relation(s) allowed. %given% given.',
+                null,
+                [
+                    '%allowed%' => $selectionLimit,
+                    '%given%'   => count($value->relations),
+                ]
+            );
+        }
+
         if (!empty($attributeErrors)) {
             $validationErrors[]     = new ValidationError('Attributes did not validate.');
             $value->attributeErrors = $attributeErrors;
@@ -429,15 +455,22 @@ class Type extends FieldType implements Nameable
     {
         $relations = [];
 
-        if (!empty($fieldValue->relations)) {
-            $relation[ApiRelation::FIELD] = [];
+        $relations[ApiRelation::FIELD] = [];
 
-            foreach ($fieldValue->relations as $relation) {
+        foreach ($fieldValue->relations as $relation) {
+            $relations[ApiRelation::FIELD][] = $relation->contentId;
+        }
+
+        foreach ($fieldValue->groups as $group) {
+            foreach ($group->relations as $relation) {
                 $relations[ApiRelation::FIELD][] = $relation->contentId;
             }
         }
 
-        return $relations;
+        $relations[ApiRelation::FIELD] =
+            array_values(array_unique($relations[ApiRelation::FIELD]));
+
+        return array_filter($relations);
     }
 
     /**

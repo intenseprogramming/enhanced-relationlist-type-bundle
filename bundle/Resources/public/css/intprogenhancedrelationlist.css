@@ -17,7 +17,7 @@ table.erl-table tr>td {
     border-top: 1px solid #888;
     border-bottom: 1px solid #888;
 }
-table.erl-table tr .erl-drag-column {
+table.erl-table tr .erl-drag-column, table.erl-table tr .erl-no-drag-column {
     width: 2em;
     padding: 0;
 }

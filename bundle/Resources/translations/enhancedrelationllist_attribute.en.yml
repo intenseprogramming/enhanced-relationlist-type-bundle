@@ -1,4 +1,12 @@
 field_definition.attribute.table_head: Relations
 field_definition.attribute.table.head.relation: Relation
 
-field.group.ungrouped: Ungrouped relations
+field.edit.selection.none: None
+field.edit.add.content-groups.modal.title: "Add content/groups to %fieldLabel%"
+field.edit.add.content-groups.modal.add-content.button: Add content
+field.edit.add.content-groups.modal.add-group.button: Add group
+field.edit.add.content-groups.modal.cancel: Cancel
+
+field.attribute.table.head.relation: Relation
+field.attribute.table.empty: This group contains no relations.
+field.group.ungrouped.name: Ungrouped relations

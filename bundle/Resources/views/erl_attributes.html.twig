@@ -1,3 +1,8 @@
+{% trans_default_domain 'enhancedrelationllist_attribute' %}
+
+{% block boolean_relation_attribute %}
+    {{ attribute.value ? 'field.boolean.yes'|trans : 'field.boolean.no'|trans }}
+{% endblock %}
 
 {% block integer_relation_attribute %}
     {{ attribute.value }}

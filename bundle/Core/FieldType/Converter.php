@@ -157,7 +157,7 @@ class Converter implements ConverterInterface
             }
 
             $attributeSettings = $doc->createElement('settings');
-            $attributeSettings->appendChild($doc->createTextNode(json_encode($attributeDefinitionValue['settings'])));
+            $attributeSettings->appendChild($doc->createTextNode(json_encode($attributeDefinitionValue['settings'] ?? [])));
             $attributeDefinition->appendChild($attributeSettings);
 
             $settings->appendChild($attributeDefinition);

@@ -1,4 +1,8 @@
 services:
+    IntProg\EnhancedRelationListBundle\Service\AttributeConverter\Boolean:
+        tags:
+            - { name: int.prog.erl.relation.attribute, identifier: boolean }
+
     IntProg\EnhancedRelationListBundle\Service\AttributeConverter\Integer:
         tags:
             - { name: int.prog.erl.relation.attribute, identifier: integer }

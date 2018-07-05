@@ -58,7 +58,9 @@
         </td>
         {% for identifier,definition in fieldSettings.attributeDefinitions %}
             <td>
-                {{ erl_render_attribute(relation.attributes[identifier], definition) }}
+                {% if relation.attributes[identifier] is defined %}
+                    {{ erl_render_attribute(relation.attributes[identifier], definition) }}
+                {% endif %}
             </td>
         {% endfor %}
     </tr>

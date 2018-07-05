@@ -119,9 +119,10 @@
                             break;
                         case 'input':
                             if (inputItem.type === 'checkbox') {
-                                break;
+                                value = inputItem.checked;
+                            } else {
+                                value = inputItem.value;
                             }
-                            value = inputItem.value;
                             break;
                         default:
                             value = inputItem.value;

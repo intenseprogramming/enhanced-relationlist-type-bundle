@@ -1,5 +1,15 @@
 {% trans_default_domain 'enhancedrelationllist_attribute' %}
 
+{% block boolean_relation_attribute_edit %}
+    <label>
+        <input class="ez-data-source__input form-control{% if hasErrors %} is-invalid{% endif %}"
+               type="checkbox"
+               {% if value %}checked="checked"{% endif %}
+               value="1"
+                {% if definition.required %} required="required"{% endif %}>
+    </label>
+{% endblock %}
+
 {% block integer_relation_attribute_edit %}
     <label>
         <input class="ez-data-source__input form-control{% if hasErrors %} is-invalid{% endif %}"

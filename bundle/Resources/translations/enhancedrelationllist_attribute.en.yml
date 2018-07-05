@@ -10,3 +10,6 @@ field.edit.add.content-groups.modal.cancel: Cancel
 field.attribute.table.head.relation: Relation
 field.attribute.table.empty: This group contains no relations.
 field.group.ungrouped.name: Ungrouped relations
+
+field.boolean.yes: Yes
+field.boolean.no: No

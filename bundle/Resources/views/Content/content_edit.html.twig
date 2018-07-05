@@ -164,13 +164,17 @@
                 <input type="hidden" value="{{ relation.contentId }}">
             </div>
         </td>
-        {% for identifier,attribute in relation.attributes %}
+        {% for identifier,attributeDefinition in fieldSettings.attributeDefinitions %}
             <td data-value-path="attributes.{{ identifier }}">
-                {{ erl_render_attribute_input(
-                    fieldSettings.attributeDefinitions[identifier],
-                    attribute,
-                    {errors: attribute_errors[index][identifier]|default([])}
-                ) }}
+                {% if relation.attributes[identifier] is defined %}
+                    {{ erl_render_attribute_input(
+                        attributeDefinition,
+                        relation.attributes[identifier],
+                        {errors: attribute_errors[index][identifier]|default([])}
+                    ) }}
+                {% else %}
+                    {{ erl_render_attribute_input(attributeDefinition, null, []) }}
+                {% endif %}
             </td>
         {% endfor %}
     </tr>

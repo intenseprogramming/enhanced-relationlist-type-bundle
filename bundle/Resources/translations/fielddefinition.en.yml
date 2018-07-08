@@ -1,0 +1,16 @@
+fielddefinition.selection.limit.label: "Selection limit:"
+fielddefinition.selection.limit.none: "None"
+
+fielddefinition.attribute.definitions.label: "Attribute definitions:"
+fielddefinition.attribute.definitions.required.yes: "Value is required."
+fielddefinition.attribute.definitions.required.no: "Value is optional."
+fielddefinition.attribute.definitions.settings: "Settings:"
+
+fielddefinition.group.setting.label: "Group settings:"
+fielddefinition.group.setting.positionsFixed.yes: "Static group positions are fixed."
+fielddefinition.group.setting.positionsFixed.no: "Static groups are repositionable."
+fielddefinition.group.setting.extendable.yes: "Custom groups can be added."
+fielddefinition.group.setting.extendable.no: "Only fixed groups are available."
+fielddefinition.group.setting.allowUngrouped.yes: "Items can be placed outside of groups."
+fielddefinition.group.setting.allowUngrouped.no: "Item ouside of group is disallowed."
+fielddefinition.group.setting.groups.label: "Static groups"

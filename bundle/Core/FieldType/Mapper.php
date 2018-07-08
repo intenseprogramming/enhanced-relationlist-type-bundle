@@ -89,14 +89,14 @@ class Mapper extends AbstractRelationFormMapper
                         'value',
                         EnhancedRelationListType::class,
                         [
-                            'required'                 => $fieldDefinition->isRequired,
-                            'label'                    => $label,
-                            'label_attr'               => ['class' => 'form-control-label'],
-                            'browse_location'          => $fieldDefinition->getFieldSettings()['defaultBrowseLocation'],
-                            'selection_limit'          => $fieldDefinition->getFieldSettings()['selectionLimit'],
-                            'allowed_content_type_ids' => $fieldDefinition->getValidatorConfiguration()['relationValidator']['allowedContentTypes'],
-                            'sub_attributes'           => $fieldDefinition->getFieldSettings()['attributeDefinitions'],
-                            'data_class'               => null,
+                            'required'                         => $fieldDefinition->isRequired,
+                            'label'                            => $label,
+                            'label_attr'                       => ['class' => 'form-control-label'],
+                            'browse_location'                  => $fieldDefinition->getFieldSettings()['defaultBrowseLocation'],
+                            'selection_limit'                  => $fieldDefinition->getFieldSettings()['selectionLimit'],
+                            'allowed_content_type_identifiers' => $fieldDefinition->getValidatorConfiguration()['relationValidator']['allowedContentTypes'],
+                            'sub_attributes'                   => $fieldDefinition->getFieldSettings()['attributeDefinitions'],
+                            'data_class'                       => null,
                         ]
                     )
                     ->setAutoInitialize(false)

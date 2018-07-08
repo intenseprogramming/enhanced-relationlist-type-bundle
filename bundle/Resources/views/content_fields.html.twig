@@ -5,19 +5,26 @@
 
 {% block intprogenhancedrelationlist_field %}
     {% import _self as erl_table_macros %}
-    {% if field.value.relations is not empty %}
+
+    {{ erl_table_macros.render_intprogenhancedrelationlist(field.value, fieldSettings) }}
+{% endblock %}
+
+{% macro render_intprogenhancedrelationlist(value, fieldSettings) %}
+    {% import _self as erl_table_macros %}
+
+    {% if value.relations is not empty %}
         {% include '@ezdesign/parts/table_header.html.twig' with {headerText: 'field.group.ungrouped.name'|trans} %}
-        <table class="table{% if field.value.groups is empty %} mb-0{% endif %}">
+        <table class="table{% if value.groups is empty %} mb-0{% endif %}">
             {{ erl_table_macros.table_head_macro(fieldSettings, field) }}
             <tbody>
-            {% for relation in field.value.relations %}
+            {% for relation in value.relations %}
                 {{ erl_table_macros.relation_row(relation, fieldSettings) }}
             {% endfor %}
             </tbody>
         </table>
     {% endif %}
 
-    {% for name,group in field.value.groups %}
+    {% for name,group in value.groups %}
         {% include '@ezdesign/parts/table_header.html.twig' with {headerText: name} %}
         {% if group.relations is not empty %}
             <table class="table{% if loop.last %} mb-0{% endif %}">
@@ -32,7 +39,7 @@
             <p class="ez-table-no-content {% if loop.last %}mb-0{% else %}mb-4{% endif %}">{{ 'field.attribute.table.empty'|trans }}</p>
         {% endif %}
     {% endfor %}
-{% endblock %}
+{% endmacro %}
 
 {% macro table_head_macro(fieldSettings, field) %}
     <thead>

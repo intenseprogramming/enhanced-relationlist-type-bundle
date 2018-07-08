@@ -144,7 +144,6 @@ class Converter implements ConverterInterface
 
         foreach ($fieldSettings['attributeDefinitions'] as $identifier => $attributeDefinitionValue) {
             $attributeDefinition = $doc->createElement('attribute_definition');
-            $attributeDefinition->setAttribute('position', $attributeDefinitionValue['position']);
             $attributeDefinition->setAttribute('identifier', $identifier);
             $attributeDefinition->setAttribute('type', $attributeDefinitionValue['type']);
             $attributeDefinition->setAttribute('required', $attributeDefinitionValue['required'] ? 1 : 0);
@@ -181,9 +180,9 @@ class Converter implements ConverterInterface
 
         $settings->appendChild($node);
 
-        foreach ($fieldValidators['relationValidator']['allowedContentTypes'] as $contentTypeId) {
+        foreach ($fieldValidators['relationValidator']['allowedContentTypes'] as $contentTypeIdentifier) {
             $attributeDefinition = $doc->createElement('allowed_content_type');
-            $attributeDefinition->setAttribute('content-type-id', $contentTypeId);
+            $attributeDefinition->setAttribute('content-type-identifier', $contentTypeIdentifier);
 
             $validators->appendChild($attributeDefinition);
         }
@@ -212,7 +211,6 @@ class Converter implements ConverterInterface
             'groupSettings'         => [
                 'positionsFixed' => false,
                 'extendable'     => true,
-                'nameable'       => true,
                 'allowUngrouped' => true,
                 'groups'         => [],
             ],
@@ -252,7 +250,6 @@ class Converter implements ConverterInterface
                 'name'     => $names,
                 'required' => !!$attributeDefinition->getAttribute('required'),
                 'settings' => $settings,
-                'position' => $attributeDefinition->getAttribute('position'),
             ];
         }
         if (
@@ -297,9 +294,9 @@ class Converter implements ConverterInterface
         $validators = &$fieldDef->fieldTypeConstraints->validators;
         /** @var DOMElement $contentTypeElement */
         foreach ($dom->getElementsByTagName('allowed_content_type') as $contentTypeElement) {
-            if ($contentTypeElement->hasAttribute('content-type-id')) {
+            if ($contentTypeElement->hasAttribute('content-type-identifier')) {
                 $validators['relationValidator']['allowedContentTypes'][] =
-                    $contentTypeElement->getAttribute('content-type-id');
+                    $contentTypeElement->getAttribute('content-type-identifier');
             }
         }
     }

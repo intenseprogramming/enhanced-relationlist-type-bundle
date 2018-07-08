@@ -14,3 +14,5 @@ system:
                     controller: 'EzPlatformAdminUiBundle:ContentView:locationView'
                     template: 'IntProgEnhancedRelationListBundle::simple_link.html.twig'
                     match: true
+        fielddefinition_settings_templates:
+            - {template: '@IntProgEnhancedRelationList/fielddefinition_settings.html.twig', priority: 0}

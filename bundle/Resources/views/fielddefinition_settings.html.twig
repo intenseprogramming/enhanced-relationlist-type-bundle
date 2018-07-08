@@ -1,0 +1,122 @@
+{% trans_default_domain "fielddefinition" %}
+{% extends '@ezdesign/fielddefinition_settings.html.twig' %}
+
+{% block intprogenhancedrelationlist_settings %}
+    <ul class="ez-fielddefinition-settings ez-fielddefinition-{{ fielddefinition.fieldTypeIdentifier }}-settings">
+        {% set defaultValue = null %}
+        {% if fielddefinition.defaultValue %}
+            {% import '@IntProgEnhancedRelationList/content_fields.html.twig' as _fields %}
+            {% set defaultValue = _fields.render_intprogenhancedrelationlist(fielddefinition.defaultValue, settings)|trim %}
+            {% if not defaultValue %}
+                {% set defaultValue = null %}
+            {% endif %}
+        {% endif %}
+        {{ block( 'settings_defaultvalue' ) }}
+
+        <li class="ez-fielddefinition-setting selection-limit">
+            <div class="ez-fielddefinition-setting-name">{{ 'fielddefinition.selection.limit.label'|trans|desc("Selection limit:") }}</div>
+            <div class="ez-fielddefinition-setting-value">
+                {% if settings.selectionLimit %}
+                    {{ selectionLimit }}
+                {% else %}
+                    {{ 'fielddefinition.selection.limit.none'|trans|desc("None") }}
+                {% endif %}
+            </div>
+        </li>
+
+        {{ block( 'settings_selection_content_types_enhanced' ) }}
+
+        {% set rootLocationId = settings.defaultBrowseLocation %}
+        {{ block( 'settings_selectionroot' ) }}
+
+        {{ block( 'settings_attribute_definitions' ) }}
+
+        {{ block( 'settings_group_setting' ) }}
+    </ul>
+{% endblock %}
+
+{% block settings_selection_content_types_enhanced %}
+    <li class="ez-fielddefinition-setting allowed-content-types">
+        <div class="ez-fielddefinition-setting-name">{{ 'fielddefinition.allowed-content-types.label'|trans|desc("Allowed content types:") }}</div>
+        <div class="ez-fielddefinition-setting-value">
+            {% if fielddefinition.validatorConfiguration.relationValidator.allowedContentTypes %}
+                {# TODO display content type name #}
+                <ul>
+                    {% for typeIdentifier in fielddefinition.validatorConfiguration.relationValidator.allowedContentTypes %}
+                        <li>{{ typeIdentifier }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <em>{{ 'fielddefinition.allowed-content-types.any'|trans|desc("Any") }}</em>
+            {% endif %}
+        </div>
+    </li>
+{% endblock %}
+
+{% block settings_attribute_definitions %}
+    <li class="ez-fielddefinition-setting allowed-content-types">
+        <div class="ez-fielddefinition-setting-name">{{ 'fielddefinition.attribute.definitions.label'|trans|desc("Attribute definitions:") }}</div>
+        <div class="ez-fielddefinition-setting-value">
+            {% if settings.attributeDefinitions %}
+                <ul>
+                    {% for identifier,definition in settings.attributeDefinitions %}
+                        <li>
+                            {% set displaying = false %}
+                            {% for code in fielddefinition.prioritizedLanguages if not displaying and definition.name[code] is defined %}
+                                {{ definition.name[code] }}
+                                {% set displaying = true %}
+                            {% endfor %}
+                            {% if not displaying %}{{ definition.name|first }}{% endif %}
+                            <ul>
+                                {% if definition.required %}
+                                    <li>{{ 'fielddefinition.attribute.definitions.required.yes'|trans|desc('Value is required.') }}</li>
+                                {% else %}
+                                    <li>{{ 'fielddefinition.attribute.definitions.required.no'|trans|desc('Value is optional.') }}</li>
+                                {% endif %}
+                                {% if definition.settings is defined and definition.settings %}
+                                    <li>
+                                        {{ 'fielddefinition.attribute.definitions.settings'|trans|desc('Settings:') }}
+                                        <b>{{ definition.settings|json_encode }}</b>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </li>
+{% endblock %}
+
+{% block settings_group_setting %}
+    <li class="ez-fielddefinition-setting group-setting">
+        <div class="ez-fielddefinition-setting-name">{{ 'fielddefinition.group.setting.label'|trans|desc("Group settings:") }}</div>
+        <div class="ez-fielddefinition-setting-value">
+            <ul>
+                {% if settings.groupSettings.positionsFixed %}
+                    <li>{{ 'fielddefinition.group.setting.positionsFixed.yes'|trans|desc('Static group positions are fixed.') }}</li>
+                {% else %}
+                    <li>{{ 'fielddefinition.group.setting.positionsFixed.no'|trans|desc('Static groups are repositionable.') }}</li>
+                {% endif %}
+                {% if settings.groupSettings.extendable %}
+                    <li>{{ 'fielddefinition.group.setting.extendable.yes'|trans|desc('Custom groups can be added.') }}</li>
+                {% else %}
+                    <li>{{ 'fielddefinition.group.setting.extendable.no'|trans|desc('Only fixed groups are available.') }}</li>
+                {% endif %}
+                {% if settings.groupSettings.allowUngrouped %}
+                    <li>{{ 'fielddefinition.group.setting.allowUngrouped.yes'|trans|desc('Items can be placed outside of groups.') }}</li>
+                {% else %}
+                    <li>{{ 'fielddefinition.group.setting.allowUngrouped.no'|trans|desc('Item ouside of group is disallowed.') }}</li>
+                {% endif %}
+                <li>
+                    {{ 'fielddefinition.group.setting.groups.label'|trans|desc('Static groups') }}
+                    <ul>
+                        {% for group in settings.groupSettings.groups %}
+                            <li>{{ group }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </li>
+{% endblock %}

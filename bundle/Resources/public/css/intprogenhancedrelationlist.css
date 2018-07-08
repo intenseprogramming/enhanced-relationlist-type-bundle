@@ -54,3 +54,51 @@ table.erl-table .form-control, table.erl-table label {
 table.erl-table tr.erl-relation-group td {
     background: #ddd;
 }
+
+table.erl-table .erl-attribute-container {
+    position: relative;
+}
+table.erl-table .erl-attribute-container .error-bubble {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    height: 1em;
+    width: 1em;
+    background-color: #f44;
+    border-radius: 1em;
+    display: none;
+}
+table.erl-table .erl-attribute-container.has-error .error-bubble {
+    z-index: 1;
+    display: block;
+}
+table.erl-table .erl-attribute-container .error-bubble .error-container {
+    padding: 0.5em;
+    pointer-events: none;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    width: max-content;
+    max-width: 25em;
+
+    background: #fceaec;
+    border-radius: 0.25em;
+    border: 1px #f44 solid;
+    position: absolute;
+    bottom: .5em;
+    left: .5em;
+
+    -webkit-transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -o-transition: opacity .25s ease-in-out;
+    transition: opacity .25s ease-in-out;
+}
+table.erl-table .erl-attribute-container .error-bubble:hover .error-container {
+    display: block;
+    pointer-events: auto;
+    filter: alpha(opacity=100);
+    opacity: 1;
+}
+table.erl-table .erl-attribute-container .error-bubble .error-container ul {
+    padding: 0 0 0 1.6em;
+    margin: 0;
+}

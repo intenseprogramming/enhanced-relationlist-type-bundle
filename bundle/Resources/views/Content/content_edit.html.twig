@@ -165,7 +165,7 @@
             </div>
         </td>
         {% for identifier,attributeDefinition in fieldSettings.attributeDefinitions %}
-            <td data-value-path="attributes.{{ identifier }}">
+            <td class="erl-attribute-container{% if attribute_errors[index][identifier] is defined %} has-error{% endif %}" data-value-path="attributes.{{ identifier }}">
                 {% if relation.attributes[identifier] is defined %}
                     {{ erl_render_attribute_input(
                         attributeDefinition,
@@ -175,6 +175,18 @@
                 {% else %}
                     {{ erl_render_attribute_input(attributeDefinition, null, []) }}
                 {% endif %}
+
+                <div class="error-bubble">
+                    <div class="error-container">
+                        {% if attribute_errors[index][identifier] is defined %}
+                            <ul>
+                                {% for error in attribute_errors[index][identifier] %}
+                                    <li>{{ error.translatableMessage.message|trans(error.translatableMessage.values) }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
             </td>
         {% endfor %}
     </tr>

@@ -6,10 +6,10 @@
 {% block intprogenhancedrelationlist_field %}
     {% import _self as erl_table_macros %}
 
-    {{ erl_table_macros.render_intprogenhancedrelationlist(field.value, fieldSettings) }}
+    {{ erl_table_macros.render_intprogenhancedrelationlist(field.value, fieldSettings, field) }}
 {% endblock %}
 
-{% macro render_intprogenhancedrelationlist(value, fieldSettings) %}
+{% macro render_intprogenhancedrelationlist(value, fieldSettings, field) %}
     {% import _self as erl_table_macros %}
 
     {% if value.relations is not empty %}

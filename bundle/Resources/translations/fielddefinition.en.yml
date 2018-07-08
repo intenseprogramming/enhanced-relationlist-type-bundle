@@ -1,5 +1,5 @@
 fielddefinition.selection.limit.label: "Selection limit:"
-fielddefinition.selection.limit.none: "None"
+fielddefinition.selection.limit.none: "No limit"
 
 fielddefinition.attribute.definitions.label: "Attribute definitions:"
 fielddefinition.attribute.definitions.required.yes: "Value is required."

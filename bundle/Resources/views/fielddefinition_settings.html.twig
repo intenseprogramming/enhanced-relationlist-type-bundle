@@ -3,25 +3,15 @@
 
 {% block intprogenhancedrelationlist_settings %}
     <ul class="ez-fielddefinition-settings ez-fielddefinition-{{ fielddefinition.fieldTypeIdentifier }}-settings">
-        {% set defaultValue = null %}
-        {% if fielddefinition.defaultValue %}
-            {% import '@IntProgEnhancedRelationList/content_fields.html.twig' as _fields %}
-            {% set defaultValue = _fields.render_intprogenhancedrelationlist(fielddefinition.defaultValue, settings)|trim %}
-            {% if not defaultValue %}
-                {% set defaultValue = null %}
-            {% endif %}
-        {% endif %}
-        {{ block( 'settings_defaultvalue' ) }}
-
         <li class="ez-fielddefinition-setting selection-limit">
-            <div class="ez-fielddefinition-setting-name">{{ 'fielddefinition.selection.limit.label'|trans|desc("Selection limit:") }}</div>
-            <div class="ez-fielddefinition-setting-value">
+            <span class="ez-fielddefinition-setting-name">{{ 'fielddefinition.selection.limit.label'|trans|desc("Selection limit:") }}</span>
+            <span class="ez-fielddefinition-setting-value">
                 {% if settings.selectionLimit %}
                     {{ selectionLimit }}
                 {% else %}
-                    {{ 'fielddefinition.selection.limit.none'|trans|desc("None") }}
+                    <em>{{ 'fielddefinition.selection.limit.none'|trans|desc("No limit") }}</em>
                 {% endif %}
-            </div>
+            </span>
         </li>
 
         {{ block( 'settings_selection_content_types_enhanced' ) }}
@@ -35,10 +25,23 @@
     </ul>
 {% endblock %}
 
+{% block settings_selectionroot %}
+    <li class="ez-fielddefinition-setting selection-root">
+        <span class="ez-fielddefinition-setting-name">{{ 'fielddefinition.selection-root.label'|trans|desc("Selection root:")}}</span>
+        <span class="ez-fielddefinition-setting-value">
+            {% if rootLocationId %}
+                {{ render_esi( controller( "ez_content:viewAction", {'locationId': rootLocationId, 'viewType': 'element_simple_link'} )) }}
+            {% else %}
+                <em>{{ 'fielddefinition.selection-root.undefined'|trans|desc("No defined root")}}</em>
+            {% endif %}
+        </span>
+    </li>
+{% endblock %}
+
 {% block settings_selection_content_types_enhanced %}
     <li class="ez-fielddefinition-setting allowed-content-types">
-        <div class="ez-fielddefinition-setting-name">{{ 'fielddefinition.allowed-content-types.label'|trans|desc("Allowed content types:") }}</div>
-        <div class="ez-fielddefinition-setting-value">
+        <span class="ez-fielddefinition-setting-name">{{ 'fielddefinition.allowed-content-types.label'|trans|desc("Allowed content types:") }}</span>
+        <span class="ez-fielddefinition-setting-value">
             {% if fielddefinition.validatorConfiguration.relationValidator.allowedContentTypes %}
                 {# TODO display content type name #}
                 <ul>
@@ -49,14 +52,14 @@
             {% else %}
                 <em>{{ 'fielddefinition.allowed-content-types.any'|trans|desc("Any") }}</em>
             {% endif %}
-        </div>
+        </span>
     </li>
 {% endblock %}
 
 {% block settings_attribute_definitions %}
     <li class="ez-fielddefinition-setting allowed-content-types">
-        <div class="ez-fielddefinition-setting-name">{{ 'fielddefinition.attribute.definitions.label'|trans|desc("Attribute definitions:") }}</div>
-        <div class="ez-fielddefinition-setting-value">
+        <span class="ez-fielddefinition-setting-name">{{ 'fielddefinition.attribute.definitions.label'|trans|desc("Attribute definitions:") }}</span>
+        <span class="ez-fielddefinition-setting-value">
             {% if settings.attributeDefinitions %}
                 <ul>
                     {% for identifier,definition in settings.attributeDefinitions %}
@@ -84,13 +87,13 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-        </div>
+        </span>
     </li>
 {% endblock %}
 
 {% block settings_group_setting %}
     <li class="ez-fielddefinition-setting group-setting">
-        <div class="ez-fielddefinition-setting-name">{{ 'fielddefinition.group.setting.label'|trans|desc("Group settings:") }}</div>
+        <span class="ez-fielddefinition-setting-name">{{ 'fielddefinition.group.setting.label'|trans|desc("Group settings:") }}</span>
         <div class="ez-fielddefinition-setting-value">
             <ul>
                 {% if settings.groupSettings.positionsFixed %}

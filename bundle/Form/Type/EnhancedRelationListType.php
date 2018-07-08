@@ -115,20 +115,9 @@ class EnhancedRelationListType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $allowedContentTypeIdentifiers = [];
-        $allowedContentTypeIds         = $options['allowed_content_type_ids'];
-        foreach ($allowedContentTypeIds as $contentTypeId) {
-            try {
-                $allowedContentTypeIdentifiers[] =
-                    $this->contentTypeService->loadContentType($contentTypeId)->identifier;
-            } catch (NotFoundException $exception) {
-                continue;
-            }
-        }
-
         $view->vars['limit']                            = $options['selection_limit'];
         $view->vars['default_location']                 = $options['browse_location'];
-        $view->vars['allowed_content_type_identifiers'] = $allowedContentTypeIdentifiers;
+        $view->vars['allowed_content_type_identifiers'] = $options['allowed_content_type_identifiers'];
 
         $view->vars['array_data'] = array_map(
             function ($relation) {
@@ -163,7 +152,7 @@ class EnhancedRelationListType extends AbstractType
 
         $resolver->setDefault('browse_location', 1);
         $resolver->setDefault('selection_limit', 0);
-        $resolver->setDefault('allowed_content_type_ids', []);
+        $resolver->setDefault('allowed_content_type_identifiers', []);
         $resolver->setDefault('sub_attributes', []);
     }
 }

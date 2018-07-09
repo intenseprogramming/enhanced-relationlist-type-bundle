@@ -42,6 +42,7 @@ class Value extends BaseValue
     public function __construct(array $relations = [], array $groups = [])
     {
         $this->relations = [];
+        $this->groups    = [];
 
         foreach ($relations as $relation) {
             if (is_array($relation) && isset($relation['contentId']) && isset($relation['attributes'])) {

@@ -45,11 +45,29 @@ class RelationAttributeExtension extends Twig_Extension
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
             new Twig_SimpleFunction(
+                'erl_render_attribute_definition',
+                function (Twig_Environment $environment, $attributeDefinition, array $params = []) {
+                    $this->attributeBlockRenderer = $environment;
+
+                    return $this->renderAttributeDefinition($attributeDefinition, $params);
+                },
+                ['is_safe' => ['html'], 'needs_environment' => true]
+            ),
+            new Twig_SimpleFunction(
                 'erl_render_attribute_input',
-                function (Twig_Environment $environment, $attributeDefinition, $value, $params) {
+                function (Twig_Environment $environment, $attributeDefinition, $value, $params = []) {
                     $this->attributeBlockRenderer = $environment;
 
                     return $this->renderAttributeInput($value, $attributeDefinition, $params);
+                },
+                ['is_safe' => ['html'], 'needs_environment' => true]
+            ),
+            new Twig_SimpleFunction(
+                'erl_render_attribute_definition_input',
+                function (Twig_Environment $environment, $attributeDefinition, $params = []) {
+                    $this->attributeBlockRenderer = $environment;
+
+                    return $this->renderAttributeDefinitionInput($attributeDefinition, $params);
                 },
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
@@ -114,4 +132,57 @@ class RelationAttributeExtension extends Twig_Extension
             ]
         );
     }
+
+    /**
+     * TODO: Insert description for renderAttributeDefinition.
+     *
+     * @param $attributeDefinition
+     * @param $params
+     *
+     * @return string
+     *
+     * @throws \Throwable
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function renderAttributeDefinition($attributeDefinition, $params)
+    {
+        return $this->attributeBlockRenderer
+            ->load('@IntProgEnhancedRelationList/erl_attributes_definition.html.twig')
+            ->renderBlock(
+                $attributeDefinition['type'] . '_relation_attribute_definition',
+                [
+                    'definition' => $attributeDefinition,
+                    'parameters' => $params,
+                ]
+            );
+    }
+
+    /**
+     * TODO: Insert description for renderAttributeDefinitionInput.
+     *
+     * @param $attributeDefinition
+     * @param $params
+     *
+     * @return string
+     *
+     * @throws \Throwable
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function renderAttributeDefinitionInput($attributeDefinition, $params)
+    {
+        return $this->attributeBlockRenderer
+            ->load('@IntProgEnhancedRelationList/erl_attributes_definition_edit.html.twig')
+            ->renderBlock(
+                $attributeDefinition['type'] . '_relation_attribute_definition_edit',
+                [
+                    'definition' => $attributeDefinition,
+                    'parameters' => $params,
+                ]
+            );
+    }
+
 }

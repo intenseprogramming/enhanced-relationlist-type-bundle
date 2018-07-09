@@ -1,0 +1,60 @@
+{% trans_default_domain 'enhancedrelationlist_definition_attribute' %}
+
+{% block boolean_relation_attribute_definition %}
+    {# no configuration available #}
+{% endblock %}
+
+{% block integer_relation_attribute_definition %}
+    <div>
+        {{ 'erl.attribute.type.integer.min-value'|trans }}:
+        {% if definition.settings.min is defined and definition.settings.min is not null %}
+            {{ definition.settings.min }}
+        {% else %}
+            {{ 'erl.attribute.type.integer.min-value.none'|trans }}
+        {% endif %}
+    </div>
+    <div>
+        {{ 'erl.attribute.type.integer.max-value'|trans }}:
+        {% if definition.settings.max is defined and definition.settings.max is not null %}
+            {{ definition.settings.max }}
+        {% else %}
+            {{ 'erl.attribute.type.integer.max-value.none'|trans }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block string_relation_attribute_definition %}
+    <div>
+        {{ 'erl.attribute.type.string.min-length'|trans }}:
+        {% if definition.settings.minLength is defined and definition.settings.minLength is not null %}
+            {{ definition.settings.minLength }}
+        {% else %}
+            {{ 'erl.attribute.type.integer.min-length.none'|trans }}
+        {% endif %}
+    </div>
+    <div>
+        {{ 'erl.attribute.type.string.max-length'|trans }}:
+        {% if definition.settings.maxLength is defined and definition.settings.maxLength is not null %}
+            {{ definition.settings.maxLength }}
+        {% else %}
+            {{ 'erl.attribute.type.string.max-length.none'|trans }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block selection_relation_attribute_definition %}
+    <div>
+        {{ 'erl.attribute.type.selection.multiple'|trans }}:
+        {% if definition.settings.multiple is defined and definition.settings.multiple %}
+            {{ 'erl.attribute.type.integer.multiple.true'|trans }}
+        {% else %}
+            {{ 'erl.attribute.type.integer.multiple.false'|trans }}
+        {% endif %}
+    </div>
+    <div>
+        {{ 'erl.attribute.type.selection.options'|trans }}:
+        <ul>
+            {% for option in definition.settings.options|default([]) %}<li>{{ option }}</li>{% endfor %}
+        </ul>
+    </div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% trans_default_domain 'enhancedrelationlist_definition_attribute' %}
+
+{% block boolean_relation_attribute_definition_edit %}
+{% endblock %}
+
+{% block integer_relation_attribute_definition_edit %}
+    <label class="form-control-label">
+        {{ 'erl.attribute.type.integer.min-value'|trans }}
+        <input type="number" class="form-control" value="{{ definition.settings.min|default('') }}" />
+    </label>
+    <label class="form-control-label">
+        {{ 'erl.attribute.type.integer.max-value'|trans }}
+        <input type="number" class="form-control" value="{{ definition.settings.max|default('') }}" />
+    </label>
+{% endblock %}
+
+{% block string_relation_attribute_definition_edit %}
+    <label class="form-control-label">
+        {{ 'erl.attribute.type.string.min-length'|trans }}
+        <input type="number" class="form-control" value="{{ definition.settings.minLength|default('') }}" />
+    </label>
+    <label class="form-control-label">
+        {{ 'erl.attribute.type.string.max-length'|trans }}
+        <input type="number" class="form-control" value="{{ definition.settings.maxLength|default('') }}" />
+    </label>
+{% endblock %}
+
+{% block selection_relation_attribute_definition_edit %}
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox"{% if definition.settings.multiple|default(false) %} checked="checked"{% endif %} />
+        <label class="checkbox-inline form-check-label">{{ 'erl.attribute.type.selection.multiple'|trans }}</label>
+    </div>
+
+    <div>
+        <label class="form-control-label">{{ 'erl.attribute.type.selection.options'|trans }}</label>
+        {% for option in definition.settings.options %}
+            <div><label class="mb-0"><input class="form-control" type="text" value="{{ option }}" /></label></div>
+        {% endfor %}
+    </div>
+{% endblock %}

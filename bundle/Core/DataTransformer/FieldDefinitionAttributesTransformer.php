@@ -14,13 +14,13 @@ use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
 /**
- * Class FieldDefinitionTransformer.
+ * Class FieldDefinitionAttributesTransformer.
  *
  * @package   IntProg\EnhancedRelationListBundle\Core\DataTransformer
  * @author    Konrad, Steve <s.konrad@wingmail.net>
  * @copyright 2018 Intense Programming
  */
-class FieldDefinitionTransformer implements DataTransformerInterface
+class FieldDefinitionAttributesTransformer implements DataTransformerInterface
 {
     /**
      * Transforms a value from the original representation to a transformed representation.
@@ -33,7 +33,7 @@ class FieldDefinitionTransformer implements DataTransformerInterface
      */
     public function transform($value)
     {
-        return [];
+        return json_encode($value);
     }
 
     /**

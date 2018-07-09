@@ -22,20 +22,38 @@
         </div>
     </div>
 
-    <div class="ezobjectrelationlist-settings selection-content-types">
+    <div class="intprogenhancedrelationlist-settings selection-content-types">
         {{- form_label(form.selectionContentTypes) -}}
         {{- form_errors(form.selectionContentTypes) -}}
         {{- form_widget(form.selectionContentTypes) -}}
     </div>
 
-    <div class="ezobjectrelationlist-settings selection-limit">
+    <div class="intprogenhancedrelationlist-settings selection-limit">
         {{- form_label(form.selectionLimit) -}}
         {{- form_errors(form.selectionLimit) -}}
         {{- form_widget(form.selectionLimit) -}}
     </div>
 
-    <div class="ezobjectrelationlist-settings attributes">
-        {#{{- form_label(form.attributes) -}}#}
+    <div class="intprogenhancedrelationlist-settings group-position-fixed">
+        {{- form_label(form.groupSettingsPositionFixed) -}}
+        {{- form_errors(form.groupSettingsPositionFixed) -}}
+        {{- form_widget(form.groupSettingsPositionFixed) -}}
+    </div>
+
+    <div class="intprogenhancedrelationlist-settings group-extendable">
+        {{- form_label(form.groupSettingsExtendable) -}}
+        {{- form_errors(form.groupSettingsExtendable) -}}
+        {{- form_widget(form.groupSettingsExtendable) -}}
+    </div>
+
+    <div class="intprogenhancedrelationlist-settings group-allowe-ungrouped">
+        {{- form_label(form.groupSettingsAllowUngrouped) -}}
+        {{- form_errors(form.groupSettingsAllowUngrouped) -}}
+        {{- form_widget(form.groupSettingsAllowUngrouped) -}}
+    </div>
+
+    <div class="intprogenhancedrelationlist-settings attributes">
+        {{- form_label(form.attributes) -}}
         {{- form_errors(form.attributes) -}}
         {{- form_widget(form.attributes) -}}
     </div>

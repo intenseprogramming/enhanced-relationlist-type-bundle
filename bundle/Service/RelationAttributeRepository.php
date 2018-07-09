@@ -37,6 +37,11 @@ class RelationAttributeRepository
         $this->converters = $converters;
     }
 
+    public function getConverters()
+    {
+        return $this->converters;
+    }
+
     public function convertAbstractValue(AbstractValue $abstractValue, $targetType)
     {
         return $this->converters[$targetType]->fromAbstractValue($abstractValue);

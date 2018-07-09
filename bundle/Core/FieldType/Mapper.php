@@ -13,8 +13,9 @@ namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 use EzSystems\RepositoryForms\Data\Content\FieldData;
 use EzSystems\RepositoryForms\Data\FieldDefinitionData;
 use EzSystems\RepositoryForms\FieldType\Mapper\AbstractRelationFormMapper;
-use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionType;
+use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionAttributesType;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -55,15 +56,6 @@ class Mapper extends AbstractRelationFormMapper
                 ]
             )
             ->add(
-                'attributes',
-                EnhancedRelationListFieldDefinitionType::class,
-                [
-                    'required'      => false,
-                    'property_path' => 'fieldSettings[attributeDefinitions]',
-                    'label'         => 'field_definition.intprogenhancedrelationlist.attributes',
-                ]
-            )
-            ->add(
                 'selectionLimit',
                 IntegerType::class,
                 [
@@ -71,6 +63,45 @@ class Mapper extends AbstractRelationFormMapper
                     'empty_data'    => 0,
                     'property_path' => 'validatorConfiguration[relationListValueValidator][selectionLimit]',
                     'label'         => 'field_definition.intprogenhancedrelationlist.selection_limit',
+                ]
+            )
+            ->add(
+                'groupSettingsPositionFixed',
+                CheckboxType::class,
+                [
+                    'required'      => false,
+                    'property_path' => 'fieldSettings[groupSettings][positionsFixed]',
+                    'label'         => 'field_definition.intprogenhancedrelationlist.group.positions_fixed',
+                    'label_attr'    => ['class' => 'checkbox-inline'],
+                ]
+            )
+            ->add(
+                'groupSettingsExtendable',
+                CheckboxType::class,
+                [
+                    'required'      => false,
+                    'property_path' => 'fieldSettings[groupSettings][extendable]',
+                    'label'         => 'field_definition.intprogenhancedrelationlist.group.extendable',
+                    'label_attr'    => ['class' => 'checkbox-inline'],
+                ]
+            )
+            ->add(
+                'groupSettingsAllowUngrouped',
+                CheckboxType::class,
+                [
+                    'required'      => false,
+                    'property_path' => 'fieldSettings[groupSettings][allowUngrouped]',
+                    'label'         => 'field_definition.intprogenhancedrelationlist.group.allow_ungrouped',
+                    'label_attr'    => ['class' => 'checkbox-inline'],
+                ]
+            )
+            ->add(
+                'attributes',
+                EnhancedRelationListFieldDefinitionAttributesType::class,
+                [
+                    'required'      => false,
+                    'property_path' => 'fieldSettings[attributeDefinitions]',
+                    'label'         => 'field_definition.intprogenhancedrelationlist.attributes',
                 ]
             );
     }

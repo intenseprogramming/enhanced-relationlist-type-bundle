@@ -51,15 +51,15 @@ class Type extends FieldType implements Nameable
         'groupSettings'         => [
             'positionsFixed' => [
                 'type'    => 'bool',
-                'default' => [],
+                'default' => false,
             ],
             'extendable'     => [
                 'type'    => 'bool',
-                'default' => [],
+                'default' => true,
             ],
             'allowUngrouped' => [
                 'type'    => 'bool',
-                'default' => [],
+                'default' => true,
             ],
             'groups'         => [
                 'type'    => 'array',

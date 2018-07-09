@@ -4,3 +4,21 @@ field_definition.attribute_definition.col.type: Type
 field_definition.attribute_definition.col.settings: Settings
 field_definition.attribute_definition.col.required: Required
 field_definition.attribute_difinition.add_attribute: Add attribute
+
+boolean.name: Boolean
+integer.name: Integer
+selection.name: Selection
+string.name: String
+
+erl.attribute.type.integer.min-value: 'Lower boundary'
+erl.attribute.type.integer.min-value.none: 'None'
+erl.attribute.type.integer.max-value: 'Upper boundary'
+erl.attribute.type.integer.max-value.none: 'None'
+erl.attribute.type.string.min-length: 'Minimal length'
+erl.attribute.type.string.min-length.none: 'None'
+erl.attribute.type.string.max-length: 'Maximal length'
+erl.attribute.type.string.max-length.none: 'None'
+erl.attribute.type.selection.multiple: 'Multiple selectable'
+erl.attribute.type.integer.multiple.true: 'Yes'
+erl.attribute.type.integer.multiple.false: 'No'
+erl.attribute.type.selection.options: 'Options'

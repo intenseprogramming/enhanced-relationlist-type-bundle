@@ -14,3 +14,9 @@ services:
             - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
         tags:
             - { name: form.type }
+
+    IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionAttributesType:
+        arguments:
+            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
+        tags:
+            - { name: form.type }

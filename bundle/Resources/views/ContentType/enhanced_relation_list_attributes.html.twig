@@ -3,76 +3,85 @@
 {%- block intprogenhancedrelationlist_definition_attributes_widget -%}
     {% import _self as attribute_edit %}
 
-    <input type="hidden" name="{{ full_name }}" value="{{ value }}">
+    <div class="intprogenhancedrelationlist-definition-edit">
+        <input type="hidden" class="erl-json-value" name="{{ full_name }}" value="{{ value }}">
 
-    <div class="ez-card__header ez-card__header--secondary d-flex justify-content-between"
-         style="border-radius: 0.25rem 0.25rem 0 0; padding: 0.75rem 1.25rem 0.5rem 1.25rem;">
-        <div class="p-2">
-            {{ 'field_definition.attribute_definition.table_head'|trans }}
-        </div>
-        <div class="form-inline">
-            <div class="ez-card__field-control mr-2">
-                <select class="ez-field-selection form-control">
-                    {% for type in availableAttributeTypes %}
-                        <option value="{{ type }}">{{ (type~'.name')|trans }}</option>
-                    {% endfor %}
-                </select>
-                <button type="button" class="btn btn-primary btn">
-                    {{ 'field_definition.attribute_difinition.add_attribute'|trans }}
+        <div class="ez-card__header ez-card__header--secondary d-flex justify-content-between"
+             style="border-radius: 0.25rem 0.25rem 0 0; padding: 0.75rem 1.25rem 0.5rem 1.25rem;">
+            <div class="p-2">
+                {{ 'field_definition.attribute_definition.table_head'|trans }}
+            </div>
+            <div class="form-inline">
+                <div class="ez-card__field-control mr-2 erl-attribute-head-input">
+                    <input type="text" class="form-control erl-attribute-new-identifier" value="" placeholder="{{ 'field_definition.attribute_definition.attribute.identifier.placeholder'|trans }}" />
+                    <select class="erl-attribute-selection form-control erl-attribute-new-type">
+                        {% for type in availableAttributeTypes %}
+                            <option value="{{ type }}">{{ (type~'.name')|trans }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" class="btn btn-primary btn erl-attribute-add-button">
+                        {{ 'field_definition.attribute_difinition.add_attribute'|trans }}
+                    </button>
+                </div>
+
+                <button type="button" title="Delete Content field definition" class="btn btn-danger">
+                    <svg class="ez-icon">
+                        <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ asset('bundles/ezplatformadminui/img/ez-icons.svg') }}#trash" />
+                    </svg>
                 </button>
             </div>
-
-            <button type="button" title="Delete Content field definition" class="btn btn-danger">
-                <svg class="ez-icon">
-                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ asset('bundles/ezplatformadminui/img/ez-icons.svg') }}#trash"></use>
-                </svg>
-            </button>
         </div>
-    </div>
-    <table class="table ez-table--list" style="margin-bottom: 0;">
-        <thead>
-        <tr>
-            <th style="width: 25%;">{{ 'field_definition.attribute_definition.col.name'|trans }}</th>
-            <th style="width: 15%;">{{ 'field_definition.attribute_definition.col.type'|trans }}</th>
-            <th style="width: 50%;">{{ 'field_definition.attribute_definition.col.settings'|trans }}</th>
-            <th style="width: 10%;">{{ 'field_definition.attribute_definition.col.required'|trans }}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for identifier,attribute in attributesData %}
-            {{ attribute_edit.render_attribute(identifier, attribute) }}
+        {% set templateData = [] %}
+        {% for type in availableAttributeTypes %}
+            {% set templateData = templateData|merge({(type): attribute_edit.render_attribute('%identifier%', {name: '', type: type, required: false, settings: []})}) %}
         {% endfor %}
-        </tbody>
-    </table>
-    {{ dump(attributesData) }}
-    {{ dump(_context) }}
+        <table class="table ez-table--list erl-table" style="margin-bottom: 0;"
+               data-attribute-template='{{ templateData|json_encode }}'>
+            <thead>
+            <tr>
+                <th style="width: 25%;">{{ 'field_definition.attribute_definition.col.name'|trans }}</th>
+                <th style="width: 15%;">{{ 'field_definition.attribute_definition.col.type'|trans }}</th>
+                <th style="width: 45%;">{{ 'field_definition.attribute_definition.col.settings'|trans }}</th>
+                <th style="width: 15%;">{{ 'field_definition.attribute_definition.col.required'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for identifier,attribute in attributesData %}
+                {{ attribute_edit.render_attribute(identifier, attribute) }}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {%- endblock -%}
 
 {% macro render_attribute(identifier, attribute) %}
+{% spaceless %}
     {% import _self as attribute_edit %}
 
-    <tr>
-        <td data-value-path="{{ identifier }}.name.{{ attribute.name|keys|first }}">
+    <tr data-value-path="{{ identifier }}">
+        <td>
             <label style="width: 100%;">
-                <input type="text" class="form-control" value="{{ attribute.name|first }}">
+                <input type="text" data-value-path="name.eng-GB" class="form-control" value="{{ attribute.name|first }}">
             </label>
         </td>
-        <td data-value-path="{{ identifier }}.type">
+        <td>
             {{ (attribute.type~'.name')|trans }}
-            <input type="hidden" value="attribute.type">
+            <input type="hidden" value="{{ attribute.type }}" data-value-path="type">
         </td>
         <td>
             {{ attribute_edit.render_attribute_settings(attribute) }}
         </td>
-        <td data-value-path="{{ identifier }}.required">
+        <td>
             <label class="ez-data-source__label is-checked" style="width: 100%;">
-                <input type="checkbox" {% if attribute.required %} checked="checked"{% endif %} value="1">
+                <input type="checkbox" data-value-path="required"{% if attribute.required %} checked="checked"{% endif %} value="1">
             </label>
         </td>
     </tr>
+{% endspaceless %}
 {% endmacro %}
 
 {% macro render_attribute_settings(attribute) %}
+{% spaceless %}
     {% set settings = erl_render_attribute_definition_input(attribute) %}
 
     {% if settings|trim %}
@@ -80,4 +89,5 @@
     {% else %}
         <i>No settings available.</i>
     {% endif %}
+{% endspaceless %}
 {% endmacro %}

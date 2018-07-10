@@ -42,7 +42,7 @@ class Type extends FieldType implements Nameable
         ],
         'defaultBrowseLocation' => [
             'type'    => 'int',
-            'default' => null,
+            'default' => 0,
         ],
         'selectionLimit'        => [
             'type'    => 'int',
@@ -76,6 +76,28 @@ class Type extends FieldType implements Nameable
             ],
         ],
     ];
+
+    /**
+     * Applies the default values to the fieldSettings of a FieldDefinitionCreateStruct.
+     *
+     * @param mixed $fieldSettings
+     */
+    public function applyDefaultSettings(&$fieldSettings)
+    {
+        foreach ($this->getSettingsSchema() as $key => $value) {
+            if (!isset($value['default'])) {
+                foreach ($value as $subKey => $subValue) {
+                    $fieldSettings[$key][$subKey] = $subValue['default'];
+                }
+
+                continue;
+            }
+
+            $fieldSettings[$key] = $value['default'];
+        }
+
+        return;
+    }
 
     /**
      * Type constructor.

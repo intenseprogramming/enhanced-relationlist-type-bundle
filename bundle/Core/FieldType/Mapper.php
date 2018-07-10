@@ -51,7 +51,7 @@ class Mapper extends AbstractRelationFormMapper
                     'expanded'          => false,
                     'multiple'          => true,
                     'required'          => false,
-                    'property_path'     => 'fieldSettings[selectionContentTypes]',
+                    'property_path'     => 'validatorConfiguration[relationValidator][allowedContentTypes]',
                     'label'             => 'field_definition.intprogenhancedrelationlist.selection_content_types',
                 ]
             )
@@ -61,7 +61,7 @@ class Mapper extends AbstractRelationFormMapper
                 [
                     'required'      => false,
                     'empty_data'    => 0,
-                    'property_path' => 'validatorConfiguration[relationListValueValidator][selectionLimit]',
+                    'property_path' => 'fieldSettings[selectionLimit]',
                     'label'         => 'field_definition.intprogenhancedrelationlist.selection_limit',
                 ]
             )

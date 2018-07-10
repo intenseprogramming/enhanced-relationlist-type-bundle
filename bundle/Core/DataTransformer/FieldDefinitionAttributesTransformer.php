@@ -47,6 +47,6 @@ class FieldDefinitionAttributesTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value)
     {
-        return '[]';
+        return json_decode($value, true);
     }
 }

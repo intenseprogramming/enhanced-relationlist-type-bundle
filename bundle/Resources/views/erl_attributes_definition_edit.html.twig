@@ -1,40 +1,58 @@
 {% trans_default_domain 'enhancedrelationlist_definition_attribute' %}
 
+{#
+contains the blocks to render attribute definition edit for the available types.
+all types must consider that on definition-edit, they will be rendered with an empty settings-array (default values required).
+
+available data-attributes for special handling of the basic types:
+* data-erl-nullable -> if input has an empty string it will be set as null
+* data-erl-multiple -> output will be set as array (regardles if multiple fields with the same name exist)
+* data-erl-ignore-empty -> if the value is null, it will be skipped and not set while storing the data
+#}
+
 {% block boolean_relation_attribute_definition_edit %}
 {% endblock %}
 
 {% block integer_relation_attribute_definition_edit %}
     <label class="form-control-label">
         {{ 'erl.attribute.type.integer.min-value'|trans }}
-        <input type="number" class="form-control" value="{{ definition.settings.min|default('') }}" />
     </label>
+    <input type="number" data-value-path="settings.min" data-erl-nullable class="form-control" value="{{ definition.settings.min|default('') }}" />
     <label class="form-control-label">
         {{ 'erl.attribute.type.integer.max-value'|trans }}
-        <input type="number" class="form-control" value="{{ definition.settings.max|default('') }}" />
     </label>
+    <input type="number" data-value-path="settings.max" data-erl-nullable class="form-control" value="{{ definition.settings.max|default('') }}" />
 {% endblock %}
 
 {% block string_relation_attribute_definition_edit %}
     <label class="form-control-label">
         {{ 'erl.attribute.type.string.min-length'|trans }}
-        <input type="number" class="form-control" value="{{ definition.settings.minLength|default('') }}" />
     </label>
+    <input type="number" data-value-path="settings.minLength" data-erl-nullable class="form-control" value="{{ definition.settings.minLength|default('') }}" />
     <label class="form-control-label">
         {{ 'erl.attribute.type.string.max-length'|trans }}
-        <input type="number" class="form-control" value="{{ definition.settings.maxLength|default('') }}" />
     </label>
+    <input type="number" data-value-path="settings.maxLength" data-erl-nullable class="form-control" value="{{ definition.settings.maxLength|default('') }}" />
 {% endblock %}
 
 {% block selection_relation_attribute_definition_edit %}
     <div class="form-check form-check-inline">
-        <input class="form-check-input" type="checkbox"{% if definition.settings.multiple|default(false) %} checked="checked"{% endif %} />
-        <label class="checkbox-inline form-check-label">{{ 'erl.attribute.type.selection.multiple'|trans }}</label>
+        <label class="checkbox-inline form-check-label">
+            <input class="form-check-input" data-value-path="settings.multiple" type="checkbox"{% if definition.settings.multiple|default(false) %} checked="checked"{% endif %} />
+            {{ 'erl.attribute.type.selection.multiple'|trans }}
+        </label>
     </div>
 
+    {# TODO: multi input for settings path! #}
     <div>
         <label class="form-control-label">{{ 'erl.attribute.type.selection.options'|trans }}</label>
-        {% for option in definition.settings.options %}
-            <div><label class="mb-0"><input class="form-control" type="text" value="{{ option }}" /></label></div>
+        {% for option in definition.settings.options|default([]) %}
+            <div>
+                <input class="form-control" type="text" data-value-path="settings.options" data-erl-nullable data-erl-multiple data-erl-ignore-empty value="{{ option }}" />
+            </div>
         {% endfor %}
+        <div>
+            <input class="form-control" type="text" data-value-path="settings.options" data-erl-nullable data-erl-multiple data-erl-ignore-empty value="" />
+        </div>
     </div>
 {% endblock %}

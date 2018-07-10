@@ -70,6 +70,7 @@
                                 {% set displaying = true %}
                             {% endfor %}
                             {% if not displaying %}{{ definition.name|first }}{% endif %}
+                            (identifier: {{ identifier }}, type: {{ definition.type }})
                             <ul>
                                 {% if definition.required %}
                                     <li>{{ 'fielddefinition.attribute.definitions.required.yes'|trans|desc('Value is required.') }}</li>

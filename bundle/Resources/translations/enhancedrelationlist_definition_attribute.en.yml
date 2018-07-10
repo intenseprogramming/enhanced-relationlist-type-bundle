@@ -5,6 +5,8 @@ field_definition.attribute_definition.col.settings: Settings
 field_definition.attribute_definition.col.required: Required
 field_definition.attribute_difinition.add_attribute: Add attribute
 
+field_definition.attribute_definition.attribute.identifier.placeholder: Attribute identifier
+
 boolean.name: Boolean
 integer.name: Integer
 selection.name: Selection

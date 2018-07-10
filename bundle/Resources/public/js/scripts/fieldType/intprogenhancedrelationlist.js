@@ -7,6 +7,21 @@
     const SELECTOR_DRAG_HANDLE = '.erl-relation-item .erl-drag-handle, .erl-relation-group .erl-drag-handle';
     const SELECTOR_INPUT_ROW = '.erl-relation-item, .erl-relation-group';
 
+    const setDeepValue = (target, path, value) => {
+        const keys = path.split('.');
+        let object = target;
+        for (let i = 0; i < keys.length - 1; i++) {
+            let key = keys[i];
+            if (key in object) {
+                object = object[key];
+            } else {
+                object[key] = {};
+                object = object[key];
+            }
+        }
+        object[keys[keys.length - 1]] = value;
+    };
+
     // class EzObjectRelationListValidator extends global.eZ.BaseFieldValidator {
     //     /**
     //      * Validates the input
@@ -75,20 +90,6 @@
             ? parseInt(relationsContainer.dataset.defaultLocation, 10)
             : window.eZ.adminUiConfig.universalDiscoveryWidget.startingLocationId;
         const allowedContentTypes = relationsContainer.dataset.allowedContentTypes.split(',').filter(item => item.length);
-        const setDeepValue = (target, path, value) => {
-            const keys = path.split('.');
-            let object = target;
-            for (let i = 0; i < keys.length - 1; i++) {
-                let key = keys[i];
-                if (key in object) {
-                    object = object[key];
-                } else {
-                    object[key] = {};
-                    object = object[key];
-                }
-            }
-            object[keys[keys.length - 1]] = value;
-        };
         const updateJson = (item) => {
             if (item !== undefined && item.target !== undefined && !item.target.closest('td').getAttribute('data-value-path')) {
                 return;

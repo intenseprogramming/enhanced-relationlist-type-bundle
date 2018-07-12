@@ -39,6 +39,7 @@
                data-attribute-template='{{ templateData|json_encode }}'>
             <thead>
             <tr>
+                <th class="erl-drag-column"/>
                 <th style="width: 25%;">{{ 'field_definition.attribute_definition.col.name'|trans }}</th>
                 <th style="width: 15%;">{{ 'field_definition.attribute_definition.col.type'|trans }}</th>
                 <th style="width: 45%;">{{ 'field_definition.attribute_definition.col.settings'|trans }}</th>
@@ -58,7 +59,10 @@
 {% spaceless %}
     {% import _self as attribute_edit %}
 
-    <tr data-value-path="{{ identifier }}">
+    <tr class="erl-attribute-item" data-value-path="{{ identifier }}">
+        <td class="erl-drag-column erl-drag-handle">
+            <i class="drag-icon" />
+        </td>
         <td>
             <label style="width: 100%;">
                 <input type="text" data-value-path="name.eng-GB" class="form-control" value="{{ attribute.name|first }}">

@@ -6,6 +6,7 @@
     const SELECTOR_INPUT = 'input[data-value-path], select[data-value-path], textarea[data-value-path]';
     const SELECTOR_ROWS = 'tr[data-value-path]';
     const SELECTOR_BODY = '.erl-table tbody';
+    const SELECTOR_DRAG_HANDLE = '.erl-attribute-item .erl-drag-handle';
 
     const SELECTOR_ADD_CONTAINER = '.erl-attribute-head-input';
     const SELECTOR_ADD_IDENTIFIER = '.erl-attribute-new-identifier';
@@ -103,8 +104,24 @@
             return fields;
         };
 
-        const attachChangeListener = () => {
+        const addRowEventListeners = () => {
             [...getInputFields()].forEach(element => {element.addEventListener('change', updateJson)});
+
+            if (sortHandler) {
+                sortHandler.destroy();
+            }
+
+            if (rootTable.querySelectorAll(SELECTOR_DRAG_HANDLE).length) {
+                sortHandler = tableDragger(
+                    rootTable,
+                    {
+                        dragHandler: SELECTOR_DRAG_HANDLE,
+                        mode: 'row',
+                        onlyBody: true
+                    }
+                );
+                sortHandler.on('drop', updateJson)
+            }
         };
 
         const addAttribute = (event) => {
@@ -116,9 +133,9 @@
 
             definitionContainer.querySelector(SELECTOR_BODY).insertAdjacentHTML('beforeend', markup);
 
-            attachChangeListener();
+            addRowEventListeners();
         };
         headContainer.querySelector(SELECTOR_ADD_BUTTON).addEventListener('click', addAttribute);
-        attachChangeListener();
+        addRowEventListeners();
     });
 })();

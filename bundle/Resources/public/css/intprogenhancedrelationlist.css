@@ -102,3 +102,10 @@ table.erl-table .erl-attribute-container .error-bubble .error-container ul {
     padding: 0 0 0 1.6em;
     margin: 0;
 }
+
+table.erl-table .erl-attribute-item *[data-erl-language-code] {
+    display: none;
+}
+table.erl-table .erl-attribute-item *[data-erl-language-code].active {
+    display: unset;
+}

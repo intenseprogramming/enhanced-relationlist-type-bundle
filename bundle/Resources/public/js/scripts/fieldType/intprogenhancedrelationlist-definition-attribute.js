@@ -2,6 +2,8 @@
     const SELECTOR_CONTAINER = '.intprogenhancedrelationlist-definition-edit';
     const SELECTOR_STORAGE_INPUT = 'input.erl-json-value';
 
+    const SELECTOR_LANGUAGE_SELECT = '.erl-attribute-head-language-select';
+
     const SELECTOR_ROOT_TABLE = '.erl-table';
     const SELECTOR_INPUT = 'input[data-value-path], select[data-value-path], textarea[data-value-path]';
     const SELECTOR_ROWS = 'tr[data-value-path]';
@@ -92,6 +94,17 @@
 
             definitionContainer.querySelector(SELECTOR_STORAGE_INPUT).value = JSON.stringify(jsonData);
         };
+        const switchLanguage = (event) => {
+            let languageOption = definitionContainer.querySelector(SELECTOR_LANGUAGE_SELECT).querySelector('option:checked');
+
+            [...definitionContainer.querySelectorAll('*[data-erl-language-code]')].forEach(item => {
+                if (item.getAttribute('data-erl-language-code') !== languageOption.value && item.classList.contains('active')) {
+                    item.classList.remove('active');
+                } else {
+                    item.classList.add('active');
+                }
+            });
+        };
         const getInputFields = () => {
             const fields = [];
 
@@ -137,5 +150,7 @@
         };
         headContainer.querySelector(SELECTOR_ADD_BUTTON).addEventListener('click', addAttribute);
         addRowEventListeners();
+
+        definitionContainer.querySelector(SELECTOR_LANGUAGE_SELECT).addEventListener('change', switchLanguage);
     });
 })();

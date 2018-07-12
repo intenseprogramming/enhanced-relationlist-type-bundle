@@ -9,7 +9,11 @@
         <div class="ez-card__header ez-card__header--secondary d-flex justify-content-between"
              style="border-radius: 0.25rem 0.25rem 0 0; padding: 0.75rem 1.25rem 0.5rem 1.25rem;">
             <div class="p-2">
-                {{ 'field_definition.attribute_definition.table_head'|trans }}
+                <select class="form-control mb-0 erl-attribute-head-language-select">
+                    {% for languageCode in admin_ui_config.languages.priority %}
+                        <option{% if loop.first %} selected{% endif %} value="{{ languageCode }}">{{ admin_ui_config.languages.mappings[languageCode].name }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="form-inline">
                 <div class="ez-card__field-control mr-2 erl-attribute-head-input">
@@ -64,9 +68,15 @@
             <i class="drag-icon" />
         </td>
         <td>
-            <label style="width: 100%;">
-                <input type="text" data-value-path="name.eng-GB" class="form-control" value="{{ attribute.name|first }}">
-            </label>
+            {% for languageCode in admin_ui_config.languages.priority %}
+                <label style="width: 100%;" data-erl-nullable data-erl-ignore-empty data-erl-language-code="{{ languageCode }}"{% if loop.first %} class="active"{% endif %}>
+                    <input type="text"
+                           data-value-path="name.{{ languageCode }}"
+                           class="form-control"
+                           value="{{ attribute.name[languageCode]|default('') }}"
+                           {% if not loop.first %}placeholder="{{ attribute.name[admin_ui_config.languages.priority|first]|default('') }}"{% endif %}>
+                </label>
+            {% endfor %}
         </td>
         <td>
             {{ (attribute.type~'.name')|trans }}

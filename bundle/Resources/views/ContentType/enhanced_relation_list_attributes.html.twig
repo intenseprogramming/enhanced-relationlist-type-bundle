@@ -28,7 +28,7 @@
                     </button>
                 </div>
 
-                <button type="button" title="Delete Content field definition" class="btn btn-danger">
+                <button type="button" title="Delete Content field definition" class="btn btn-danger erl-attribute-remove-button">
                     <svg class="ez-icon">
                         <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ asset('bundles/ezplatformadminui/img/ez-icons.svg') }}#trash" />
                     </svg>
@@ -44,10 +44,11 @@
             <thead>
             <tr>
                 <th class="erl-drag-column"/>
-                <th style="width: 25%;">{{ 'field_definition.attribute_definition.col.name'|trans }}</th>
-                <th style="width: 15%;">{{ 'field_definition.attribute_definition.col.type'|trans }}</th>
-                <th style="width: 45%;">{{ 'field_definition.attribute_definition.col.settings'|trans }}</th>
-                <th style="width: 15%;">{{ 'field_definition.attribute_definition.col.required'|trans }}</th>
+                <th style="width: 4%" />
+                <th style="width: 24%;">{{ 'field_definition.attribute_definition.col.name'|trans }}</th>
+                <th style="width: 14%;">{{ 'field_definition.attribute_definition.col.type'|trans }}</th>
+                <th style="width: 44%;">{{ 'field_definition.attribute_definition.col.settings'|trans }}</th>
+                <th style="width: 14%;">{{ 'field_definition.attribute_definition.col.required'|trans }}</th>
             </tr>
             </thead>
             <tbody>
@@ -66,6 +67,9 @@
     <tr class="erl-attribute-item" data-value-path="{{ identifier }}">
         <td class="erl-drag-column erl-drag-handle">
             <i class="drag-icon" />
+        </td>
+        <td>
+            <label><input type="checkbox" class="remove-attribute"></label>
         </td>
         <td>
             {% for languageCode in admin_ui_config.languages.priority %}

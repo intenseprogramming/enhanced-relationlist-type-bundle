@@ -2,16 +2,16 @@
     const SELECTOR_CONTAINER = '.intprogenhancedrelationlist-definition-group-edit';
     const SELECTOR_STORAGE_INPUT = 'input.erl-json-value';
 
-    const SELECTOR_LANGUAGE_SELECT = '.erl-attribute-head-language-select';
+    const SELECTOR_LANGUAGE_SELECT = '.erl-group-head-language-select';
 
     const SELECTOR_ROOT_TABLE = '.erl-table';
     const SELECTOR_INPUT = 'input[data-value-path], select[data-value-path], textarea[data-value-path]';
     const SELECTOR_ROWS = 'tr[data-value-path]';
     const SELECTOR_BODY = '.erl-table tbody';
-    const SELECTOR_DRAG_HANDLE = '.erl-attribute-item .erl-drag-handle';
-    const SELECTOR_REMOVE = SELECTOR_ROWS + ' input.remove-attribute';
+    const SELECTOR_DRAG_HANDLE = '.erl-group-item .erl-drag-handle';
+    const SELECTOR_REMOVE = SELECTOR_ROWS + ' input.remove-group';
 
-    const SELECTOR_HEAD_CONTAINER = '.erl-attribute-head-input';
+    const SELECTOR_HEAD_CONTAINER = '.erl-group-head-input';
     const SELECTOR_ADD_IDENTIFIER = '.erl-group-new-identifier';
     const SELECTOR_ADD_BUTTON = '.erl-group-add-button';
     const SELECTOR_REMOVE_BUTTON = '.erl-group-remove-button';

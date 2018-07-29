@@ -223,11 +223,7 @@
         const removeItem = (event) => {
             event.preventDefault();
 
-            const removedItems = [];
-
-            [...relationsContainer.querySelectorAll('input:checked')].forEach(input => {
-                removedItems.push(parseInt(input.value, 10));
-
+            [...relationsContainer.querySelectorAll('input.erl-remove-control:checked')].forEach(input => {
                 input.closest('tr').remove();
             });
 

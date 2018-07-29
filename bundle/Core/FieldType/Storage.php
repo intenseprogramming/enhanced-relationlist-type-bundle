@@ -55,50 +55,43 @@ class Storage extends GatewayBasedStorage
             FieldType::STATUS_DEFINED
         );
 
-        $groups = $fieldDefinition->fieldTypeConstraints->fieldSettings['groupSettings']['groups'];
-
-        foreach ($field->value->data['groups'] as $identifier => $relations) {
-            if (isset($groups[$identifier])) {
-                foreach ($this->languages as $language) {
-                    if (isset($groups[$identifier]['names'][$language])) {
-                        $groupName = $groups[$identifier][$language];
-                    }
-                }
-                if (!isset($groupName)) {
-                    $groupName = reset($groups[$identifier]);
-                }
-
-                $field->value->data['groups'][$identifier] = [
-                    'name'      => $groupName,
-                    'relations' => $field->value->data['groups'][$identifier],
-                ];
-
-                unset($groupName);
-            } else {
-                $field->value->data['groups'][$identifier] = [
-                    'name'      => $identifier,
-                    'relations' => $field->value->data['groups'][$identifier],
-                ];
-            }
-        }
-
+        $groups     = $fieldDefinition->fieldTypeConstraints->fieldSettings['groupSettings']['groups'];
+        $groupValue = [];
         foreach ($groups as $identifier => $group) {
-            if (!isset($field->value->data['groups'][$identifier])) {
-                foreach ($this->languages as $language) {
-                    if (isset($group[$language])) {
-                        $groupName = $group[$language];
-                    }
+            foreach ($this->languages as $language) {
+                if (isset($group[$language])) {
+                    $groupName = $group[$language];
                 }
-                if (!isset($groupName)) {
-                    $groupName = reset($group);
-                }
+            }
+            if (!isset($groupName)) {
+                $groupName = reset($group);
+            }
 
-                $field->value->data['groups'][$identifier] = [
+            if (!isset($field->value->data['groups'][$identifier])) {
+                $groupValue[$identifier] = [
                     'name'      => $groupName,
                     'relations' => [],
                 ];
+            } else {
+                $groupValue[$identifier] = [
+                    'name'      => $groupName,
+                    'relations' => $field->value->data['groups'][$identifier],
+                ];
+            }
+
+            unset($groupName);
+        }
+
+        foreach ($field->value->data['groups'] as $identifier => $relations) {
+            if (!isset($groups[$identifier])) {
+                $groupValue[$identifier] = [
+                    'name'      => $identifier,
+                    'relations' => $relations,
+                ];
             }
         }
+
+        $field->value->data['groups'] = $groupValue;
     }
 
     public function deleteFieldData(VersionInfo $versionInfo, array $fieldIds, array $context)

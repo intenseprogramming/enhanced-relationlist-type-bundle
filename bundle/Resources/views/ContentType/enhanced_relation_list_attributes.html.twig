@@ -3,7 +3,7 @@
 {%- block intprogenhancedrelationlist_definition_attributes_widget -%}
     {% import _self as attribute_edit %}
 
-    <div class="intprogenhancedrelationlist-definition-edit">
+    <div class="intprogenhancedrelationlist-definition-attribute-edit">
         <input type="hidden" class="erl-json-value" name="{{ full_name }}" value="{{ value }}">
 
         <div class="ez-card__header ez-card__header--secondary d-flex justify-content-between"
@@ -75,12 +75,13 @@
             {% for languageCode in admin_ui_config.languages.priority %}
                 <label style="width: 100%;" data-erl-nullable data-erl-ignore-empty data-erl-language-code="{{ languageCode }}"{% if loop.first %} class="active"{% endif %}>
                     <input type="text"
-                           data-value-path="name.{{ languageCode }}"
+                           data-value-path="names.{{ languageCode }}"
                            class="form-control"
-                           value="{{ attribute.name[languageCode]|default('') }}"
+                           value="{{ attribute.names[languageCode]|default('') }}"
                            {% if not loop.first %}placeholder="{{ attribute.name[admin_ui_config.languages.priority|first]|default('') }}"{% endif %}>
                 </label>
             {% endfor %}
+            ({{ identifier }})
         </td>
         <td>
             {{ (attribute.type~'.name')|trans }}

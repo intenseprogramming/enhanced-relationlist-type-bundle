@@ -1,5 +1,5 @@
 (function () {
-    const SELECTOR_CONTAINER = '.intprogenhancedrelationlist-definition-edit';
+    const SELECTOR_CONTAINER = '.intprogenhancedrelationlist-definition-attribute-edit';
     const SELECTOR_STORAGE_INPUT = 'input.erl-json-value';
 
     const SELECTOR_LANGUAGE_SELECT = '.erl-attribute-head-language-select';

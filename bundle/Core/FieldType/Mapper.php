@@ -14,6 +14,7 @@ use EzSystems\RepositoryForms\Data\Content\FieldData;
 use EzSystems\RepositoryForms\Data\FieldDefinitionData;
 use EzSystems\RepositoryForms\FieldType\Mapper\AbstractRelationFormMapper;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionAttributesType;
+use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionGroupsType;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -102,6 +103,15 @@ class Mapper extends AbstractRelationFormMapper
                     'required'      => false,
                     'property_path' => 'fieldSettings[attributeDefinitions]',
                     'label'         => 'field_definition.intprogenhancedrelationlist.attributes',
+                ]
+            )
+            ->add(
+                'groups',
+                EnhancedRelationListFieldDefinitionGroupsType::class,
+                [
+                    'required'      => false,
+                    'property_path' => 'fieldSettings[groupSettings][groups]',
+                    'label'         => 'field_definition.intprogenhancedrelationlist.groups',
                 ]
             );
     }

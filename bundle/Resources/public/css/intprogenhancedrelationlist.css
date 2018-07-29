@@ -103,9 +103,9 @@ table.erl-table .erl-attribute-container .error-bubble .error-container ul {
     margin: 0;
 }
 
-table.erl-table .erl-attribute-item *[data-erl-language-code] {
+table.erl-table .erl-attribute-item *[data-erl-language-code], table.erl-table .erl-group-item *[data-erl-language-code] {
     display: none;
 }
-table.erl-table .erl-attribute-item *[data-erl-language-code].active {
+table.erl-table .erl-attribute-item *[data-erl-language-code].active, table.erl-table .erl-group-item *[data-erl-language-code].active {
     display: unset;
 }

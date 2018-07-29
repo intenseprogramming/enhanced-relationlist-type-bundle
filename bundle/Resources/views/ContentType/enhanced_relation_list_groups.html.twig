@@ -1,0 +1,77 @@
+{% trans_default_domain 'enhancedrelationlist_definition_group' %}
+
+{%- block intprogenhancedrelationlist_definition_groups_widget -%}
+<div class="intprogenhancedrelationlist-definition-group-edit">
+    {% import _self as group_edit %}
+
+    <input type="hidden" class="erl-json-value" name="{{ full_name }}" value="{{ value }}">
+
+    <div class="ez-card__header ez-card__header--secondary d-flex justify-content-between"
+         style="border-radius: 0.25rem 0.25rem 0 0; padding: 0.75rem 1.25rem 0.5rem 1.25rem;">
+        <div class="p-2">
+            <select class="form-control mb-0 erl-attribute-head-language-select">
+                {% for languageCode in admin_ui_config.languages.priority %}
+                    <option{% if loop.first %} selected{% endif %} value="{{ languageCode }}">{{ admin_ui_config.languages.mappings[languageCode].name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-inline">
+            <div class="ez-card__field-control mr-2 erl-attribute-head-input">
+                <input type="text" class="form-control erl-group-new-identifier" value=""
+                       placeholder="{{ 'field_definition.attribute_definition.group.identifier.placeholder'|trans }}" />
+                <button type="button" class="btn btn-primary btn erl-group-add-button">
+                    {{ 'field_definition.group_difinition.add_group'|trans }}
+                </button>
+            </div>
+
+            <button type="button" title="Delete Content field definition" class="btn btn-danger erl-group-remove-button">
+                <svg class="ez-icon">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="{{ asset('bundles/ezplatformadminui/img/ez-icons.svg') }}#trash" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    <table class="table ez-table--list erl-table" style="margin-bottom: 0;" data-group-template="{{ group_edit.render_group('%identifier%', {})|json_encode }}">
+        <thead>
+        <tr>
+            <th class="erl-drag-column"/>
+            <th style="width: 4%" />
+            <th style="width: 20%;">{{ 'field_definition.group_definition.col.identifier'|trans }}</th>
+            <th style="width: 76%;">{{ 'field_definition.group_definition.col.name'|trans }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for identifier,group in array_data %}
+            {{ group_edit.render_group(identifier, group) }}
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{%- endblock -%}
+
+{% macro render_group(identifier, names) %}
+{% spaceless %}
+    <tr class="erl-group-item" data-value-path="{{ identifier }}">
+        <td class="erl-drag-column erl-drag-handle">
+            <i class="drag-icon" />
+        </td>
+        <td>
+            <label><input type="checkbox" class="remove-attribute"></label>
+        </td>
+        <td>
+            {{ identifier }}
+        </td>
+        <td>
+            {% for languageCode in admin_ui_config.languages.priority %}
+                <label style="width: 100%;" data-erl-nullable data-erl-ignore-empty data-erl-language-code="{{ languageCode }}"{% if loop.first %} class="active"{% endif %}>
+                    <input type="text"
+                           data-value-path="{{ languageCode }}"
+                           class="form-control"
+                           value="{{ names[languageCode]|default('') }}"
+                           {% if not loop.first %}placeholder="{{ attribute.name[admin_ui_config.languages.priority|first]|default('') }}"{% endif %}>
+                </label>
+            {% endfor %}
+        </td>
+    </tr>
+{% endspaceless %}
+{% endmacro %}

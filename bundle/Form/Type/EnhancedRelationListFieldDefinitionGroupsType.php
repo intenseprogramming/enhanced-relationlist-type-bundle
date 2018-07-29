@@ -10,10 +10,12 @@
 
 namespace IntProg\EnhancedRelationListBundle\Form\Type;
 
-use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldDefinitionAttributesTransformer;
+use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldDefinitionGroupsTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 /**
  * Class EnhancedRelationListFieldDefinitionGroupsType.
@@ -53,7 +55,15 @@ class EnhancedRelationListFieldDefinitionGroupsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer(
-            new FieldDefinitionAttributesTransformer()
+            new FieldDefinitionGroupsTransformer()
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['array_data'] = json_decode($form->getNormData(), true);
     }
 }

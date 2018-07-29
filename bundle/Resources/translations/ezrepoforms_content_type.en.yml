@@ -2,6 +2,7 @@ intprogenhancedrelationlist.name: Content relations (enhanced)
 field_definition.intprogenhancedrelationlist.selection_default_location: Default browse location
 field_definition.intprogenhancedrelationlist.selection_content_types: Allowed content types
 field_definition.intprogenhancedrelationlist.attributes: Attributes
+field_definition.intprogenhancedrelationlist.groups: Groups
 field_definition.intprogenhancedrelationlist.selection_limit: Selection limit
 field_definition.intprogenhancedrelationlist.group.positions_fixed: Group positions fixed
 field_definition.intprogenhancedrelationlist.group.extendable: Groups can be added by editor

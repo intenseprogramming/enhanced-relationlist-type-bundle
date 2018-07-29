@@ -65,11 +65,11 @@
                     {% for identifier,definition in settings.attributeDefinitions %}
                         <li>
                             {% set displaying = false %}
-                            {% for code in fielddefinition.prioritizedLanguages if not displaying and definition.name[code] is defined %}
-                                {{ definition.name[code] }}
+                            {% for code in fielddefinition.prioritizedLanguages if not displaying and definition.names[code] is defined %}
+                                {{ definition.names[code] }}
                                 {% set displaying = true %}
                             {% endfor %}
-                            {% if not displaying %}{{ definition.name|first }}{% endif %}
+                            {% if not displaying %}{{ definition.names|first }}{% endif %}
                             (identifier: {{ identifier }}, type: {{ definition.type }})
                             <ul>
                                 {% if definition.required %}
@@ -115,8 +115,16 @@
                 <li>
                     {{ 'fielddefinition.group.setting.groups.label'|trans|desc('Static groups') }}
                     <ul>
-                        {% for group in settings.groupSettings.groups %}
-                            <li>{{ group }}</li>
+                        {% for identifier,group in settings.groupSettings.groups %}
+                            <li>
+                                {{ identifier }}:
+                                {% set displaying = false %}
+                                {% for code in fielddefinition.prioritizedLanguages if not displaying and group[code] is defined %}
+                                    {{ group[code] }}
+                                    {% set displaying = true %}
+                                {% endfor %}
+                                {% if not displaying %}{{ group|first }}{% endif %}
+                            </li>
                         {% endfor %}
                     </ul>
                 </li>

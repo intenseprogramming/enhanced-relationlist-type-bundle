@@ -88,6 +88,10 @@ class Type extends FieldType implements Nameable
         foreach ($this->getSettingsSchema() as $key => $value) {
             if (!isset($value['default'])) {
                 foreach ($value as $subKey => $subValue) {
+                    if (isset($fieldSettings[$key][$subKey])) {
+                        continue;
+                    }
+
                     $fieldSettings[$key][$subKey] = $subValue['default'];
                 }
 

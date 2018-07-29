@@ -98,7 +98,9 @@ class Type extends FieldType implements Nameable
                 continue;
             }
 
-            $fieldSettings[$key] = $value['default'];
+            if (!isset($fieldSettings[$key])) {
+                $fieldSettings[$key] = $value['default'];
+            }
         }
 
         return;

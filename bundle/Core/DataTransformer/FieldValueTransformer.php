@@ -126,7 +126,7 @@ class FieldValueTransformer extends EzFieldValueTransformer
         }
 
         foreach ($groupRelations as $groupName => $groupedRelations) {
-            $groups[$groupName] = new Value\Group($groupedRelations);
+            $groups[$groupName] = new Value\Group($groupName, $groupedRelations);
         }
 
         return new Value($relations, $groups);

@@ -21,6 +21,13 @@ services:
             - { name: ez.fieldFormMapper.definition, fieldType: intprogenhancedrelationlist }
             - { name: ez.fieldFormMapper.value, fieldType: intprogenhancedrelationlist }
 
+    IntProg\EnhancedRelationListBundle\Core\FieldType\Storage:
+        arguments:
+            - '@ezpublish.spi.persistence.content_type_handler'
+            - '$languages$'
+        tags:
+            - { name: ezpublish.fieldType.externalStorageHandler, alias: intprogenhancedrelationlist }
+
     intprog.erl.ezadminui.component.javascripts:
          parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
          public: false

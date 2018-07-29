@@ -22,12 +22,16 @@ use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
  */
 class Group extends ValueObject
 {
+    /** @var string $names */
+    public $name = [];
 
     /** @var array|Relation[] $relations */
     public $relations = [];
 
-    public function __construct(array $relations = [])
+    public function __construct(string $name, array $relations = [])
     {
+        $this->name = $name;
+
         foreach ($relations as $relation) {
             if (is_array($relation) && isset($relation['contentId']) && isset($relation['attributes'])) {
                 foreach ($relation['attributes'] as $attributeIndex => $value) {

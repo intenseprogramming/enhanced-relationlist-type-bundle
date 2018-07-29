@@ -9,11 +9,11 @@
 
     {% import _self as enhanced_relation_list_macros %}
 
+    <input type="hidden" class="relation-json" name="{{ full_name }}" value="{{ value|escape }}">
     {% include '@EzPlatformAdminUi/parts/table_header.html.twig' with {
         headerText: 'field_definition.attribute.table_head'|trans,
         tools: enhanced_relation_list_macros.head_buttons(id, label, extendable, limit)
     } %}
-    <input type="hidden" class="relation-json" name="{{ full_name }}" value="{{ value|escape }}">
     <table class="relation-root-table erl-table table mb-0"
            data-form-root="{{ full_name }}"
            data-attributes-layout="{{ enhanced_relation_list_macros.layout_attributes(fieldSettings.attributeDefinitions)|escape }}"
@@ -25,10 +25,10 @@
             <th>{{ 'field_definition.attribute.table.head.relation'|trans }}</th>
             {% for attributeDefinition in fieldSettings.attributeDefinitions %}
                 <th>
-                    {% if attributeDefinition.name[form.parent.vars.languageCode] is defined %}
-                        {{ attributeDefinition.name[form.parent.vars.languageCode] }}
+                    {% if attributeDefinition.names[form.parent.vars.languageCode] is defined %}
+                        {{ attributeDefinition.names[form.parent.vars.languageCode] }}
                     {% else %}
-                        {{ attributeDefinition.name|first }}
+                        {{ attributeDefinition.names|first }}
                     {% endif %}
                     {% if attributeDefinition.required %}*{% endif %}
                 </th>
@@ -42,17 +42,29 @@
                 {{ enhanced_relation_list_macros.relation_row(relation, fieldSettings, relationIndex, attribute_errors) }}
                 {% set relationIndex = relationIndex + 1 %}
             {% else %}
+                {% if fieldSettings.groupSettings.groups[relation.group] is defined %}
+                    {% if fieldSettings.groupSettings.groups[relation.group][form.parent.vars.languageCode] is defined %}
+                        {% set groupName = fieldSettings.groupSettings.groups[relation.group][form.parent.vars.languageCode] %}
+                    {% else %}
+                        {% set groupName = fieldSettings.groupSettings.groups[relation.group]|first %}
+                    {% endif %}
+                {% else %}
+                    {% set groupName = relation.group %}
+                {% endif %}
+
                 {{ enhanced_relation_list_macros.group_row(
                     relation.group,
+                    groupName,
                     fieldSettings.attributeDefinitions,
                     fieldSettings.groupSettings.positionsFixed,
-                    (relation.group in fieldSettings.groupSettings.groups)
+                    (fieldSettings.groupSettings.groups[relation.group] is defined)
                 ) }}
             {% endif %}
         {% endfor %}
-        {% for group in fieldSettings.groupSettings.groups if {group: group} not in array_data %}
+        {% for identifier,group in fieldSettings.groupSettings.groups if {group: identifier} not in array_data %}
             {{ enhanced_relation_list_macros.group_row(
-                group,
+                identifier,
+                group[form.parent.vars.languageCode]|default(group|first),
                 fieldSettings.attributeDefinitions,
                 fieldSettings.groupSettings.positionsFixed,
                 true
@@ -192,7 +204,7 @@
     </tr>
 {% endmacro %}
 
-{% macro group_row(group, attributeDefinitions, positionFixed, system) %}
+{% macro group_row(identifier, group, attributeDefinitions, positionFixed, system) %}
     <tr class="ez-relations__group erl-relation-group">
         {% if not positionFixed %}
             <td class="erl-drag-column erl-drag-handle">
@@ -213,10 +225,12 @@
             {% if loop.first %}
                 <td data-value-path="group">
                     <label>
-                        <input type="text"
-                               {% if system %}disabled="disabled"{% endif %}
-                               class="ez-data-source__input form-control erl-group-name-input"
-                               value="{{ group }}">
+                        {% if system %}
+                            {{ group }}
+                            <input type="hidden" value="{{ identifier }}">
+                        {% else %}
+                            <input type="text" class="ez-data-source__input form-control erl-group-name-input" value="{{ group }}">
+                        {% endif %}
                     </label>
                 </td>
             {% else %}

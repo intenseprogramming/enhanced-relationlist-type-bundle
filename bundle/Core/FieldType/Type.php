@@ -21,6 +21,7 @@ use eZ\Publish\SPI\Persistence\Content\FieldValue as PersistenceValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Group;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
+use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\SystemGroup;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 
 /**
@@ -257,10 +258,10 @@ class Type extends FieldType implements Nameable
             }
 
             if (is_array($fieldValue->data['groups'] ?? false) && !empty($fieldValue->data['groups'])) {
-                foreach ($fieldValue->data['groups'] as $groupName => $group) {
+                foreach ($fieldValue->data['groups'] as $groupIdentifier => $group) {
                     $groupRelations = [];
 
-                    foreach ($group as $datum) {
+                    foreach ($group['relations'] as $datum) {
                         $relation = [
                             'contentId'  => $datum['contentId'],
                             'attributes' => [],
@@ -277,7 +278,7 @@ class Type extends FieldType implements Nameable
                         $groupRelations[] = new Relation($relation);
                     }
 
-                    $groups[$groupName] = new Group($groupRelations);
+                    $groups[$groupIdentifier] = new Group($group['name'], $groupRelations);
                 }
             }
 
@@ -374,8 +375,6 @@ class Type extends FieldType implements Nameable
 
     /**
      * Validates a field based on the validators in the field definition.
-     *
-     * @TODO: check if the value can be transformed knowing the field definition in a more suitable location.
      *
      * @param FieldDefinition $fieldDefinition The field definition of the field
      * @param SPIValue|Value  $value           The field value for which an action is performed

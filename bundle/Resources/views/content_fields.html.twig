@@ -25,7 +25,7 @@
     {% endif %}
 
     {% for name,group in value.groups %}
-        {% include '@ezdesign/parts/table_header.html.twig' with {headerText: name} %}
+        {% include '@ezdesign/parts/table_header.html.twig' with {headerText: group.name} %}
         {% if group.relations is not empty %}
             <table class="table{% if loop.last %} mb-0{% endif %}">
                 {{ erl_table_macros.table_head_macro(fieldSettings, field) }}
@@ -47,10 +47,10 @@
         <th>{{ 'field.attribute.table.head.relation'|trans }}</th>
         {% for attributeDefinition in fieldSettings.attributeDefinitions %}
             <th>
-                {% if attributeDefinition.name[field.languageCode] is defined %}
-                    {{ attributeDefinition.name[field.languageCode] }}
+                {% if attributeDefinition.names[field.languageCode] is defined %}
+                    {{ attributeDefinition.names[field.languageCode] }}
                 {% else %}
-                    {{ attributeDefinition.name|first }}
+                    {{ attributeDefinition.names|first }}
                 {% endif %}
             </th>
         {% endfor %}

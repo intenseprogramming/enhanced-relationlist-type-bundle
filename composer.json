@@ -12,6 +12,8 @@
   ],
   "require": {
     "php": "~7.1",
+    "ext-dom": "*",
+    "ext-json": "*",
     "ezsystems/ezpublish-kernel": "~7.0",
     "ezsystems/ezplatform-admin-ui": "~1.1",
     "erusev/parsedown": "~1.7"

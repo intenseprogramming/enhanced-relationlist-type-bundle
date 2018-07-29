@@ -10,6 +10,7 @@
 
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
+use DOMAttr;
 use DOMDocument;
 use DOMElement;
 use eZ\Publish\Core\Persistence\Legacy\Content\FieldValue\Converter as ConverterInterface;
@@ -57,7 +58,7 @@ class Converter implements ConverterInterface
                 $groupNode = $doc->createElement('group');
                 $groupNode->setAttribute('name', $groupName);
 
-                foreach ($group as $relation) {
+                foreach ($group['relations'] ?? $group as $relation) {
                     $groupNode->appendChild($this->createRelationElement($doc, $relation));
                 }
 
@@ -148,7 +149,7 @@ class Converter implements ConverterInterface
             $attributeDefinition->setAttribute('type', $attributeDefinitionValue['type']);
             $attributeDefinition->setAttribute('required', $attributeDefinitionValue['required'] ? 1 : 0);
 
-            foreach ($attributeDefinitionValue['name'] as $languageCode => $name) {
+            foreach ($attributeDefinitionValue['names'] as $languageCode => $name) {
                 $nameElement = $doc->createElement('attribute_name');
                 $nameElement->setAttribute('language-code', $languageCode);
                 $nameElement->setAttribute('value', $name);
@@ -176,7 +177,23 @@ class Converter implements ConverterInterface
         $node->setAttribute('position_fixed', $fieldSettings['groupSettings']['positionsFixed'] ? 1 : 0);
         $node->setAttribute('extendable', $fieldSettings['groupSettings']['extendable'] ? 1 : 0);
         $node->setAttribute('allow_ungrouped', $fieldSettings['groupSettings']['allowUngrouped'] ? 1 : 0);
-        $node->setAttribute('groups', json_encode($fieldSettings['groupSettings']['groups'] ?? []));
+
+        $groupsNode = $doc->createElement('groups');
+        foreach ($fieldSettings['groupSettings']['groups'] ?? [] as $identifier => $names) {
+            $groupNode = $doc->createElement('group');
+            $groupNode->setAttribute('identifier', $identifier);
+
+            if (is_array($names)) {
+                foreach ($names as $languageCode => $name) {
+                    $groupNode->setAttribute($languageCode, $name);
+                }
+            } else {
+                $groupNode->setAttribute('name', $names);
+            }
+
+            $groupsNode->appendChild($groupNode);
+        }
+        $node->appendChild($groupsNode);
 
         $settings->appendChild($node);
 
@@ -247,7 +264,7 @@ class Converter implements ConverterInterface
 
             $fieldSettings['attributeDefinitions'][$attributeDefinition->getAttribute('identifier')] = [
                 'type'     => $attributeDefinition->getAttribute('type'),
-                'name'     => $names,
+                'names'    => $names,
                 'required' => !!$attributeDefinition->getAttribute('required'),
                 'settings' => $settings,
             ];
@@ -281,12 +298,22 @@ class Converter implements ConverterInterface
                 $fieldSettings['groupSettings']['allowUngrouped'] =
                     !!$groupSettingElement->getAttribute('allow_ungrouped');
             }
-            if ($groupSettingElement->hasAttribute('groups')) {
-                $groups = json_decode($groupSettingElement->getAttribute('groups'));
-
-                if (is_array($groups)) {
-                    $fieldSettings['groupSettings']['groups'] = $groups;
+            $fieldSettings['groupSettings']['groups'] = [];
+            /** @var DOMElement $groupElement */
+            foreach ($groupSettingElement->getElementsByTagName('group') as $groupElement) {
+                if ($groupElement->hasAttribute('name')) {
+                    $groupValue = $groupElement->getAttribute('name');
+                } else {
+                    $groupValue = [];
+                    /** @var DOMAttr $attribute */
+                    foreach ($groupElement->attributes as $attribute) {
+                        if ($attribute->name != 'identifier') {
+                            $groupValue[$attribute->name] = $attribute->value;
+                        }
+                    }
                 }
+
+                $fieldSettings['groupSettings']['groups'][$groupElement->getAttribute('identifier')] = $groupValue;
             }
         }
 

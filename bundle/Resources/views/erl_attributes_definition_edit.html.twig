@@ -60,7 +60,7 @@ available data-attributes for special handling of the basic types:
 
 {% macro selection_option(optionNames, index) %}
 {% spaceless %}
-<div class="input-group">
+<div class="input-group" data-index="{{ index }}">
     <div class="input-group-prepend">
         <div class="input-group-text">
             <button class="btn px-0 pt-0 pb-0">{{ 'erl.attribute.type.selection.options.remove'|trans|desc('Remove') }}</button>

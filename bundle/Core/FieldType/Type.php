@@ -267,7 +267,7 @@ class Type extends FieldType implements Nameable
                 foreach ($fieldValue->data['groups'] as $groupIdentifier => $group) {
                     $groupRelations = [];
 
-                    foreach ($group['relations'] as $datum) {
+                    foreach ($group['relations'] ?? [] as $datum) {
                         $relation = [
                             'contentId'  => $datum['contentId'],
                             'attributes' => [],
@@ -284,7 +284,7 @@ class Type extends FieldType implements Nameable
                         $groupRelations[] = new Relation($relation);
                     }
 
-                    $groups[$groupIdentifier] = new Group($group['name'], $groupRelations);
+                    $groups[$groupIdentifier] = new Group($groupIdentifier, $groupRelations);
                 }
             }
 

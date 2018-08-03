@@ -79,10 +79,9 @@
     {% import _self as enhanced_relation_list_macros %}
 
     {% for identifier,attributeDefinition in attributeDefinitions %}
-        {{ dump(_context) }}
-        {#<td data-value-path="attributes.{{ identifier }}">#}
-            {#{{ erl_render_attribute_input(fieldDefinition, attributeDefinition, null, []) }}#}
-        {#</td>#}
+        <td data-value-path="attributes.{{ identifier }}">
+            {{ erl_render_attribute_input(fieldDefinition, attributeDefinition, null, []) }}
+        </td>
     {% endfor %}
 {% endspaceless %}
 {% endmacro %}

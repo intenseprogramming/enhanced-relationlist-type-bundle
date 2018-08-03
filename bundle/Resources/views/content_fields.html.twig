@@ -25,7 +25,7 @@
     {% endif %}
 
     {% for name,group in value.groups %}
-        {% include '@ezdesign/parts/table_header.html.twig' with {headerText: group.name} %}
+        {% include '@ezdesign/parts/table_header.html.twig' with {headerText: fieldSettings.groupSettings.groups[group.name][field.languageCode]|default(group.name)} %}
         {% if group.relations is not empty %}
             <table class="table{% if loop.last %} mb-0{% endif %}">
                 {{ erl_table_macros.table_head_macro(fieldSettings, field) }}

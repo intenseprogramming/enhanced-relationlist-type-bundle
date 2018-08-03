@@ -15,6 +15,7 @@
         <input class="ez-data-source__input form-control{% if hasErrors %} is-invalid{% endif %}"
                type="number"
                value="{{ value }}"
+               data-erl-nullable
                {% if definition.required %} required="required"{% endif %}>
     </label>
 {% endblock %}
@@ -24,6 +25,7 @@
         <input class="ez-data-source__input form-control{% if hasErrors %} is-invalid{% endif %}"
                type="text"
                value="{{ value }}"
+               data-erl-nullable
                {% if definition.required %} required="required"{% endif %}>
     </label>
 {% endblock %}

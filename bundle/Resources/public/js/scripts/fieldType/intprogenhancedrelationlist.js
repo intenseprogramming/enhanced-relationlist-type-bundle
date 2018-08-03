@@ -7,7 +7,7 @@
     const SELECTOR_DRAG_HANDLE = '.erl-relation-item .erl-drag-handle, .erl-relation-group .erl-drag-handle';
     const SELECTOR_INPUT_ROW = '.erl-relation-item, .erl-relation-group';
 
-    const setDeepValue = (target, path, value) => {
+    const setDeepValue = (target, path, value, multiple) => {
         const keys = path.split('.');
         let object = target;
         for (let i = 0; i < keys.length - 1; i++) {
@@ -19,7 +19,15 @@
                 object = object[key];
             }
         }
-        object[keys[keys.length - 1]] = value;
+
+        if (multiple) {
+            if (typeof object[keys[keys.length - 1]] === 'undefined') {
+                object[keys[keys.length - 1]] = []
+            }
+            object[keys[keys.length - 1]].push(value);
+        } else {
+            object[keys[keys.length - 1]] = value;
+        }
     };
 
     // class EzObjectRelationListValidator extends global.eZ.BaseFieldValidator {
@@ -102,6 +110,8 @@
 
                 item.querySelectorAll(SELECTOR_INPUT).forEach(inputItem => {
                     let valuePath = inputItem.closest('td').getAttribute('data-value-path');
+                    let multiple = inputItem.hasAttribute('data-erl-multiple');
+                    let nullable = inputItem.hasAttribute('data-erl-nullable');
 
                     if (!valuePath) {
                         return;
@@ -129,7 +139,11 @@
                             value = inputItem.value;
                     }
 
-                    setDeepValue(itemValue, valuePath, value);
+                    if (nullable && value === "") {
+                        value = null;
+                    }
+
+                    setDeepValue(itemValue, valuePath, value, multiple);
                 });
 
                 jsonValue.push(itemValue);

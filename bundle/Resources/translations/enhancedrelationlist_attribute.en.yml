@@ -13,3 +13,5 @@ field.group.ungrouped.name: Ungrouped relations
 
 field.boolean.yes: Yes
 field.boolean.no: No
+
+field.empty: empty

@@ -164,6 +164,7 @@
             const markup = `${attributeTemplates[type].replace(/%identifier%/g, identifier)}`;
 
             definitionContainer.querySelector(SELECTOR_BODY).insertAdjacentHTML('beforeend', markup);
+            rootTable.dispatchEvent(new Event('erl-attribute-add'));
 
             addRowEventListeners();
             updateJson();
@@ -172,6 +173,8 @@
         addRowEventListeners();
         updateRemoveButton();
 
+        rootTable.addEventListener('change-values', updateJson);
+        rootTable.addEventListener('change-fields', addRowEventListeners);
         definitionContainer.querySelector(SELECTOR_REMOVE_BUTTON).addEventListener('click', removeAttribute);
         definitionContainer.querySelector(SELECTOR_LANGUAGE_SELECT).addEventListener('change', switchLanguage);
     });

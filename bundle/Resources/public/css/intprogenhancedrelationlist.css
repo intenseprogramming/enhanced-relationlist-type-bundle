@@ -48,7 +48,6 @@ table.erl-table tr .slim>.slim-content {
 
 table.erl-table .form-control, table.erl-table label {
     margin-bottom: 0;
-    width: 100%;
 }
 
 table.erl-table tr.erl-relation-group td {
@@ -108,4 +107,11 @@ table.erl-table .erl-attribute-item *[data-erl-language-code], table.erl-table .
 }
 table.erl-table .erl-attribute-item *[data-erl-language-code].active, table.erl-table .erl-group-item *[data-erl-language-code].active {
     display: unset;
+}
+
+table.erl-table .erl-selection-attribute-edit .input-group:last-child .input-group-prepend {
+    display: none;
+}
+table.erl-table .erl-selection-attribute-edit .input-group:last-child label {
+    width: 100%;
 }

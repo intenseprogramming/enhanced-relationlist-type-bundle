@@ -37,7 +37,7 @@
         </div>
         {% set templateData = [] %}
         {% for type in availableAttributeTypes %}
-            {% set templateData = templateData|merge({(type): attribute_edit.render_attribute('%identifier%', {name: '', type: type, required: false, settings: []})}) %}
+            {% set templateData = templateData|merge({(type): attribute_edit.render_attribute(form.parent.vars.value.fieldDefinition, '%identifier%', {name: '', type: type, required: false, settings: []})}) %}
         {% endfor %}
         <table class="table ez-table--list erl-table" style="margin-bottom: 0;"
                data-attribute-template='{{ templateData|json_encode }}'>
@@ -53,14 +53,14 @@
             </thead>
             <tbody>
             {% for identifier,attribute in attributesData %}
-                {{ attribute_edit.render_attribute(identifier, attribute) }}
+                {{ attribute_edit.render_attribute(form.parent.vars.value.fieldDefinition, identifier, attribute) }}
             {% endfor %}
             </tbody>
         </table>
     </div>
 {%- endblock -%}
 
-{% macro render_attribute(identifier, attribute) %}
+{% macro render_attribute(fielddefinition, identifier, attribute) %}
 {% spaceless %}
     {% import _self as attribute_edit %}
 
@@ -73,22 +73,23 @@
         </td>
         <td>
             {% for languageCode in admin_ui_config.languages.priority %}
-                <label style="width: 100%;" data-erl-nullable data-erl-ignore-empty data-erl-language-code="{{ languageCode }}"{% if loop.first %} class="active"{% endif %}>
+                <label style="width: 100%;"  data-erl-language-code="{{ languageCode }}"{% if loop.first %} class="active"{% endif %}>
                     <input type="text"
                            data-value-path="names.{{ languageCode }}"
                            class="form-control"
                            value="{{ attribute.names[languageCode]|default('') }}"
-                           {% if not loop.first %}placeholder="{{ attribute.name[admin_ui_config.languages.priority|first]|default('') }}"{% endif %}>
+                           data-erl-nullable data-erl-ignore-empty
+                           {% if not loop.first %}placeholder="{{ attribute.names[admin_ui_config.languages.priority|first]|default('') }}"{% endif %}>
                 </label>
             {% endfor %}
-            ({{ identifier }})
+            <span class="ml-1">({{ identifier }})</span>
         </td>
         <td>
             {{ (attribute.type~'.name')|trans }}
             <input type="hidden" value="{{ attribute.type }}" data-value-path="type">
         </td>
         <td>
-            {{ attribute_edit.render_attribute_settings(attribute) }}
+            {{ attribute_edit.render_attribute_settings(fielddefinition, attribute) }}
         </td>
         <td>
             <label class="ez-data-source__label is-checked" style="width: 100%;">
@@ -99,9 +100,9 @@
 {% endspaceless %}
 {% endmacro %}
 
-{% macro render_attribute_settings(attribute) %}
+{% macro render_attribute_settings(fielddefinition, attribute) %}
 {% spaceless %}
-    {% set settings = erl_render_attribute_definition_input(attribute) %}
+    {% set settings = erl_render_attribute_definition_input(fielddefinition, attribute) %}
 
     {% if settings|trim %}
         {{ settings|raw }}

@@ -14,6 +14,6 @@
 
 {% block selection_relation_attribute %}
     {% for index in attribute.selection %}
-        {{ definition.settings.options[index] }}{% if not loop.last %},{% endif %}
+        {{ definition.settings.options[index][field.languageCode]|default(definition.settings.options[index]) }}{% if not loop.last %},{% endif %}
     {% endfor %}
 {% endblock %}

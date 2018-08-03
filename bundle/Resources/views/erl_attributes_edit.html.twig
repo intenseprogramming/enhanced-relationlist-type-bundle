@@ -2,7 +2,7 @@
 
 {% block boolean_relation_attribute_edit %}
     <label>
-        <input class="ez-data-source__input form-control{% if hasErrors %} is-invalid{% endif %}"
+        <input class="ez-data-source__input{% if hasErrors %} is-invalid{% endif %}"
                type="checkbox"
                {% if value %}checked="checked"{% endif %}
                value="1"
@@ -37,7 +37,7 @@
                 <option>{{ 'field.edit.selection.none'|trans }}</option>
             {% endif %}
             {% for index,option in definition.settings.options %}
-                <option value="{{ index }}"{% if index in value %} selected="selected"{% endif %}>{{ option }}</option>
+                <option value="{{ index }}"{% if index in value %} selected="selected"{% endif %}>{{ option[field.languageCode]|default(option|first) }}</option>
             {% endfor %}
         </select>
     </label>

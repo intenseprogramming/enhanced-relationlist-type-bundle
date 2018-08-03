@@ -14,7 +14,7 @@ available data-attributes for special handling of the basic types:
 {% endblock %}
 
 {% block integer_relation_attribute_definition_edit %}
-    <label class="form-control-label">
+    <label class="form-control-label mt-0">
         {{ 'erl.attribute.type.integer.min-value'|trans }}
     </label>
     <input type="number" data-value-path="settings.min" data-erl-nullable class="form-control" value="{{ definition.settings.min|default('') }}" />
@@ -25,7 +25,7 @@ available data-attributes for special handling of the basic types:
 {% endblock %}
 
 {% block string_relation_attribute_definition_edit %}
-    <label class="form-control-label">
+    <label class="form-control-label mt-0">
         {{ 'erl.attribute.type.string.min-length'|trans }}
     </label>
     <input type="number" data-value-path="settings.minLength" data-erl-nullable class="form-control" value="{{ definition.settings.minLength|default('') }}" />
@@ -36,6 +36,8 @@ available data-attributes for special handling of the basic types:
 {% endblock %}
 
 {% block selection_relation_attribute_definition_edit %}
+    {% import _self as attributeDefinition %}
+
     <div class="form-check form-check-inline">
         <label class="checkbox-inline form-check-label">
             <input class="form-check-input" data-value-path="settings.multiple" type="checkbox"{% if definition.settings.multiple|default(false) %} checked="checked"{% endif %} />
@@ -43,16 +45,36 @@ available data-attributes for special handling of the basic types:
         </label>
     </div>
 
-    {# TODO: multi input for settings path! #}
-    <div>
+    <div class="erl-selection-attribute-edit" data-option-template="{{ attributeDefinition.selection_option('', '%index%')|json_encode }}">
         <label class="form-control-label">{{ 'erl.attribute.type.selection.options'|trans }}</label>
-        {% for option in definition.settings.options|default([]) %}
-            <div>
-                <input class="form-control" type="text" data-value-path="settings.options" data-erl-nullable data-erl-multiple data-erl-ignore-empty value="{{ option }}" />
-            </div>
+        {% for index,optionNames in definition.settings.options|default([]) %}
+            {{ attributeDefinition.selection_option(optionNames, index) }}
         {% endfor %}
-        <div>
-            <input class="form-control" type="text" data-value-path="settings.options" data-erl-nullable data-erl-multiple data-erl-ignore-empty value="" />
-        </div>
+        {% if definition.settings.options|default([]) is not empty %}
+            {{ attributeDefinition.selection_option('', definition.settings.options|keys|last + 1) }}
+        {% else %}
+            {{ attributeDefinition.selection_option('', 0) }}
+        {% endif %}
     </div>
 {% endblock %}
+
+{% macro selection_option(optionNames, index) %}
+{% spaceless %}
+<div class="input-group">
+    <div class="input-group-prepend">
+        <div class="input-group-text">
+            <button class="btn px-0 pt-0 pb-0">{{ 'erl.attribute.type.selection.options.remove'|trans|desc('Remove') }}</button>
+        </div>
+    </div>
+    {% for languageCode in admin_ui_config.languages.priority %}
+        <input type="text"
+               data-value-path="settings.options.{{ index }}.{{ languageCode }}"
+               class="form-control{% if loop.first %} active{% endif %}"
+               data-erl-nullable data-erl-ignore-empty
+               data-erl-language-code="{{ languageCode }}"
+               value="{{ optionNames[languageCode]|default('') }}"
+               {% if not loop.first %}placeholder="{{ optionNames[admin_ui_config.languages.priority|first]|default('') }}"{% endif %}>
+    {% endfor %}
+</div>
+{% endspaceless %}
+{% endmacro selection_option %}

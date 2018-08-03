@@ -18,7 +18,7 @@
             {{ erl_table_macros.table_head_macro(fieldSettings, field) }}
             <tbody>
             {% for relation in value.relations %}
-                {{ erl_table_macros.relation_row(relation, fieldSettings) }}
+                {{ erl_table_macros.relation_row(field, relation, fieldSettings) }}
             {% endfor %}
             </tbody>
         </table>
@@ -31,7 +31,7 @@
                 {{ erl_table_macros.table_head_macro(fieldSettings, field) }}
                 <tbody>
                 {% for relation in group.relations %}
-                    {{ erl_table_macros.relation_row(relation, fieldSettings) }}
+                    {{ erl_table_macros.relation_row(field, relation, fieldSettings) }}
                 {% endfor %}
                 </tbody>
             </table>
@@ -58,7 +58,7 @@
     </thead>
 {% endmacro %}
 
-{% macro relation_row(relation, fieldSettings) %}
+{% macro relation_row(field, relation, fieldSettings) %}
     <tr>
         <td>
             {{ render(controller('ez_content:viewAction', {'contentId': relation.contentId, 'viewType': 'element_simple_link', 'layout': false})) }}
@@ -66,7 +66,7 @@
         {% for identifier,definition in fieldSettings.attributeDefinitions %}
             <td>
                 {% if relation.attributes[identifier] is defined %}
-                    {{ erl_render_attribute(relation.attributes[identifier], definition) }}
+                    {{ erl_render_attribute(field, relation.attributes[identifier], definition) }}
                 {% endif %}
             </td>
         {% endfor %}

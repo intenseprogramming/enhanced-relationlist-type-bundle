@@ -80,7 +80,7 @@
                                 {% if definition.settings is defined and definition.settings %}
                                     <li>
                                         {{ 'fielddefinition.attribute.definitions.settings'|trans|desc('Settings:') }}
-                                        <div class="erl-attribute-definition">{{ erl_render_attribute_definition(definition) }}</div>
+                                        <div class="erl-attribute-definition">{{ erl_render_attribute_definition(fielddefinition, definition) }}</div>
                                     </li>
                                 {% endif %}
                             </ul>

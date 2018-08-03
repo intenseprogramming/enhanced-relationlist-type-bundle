@@ -54,7 +54,7 @@
     <div>
         {{ 'erl.attribute.type.selection.options'|trans }}:
         <ul>
-            {% for option in definition.settings.options|default([]) %}<li>{{ option }}</li>{% endfor %}
+            {% for option in definition.settings.options|default([]) %}<li>{{ option[fieldDefinition.prioritizedLanguages|first]|default(option|first) }}</li>{% endfor %}
         </ul>
     </div>
 {% endblock %}

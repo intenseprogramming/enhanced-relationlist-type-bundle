@@ -16,3 +16,8 @@ field.boolean.yes: Yes
 field.boolean.no: No
 
 field.empty: empty
+
+intprogenhancedrelationilist.definition.selection-allow-duplicates.description: 'If active allows the editor to add a relation to a content item multiple times.'
+intprogenhancedrelationilist.definition.group-position-fixed.description: 'If active allows the editor to rearrange the defined system groups.'
+intprogenhancedrelationilist.definition.group-extendable.description: 'If active allows the editor to add custom groups to the relation.'
+intprogenhancedrelationilist.definition.allow-ungrouped.description: 'If active allows relations that do not belong to a group.'

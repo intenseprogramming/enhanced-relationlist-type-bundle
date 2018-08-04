@@ -1,6 +1,8 @@
 
 {% use 'EzPublishCoreBundle::fielddefinition_settings.html.twig' %}
 
+{% trans_default_domain 'enhancedrelationlist_attribute' %}
+
 {% block intprogenhancedrelationlist_field_definition_edit %}
     <div class="ezobjectrelationlist-settings selection-default-location">
         {{- form_label(form.selectionDefaultLocation) -}}
@@ -34,31 +36,39 @@
         {{- form_widget(form.selectionLimit) -}}
     </div>
 
-    <div class="intprogenhancedrelationlist-settings selection-allow-duplicates">
+    <div class="intprogenhancedrelationlist-settings selection-allow-duplicates mb-2">
         {{- form_label(form.selectionAllowDuplicates) -}}
         {{- form_errors(form.selectionAllowDuplicates) -}}
         {{- form_widget(form.selectionAllowDuplicates) -}}
+        <br>
+        <small><em>{{ 'intprogenhancedrelationilist.definition.selection-allow-duplicates.description'|trans }}</em></small>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings group-position-fixed">
+    <div class="intprogenhancedrelationlist-settings group-position-fixed mb-2">
         {{- form_label(form.groupSettingsPositionFixed) -}}
         {{- form_errors(form.groupSettingsPositionFixed) -}}
         {{- form_widget(form.groupSettingsPositionFixed) -}}
+        <br>
+        <small><em>{{ 'intprogenhancedrelationilist.definition.group-position-fixed.description'|trans }}</em></small>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings group-extendable">
+    <div class="intprogenhancedrelationlist-settings group-extendable mb-2">
         {{- form_label(form.groupSettingsExtendable) -}}
         {{- form_errors(form.groupSettingsExtendable) -}}
         {{- form_widget(form.groupSettingsExtendable) -}}
+        <br>
+        <small><em>{{ 'intprogenhancedrelationilist.definition.group-extendable.description'|trans }}</em></small>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings group-allowe-ungrouped">
+    <div class="intprogenhancedrelationlist-settings group-allow-ungrouped mb-3">
         {{- form_label(form.groupSettingsAllowUngrouped) -}}
         {{- form_errors(form.groupSettingsAllowUngrouped) -}}
         {{- form_widget(form.groupSettingsAllowUngrouped) -}}
+        <br>
+        <small><em>{{ 'intprogenhancedrelationilist.definition.allow-ungrouped.description'|trans }}</em></small>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings attributes">
+    <div class="intprogenhancedrelationlist-settings attributes mb-2">
         {{- form_label(form.attributes) -}}
         {{- form_errors(form.attributes) -}}
         {{- form_widget(form.attributes) -}}

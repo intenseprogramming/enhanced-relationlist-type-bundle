@@ -33,6 +33,9 @@
                     {% if attributeDefinition.required %}*{% endif %}
                 </th>
             {% endfor %}
+            {% if fieldSettings.attributeDefinitions is empty %}
+                <th> </th>
+            {% endif %}
         </tr>
         </thead>
         <tbody class="ez-relations__list" data-limit="{{ limit }}" data-default-location="{{ default_location }}" data-allowed-content-types="{{ allowed_content_type_identifiers|join(',') }}">
@@ -90,7 +93,7 @@
 {% spaceless %}
     {% import _self as enhanced_relation_list_macros %}
 
-    {{ enhanced_relation_list_macros.group_row('', attributeDefinitions, false, false) }}
+    {{ enhanced_relation_list_macros.group_row('', '', attributeDefinitions, false, false) }}
 {% endspaceless %}
 {% endmacro %}
 
@@ -202,6 +205,9 @@
                 </div>
             </td>
         {% endfor %}
+        {% if fieldSettings.attributeDefinitions is empty %}
+            <td> </td>
+        {% endif %}
     </tr>
 {% endmacro %}
 
@@ -222,19 +228,18 @@
         <td>
             Group name:
         </td>
+        <td data-value-path="group">
+            <label>
+                {% if system %}
+                    {{ group }}
+                    <input type="hidden" value="{{ identifier }}">
+                {% else %}
+                    <input type="text" class="ez-data-source__input form-control erl-group-name-input" value="{{ group }}">
+                {% endif %}
+            </label>
+        </td>
         {% for attribute in attributeDefinitions %}
-            {% if loop.first %}
-                <td data-value-path="group">
-                    <label>
-                        {% if system %}
-                            {{ group }}
-                            <input type="hidden" value="{{ identifier }}">
-                        {% else %}
-                            <input type="text" class="ez-data-source__input form-control erl-group-name-input" value="{{ group }}">
-                        {% endif %}
-                    </label>
-                </td>
-            {% else %}
+            {% if not loop.first %}
                 <td> </td>
             {% endif %}
         {% endfor %}

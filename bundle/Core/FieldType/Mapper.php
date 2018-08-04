@@ -67,6 +67,16 @@ class Mapper extends AbstractRelationFormMapper
                 ]
             )
             ->add(
+                'selectionAllowDuplicates',
+                CheckboxType::class,
+                [
+                    'required'      => false,
+                    'property_path' => 'fieldSettings[selectionAllowDuplicates]',
+                    'label'         => 'field_definition.intprogenhancedrelationlist.selection_allow_duplicates',
+                    'label_attr'    => ['class' => 'checkbox-inline'],
+                ]
+            )
+            ->add(
                 'groupSettingsPositionFixed',
                 CheckboxType::class,
                 [

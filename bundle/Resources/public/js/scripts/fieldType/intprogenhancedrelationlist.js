@@ -6,6 +6,7 @@
     const SELECTOR_INPUT = '.relation-root-table input, .relation-root-table textarea, .relation-root-table select';
     const SELECTOR_DRAG_HANDLE = '.erl-relation-item .erl-drag-handle, .erl-relation-group .erl-drag-handle';
     const SELECTOR_INPUT_ROW = '.erl-relation-item, .erl-relation-group';
+    const SELECTOR_CONTENT_ID_INPUT = 'td[data-value-path="contentId"] input[type="hidden"]';
 
     const setDeepValue = (target, path, value, multiple) => {
         const keys = path.split('.');
@@ -87,6 +88,7 @@
         const jsonValueInput = fieldContainer.querySelector('input.relation-json');
         const attributesLayout = relationsRootTable.getAttribute('data-attributes-layout');
         const groupLayout = relationsRootTable.getAttribute('data-group-layout');
+        const duplicateRelationsAllowed = !!parseInt(relationsRootTable.getAttribute('data-allow-duplicates'));
         const udwContainer = document.getElementById('react-udw');
         const token = document.querySelector('meta[name="CSRF-Token"]').content;
         const siteaccess = document.querySelector('meta[name="SiteAccess"]').content;
@@ -151,6 +153,15 @@
 
             jsonValueInput.value = JSON.stringify(jsonValue);
         };
+        const getSelectedContentIds = () => {
+            const selectedContentIds = [];
+
+            relationsRootTable.querySelectorAll(SELECTOR_CONTENT_ID_INPUT).forEach(input => {
+                selectedContentIds.push(parseInt(input.value));
+            });
+
+            return selectedContentIds;
+        };
         fieldContainer.querySelectorAll(SELECTOR_INPUT).forEach((item) => {item.addEventListener('change', updateJson);});
         const closeUDW = () => ReactDOM.unmountComponentAtNode(udwContainer);
         const renderRows = (items) => {
@@ -173,7 +184,9 @@
                 return callback(false);
             }
 
-            // TODO: add setting to enable/disabled duplicate selection.
+            if (!duplicateRelationsAllowed && getSelectedContentIds().indexOf(item.ContentInfo.Content._id) !== -1) {
+                return callback(false);
+            }
 
             const canSelect = !selectedItemsLimit || (fieldContainer.querySelectorAll(SELECTOR_INPUT_ROW).length + itemsCount) < selectedItemsLimit;
 

@@ -19,6 +19,8 @@
         {% set rootLocationId = settings.defaultBrowseLocation %}
         {{ block( 'settings_selectionroot' ) }}
 
+        {{ block( 'settings_allow_duplicates' ) }}
+
         {{ block( 'settings_attribute_definitions' ) }}
 
         {{ block( 'settings_group_setting' ) }}
@@ -36,6 +38,14 @@
             {% endif %}
         </span>
     </li>
+{% endblock %}
+
+{% block settings_allow_duplicates %}
+    {% if settings.selectionAllowDuplicates %}
+        <li>{{ 'fielddefinition.selection-allow-duplicates.allowed'|trans|desc('Duplicates are allowed.') }}</li>
+    {% else %}
+        <li>{{ 'fielddefinition.selection-allow-duplicates.disallowed'|trans|desc('Duplicates are not allowed.') }}</li>
+    {% endif %}
 {% endblock %}
 
 {% block settings_selection_content_types_enhanced %}

@@ -109,7 +109,7 @@ class Converter implements ConverterInterface
         ) {
             /** @var DOMElement $group */
             foreach ($groups->item(0)->getElementsByTagName('group') as $group) {
-                $groupName = $group->getAttribute('name');
+                $groupName                              = $group->getAttribute('name');
                 $fieldValue->data['groups'][$groupName] = [];
 
                 foreach ($group->getElementsByTagName('relation') as $relation) {
@@ -172,6 +172,9 @@ class Converter implements ConverterInterface
             $node->setAttribute('value', $fieldSettings['selectionLimit']);
             $settings->appendChild($node);
         }
+        $node = $doc->createElement('selection_allow_duplicates');
+        $node->setAttribute('value', (integer) $fieldSettings['selectionAllowDuplicates']);
+        $settings->appendChild($node);
 
         $node = $doc->createElement('group_setting');
         $node->setAttribute('position_fixed', $fieldSettings['groupSettings']['positionsFixed'] ? 1 : 0);
@@ -222,10 +225,11 @@ class Converter implements ConverterInterface
     {
         // default settings
         $fieldDef->fieldTypeConstraints->fieldSettings = [
-            'attributeDefinitions'  => [],
-            'defaultBrowseLocation' => null,
-            'selectionLimit'        => 0,
-            'groupSettings'         => [
+            'attributeDefinitions'     => [],
+            'defaultBrowseLocation'    => null,
+            'selectionLimit'           => 0,
+            'selectionAllowDuplicates' => false,
+            'groupSettings'            => [
                 'positionsFixed' => false,
                 'extendable'     => true,
                 'allowUngrouped' => true,
@@ -280,6 +284,12 @@ class Converter implements ConverterInterface
             $selectionLimit->hasAttribute('value')
         ) {
             $fieldSettings['selectionLimit'] = $selectionLimit->getAttribute('value');
+        }
+        if (
+            ($allowDuplicates = $dom->getElementsByTagName('selection_allow_duplicates')->item(0)) &&
+            $allowDuplicates->hasAttribute('value')
+        ) {
+            $fieldSettings['selectionAllowDuplicates'] = !!$allowDuplicates->getAttribute('value');
         }
 
         if (

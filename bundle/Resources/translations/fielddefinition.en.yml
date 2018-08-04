@@ -1,6 +1,9 @@
 fielddefinition.selection.limit.label: "Selection limit:"
 fielddefinition.selection.limit.none: "No limit"
 
+fielddefinition.selection-allow-duplicates.allowed: 'Duplicates are allowed.'
+fielddefinition.selection-allow-duplicates.disallowed: 'Duplicates are not allowed.'
+
 fielddefinition.attribute.definitions.label: "Attribute definitions:"
 fielddefinition.attribute.definitions.required.yes: "Value is required."
 fielddefinition.attribute.definitions.required.no: "Value is optional."

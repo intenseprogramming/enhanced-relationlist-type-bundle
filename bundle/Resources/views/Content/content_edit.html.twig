@@ -16,6 +16,7 @@
     } %}
     <table class="relation-root-table erl-table table mb-0"
            data-form-root="{{ full_name }}"
+           data-allow-duplicates="{{ fieldSettings.selectionAllowDuplicates ? 1 : 0 }}"
            data-attributes-layout="{{ enhanced_relation_list_macros.layout_attributes(form.parent.vars.value.field, fieldSettings.attributeDefinitions)|escape }}"
            data-group-layout="{{ enhanced_relation_list_macros.layout_group(fieldSettings.attributeDefinitions)|escape }}">
         <thead>

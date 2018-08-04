@@ -37,19 +37,23 @@ class Type extends FieldType implements Nameable
     protected $relationAttributeTransformer;
 
     protected $settingsSchema = [
-        'attributeDefinitions'  => [
+        'attributeDefinitions'     => [
             'type'    => 'array',
             'default' => [],
         ],
-        'defaultBrowseLocation' => [
+        'defaultBrowseLocation'    => [
             'type'    => 'int',
             'default' => 0,
         ],
-        'selectionLimit'        => [
+        'selectionLimit'           => [
             'type'    => 'int',
             'default' => 0,
         ],
-        'groupSettings'         => [
+        'selectionAllowDuplicates' => [
+            'type'    => 'bool',
+            'default' => false,
+        ],
+        'groupSettings'            => [
             'positionsFixed' => [
                 'type'    => 'bool',
                 'default' => false,
@@ -66,7 +70,7 @@ class Type extends FieldType implements Nameable
                 'type'    => 'array',
                 'default' => [],
             ],
-        ]
+        ],
     ];
 
     protected $validatorConfigurationSchema = [
@@ -77,6 +81,16 @@ class Type extends FieldType implements Nameable
             ],
         ],
     ];
+
+    /**
+     * Type constructor.
+     *
+     * @param RelationAttributeRepository $relationAttributeTransformer
+     */
+    public function __construct(RelationAttributeRepository $relationAttributeTransformer)
+    {
+        $this->relationAttributeTransformer = $relationAttributeTransformer;
+    }
 
     /**
      * Applies the default values to the fieldSettings of a FieldDefinitionCreateStruct.
@@ -104,16 +118,6 @@ class Type extends FieldType implements Nameable
         }
 
         return;
-    }
-
-    /**
-     * Type constructor.
-     *
-     * @param RelationAttributeRepository $relationAttributeTransformer
-     */
-    public function __construct(RelationAttributeRepository $relationAttributeTransformer)
-    {
-        $this->relationAttributeTransformer = $relationAttributeTransformer;
     }
 
     /**

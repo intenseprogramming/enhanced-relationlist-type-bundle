@@ -15,6 +15,8 @@ use eZ\Publish\SPI\Persistence\Content\Field;
 use eZ\Publish\SPI\Persistence\Content\Type as FieldType;
 use eZ\Publish\SPI\Persistence\Content\Type\Handler;
 use eZ\Publish\SPI\Persistence\Content\VersionInfo;
+use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
+use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 
 /**
  * Class Storage.
@@ -28,19 +30,25 @@ class Storage extends GatewayBasedStorage
     /** @var Handler $contentTypeHandler */
     protected $contentTypeHandler;
 
+    /** @var RelationAttributeRepository $repository */
+    protected $repository;
+
     /** @var array $languages */
     protected $languages;
 
     /**
      * Storage constructor.
      *
-     * @param Handler $contentTypeHandler
-     * @param array   $languages
+     * @param Handler                     $contentTypeHandler
+     * @param RelationAttributeRepository $repository
+     * @param array                       $languages
      */
-    public function __construct(Handler $contentTypeHandler, array $languages)
+    public function __construct(Handler $contentTypeHandler, RelationAttributeRepository $repository, array $languages)
     {
-        $this->languages          = $languages;
         $this->contentTypeHandler = $contentTypeHandler;
+        $this->repository         = $repository;
+        $this->languages          = $languages;
+
     }
 
     public function storeFieldData(VersionInfo $versionInfo, Field $field, array $context)
@@ -91,6 +99,14 @@ class Storage extends GatewayBasedStorage
             }
         }
 
+        $attributeDefinitions = $fieldDefinition->fieldTypeConstraints->fieldSettings['attributeDefinitions'];
+        foreach ($groupValue as $identifier => $group) {
+            foreach ($group['relations'] as $key => $relation) {
+                $groupValue[$identifier]['relations'][$key] =
+                    $this->normalizeRelation($relation, $attributeDefinitions);
+            }
+        }
+
         $field->value->data['groups'] = $groupValue;
     }
 
@@ -107,5 +123,31 @@ class Storage extends GatewayBasedStorage
     public function getIndexData(VersionInfo $versionInfo, Field $field, array $context)
     {
         return false;
+    }
+
+    protected function normalizeRelation(array $relation, array $attributeDefinitions)
+    {
+        foreach ($attributeDefinitions as $identifier => $attributeDefinition) {
+            if (isset($relation['attributes'][$identifier])) {
+                continue;
+            }
+
+            $abstractValue = new AbstractValue(null);
+            $relation['attributes'][$identifier] =
+                [
+                    'value' => $this->repository->toPersistentValue(
+                        $this->repository->convertAbstractValue($abstractValue, $attributeDefinition['type'])
+                    ),
+                    'type'  => $attributeDefinition['type'],
+                ];
+        }
+
+        foreach (array_keys($relation['attributes']) as $identifier) {
+            if (!isset($attributeDefinitions[$identifier])) {
+                unset($relation['attributes'][$identifier]);
+            }
+        }
+
+        return $relation;
     }
 }

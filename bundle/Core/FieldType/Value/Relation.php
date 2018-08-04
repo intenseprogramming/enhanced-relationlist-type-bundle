@@ -41,7 +41,7 @@ class Relation extends ValueObject
 
                 return new AbstractValue($attribute);
             },
-            $this->attributes
+            $this->attributes ?? []
         );
     }
 }

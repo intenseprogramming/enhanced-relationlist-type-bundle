@@ -111,7 +111,11 @@ class FieldValueTransformer extends EzFieldValueTransformer
                 continue;
             }
 
-            foreach ($relation['attributes'] as $identifier => $attribute) {
+            foreach ($relation['attributes'] ?? [] as $identifier => $attribute) {
+                if (!isset($this->configuration[$identifier])) {
+                    continue;
+                }
+
                 $relation['attributes'][$identifier] = $this->transformer->fromPersistentValue(
                     $attribute,
                     $this->configuration[$identifier]['type']

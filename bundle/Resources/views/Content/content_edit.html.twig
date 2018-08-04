@@ -5,7 +5,7 @@
     {% set default_location = default_location|default(0) %}
     {% set allowed_content_type_identifiers = allowed_content_type_identifiers|default([]) %}
     {% set fieldSettings = form.parent.vars.data.fieldDefinition.fieldSettings %}
-    {% set extendable = (fieldSettings.groupSettings.extendable and not fieldSettings.groupSettings.positionsFixed) %}
+    {% set extendable = fieldSettings.groupSettings.extendable %}
 
     {% import _self as enhanced_relation_list_macros %}
 

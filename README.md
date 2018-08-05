@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.org/intenseprogramming/enhanced-relationlist-type-bundle.svg?branch=master)](https://travis-ci.org/intenseprogramming/enhanced-relationlist-type-bundle)
+
 # IntProg Enhanced Relation List Type Bundle
 
 This bundle contains the enhanced relation list field type for eZ Platform version 2.x

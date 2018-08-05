@@ -17,7 +17,7 @@ The behavior of the relation list is completely controlled by the field definiti
 Get the bundle using composer
 
 ```
-composer require ezsystems/ezplatform-drawio-fieldtype
+composer require intprog/enhanced-relationlist-type-bundle
 ```
 
 #### Enable the bundle in kernel

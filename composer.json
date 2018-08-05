@@ -26,13 +26,9 @@
     "ext-dom": "*",
     "ext-json": "*",
     "ezsystems/ezpublish-kernel": "~7.0",
-    "ezsystems/ezplatform-admin-ui": "~1.1",
-    "erusev/parsedown": "~1.7"
+    "ezsystems/ezplatform-admin-ui": "~1.1"
   },
   "require-dev": {
-    "sebastian/phpcpd": "~2.0",
-    "phpmd/phpmd": "~2.4",
-    "leaphub/phpcs-symfony2-standard": "~2.0",
     "phpunit/phpunit": "~7.0"
   },
   "autoload": {

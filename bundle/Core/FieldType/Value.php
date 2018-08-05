@@ -76,14 +76,17 @@ class Value extends BaseValue
      */
     public function __toString()
     {
-        return implode(
-            ', ',
-            array_map(
-                function (Relation $relation) {
-                    return $relation->contentId;
-                },
-                $this->relations
-            )
-        );
+        $relationContentIds = [];
+
+        foreach ($this->relations as $relation) {
+            $relationContentIds[] = $relation->contentId;
+        }
+        foreach ($this->groups as $group) {
+            foreach ($group->relations as $relation) {
+                $relationContentIds[] = $relation->contentId;
+            }
+        }
+
+        return implode(', ', $relationContentIds);
     }
 }

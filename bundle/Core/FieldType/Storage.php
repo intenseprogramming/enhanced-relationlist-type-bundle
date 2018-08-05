@@ -58,10 +58,11 @@ class Storage extends GatewayBasedStorage
      * @param Field       $field
      * @param array       $context
      *
-     * @return void
+     * @return null
      */
     public function storeFieldData(VersionInfo $versionInfo, Field $field, array $context)
     {
+        return null;
     }
 
     /**
@@ -102,18 +103,18 @@ class Storage extends GatewayBasedStorage
             } else {
                 $groupValue[$identifier] = [
                     'name'      => $groupName,
-                    'relations' => $field->value->data['groups'][$identifier],
+                    'relations' => $field->value->data['groups'][$identifier]['relations'],
                 ];
             }
 
             unset($groupName);
         }
 
-        foreach ($field->value->data['groups'] as $identifier => $relations) {
+        foreach ($field->value->data['groups'] as $identifier => $group) {
             if (!isset($groups[$identifier])) {
                 $groupValue[$identifier] = [
                     'name'      => $identifier,
-                    'relations' => $relations,
+                    'relations' => $group['relations'],
                 ];
             }
         }
@@ -124,6 +125,9 @@ class Storage extends GatewayBasedStorage
                 $groupValue[$identifier]['relations'][$key] =
                     $this->normalizeRelation($relation, $attributeDefinitions);
             }
+        }
+        foreach ($field->value->data['relations'] as $key => $relation) {
+            $field->value->data['relations'][$key] = $this->normalizeRelation($relation, $attributeDefinitions);
         }
 
         $field->value->data['groups'] = $groupValue;
@@ -136,11 +140,11 @@ class Storage extends GatewayBasedStorage
      * @param array       $fieldIds
      * @param array       $context
      *
-     * @return void
+     * @return null
      */
     public function deleteFieldData(VersionInfo $versionInfo, array $fieldIds, array $context)
     {
-        return;
+        return null;
     }
 
     /**

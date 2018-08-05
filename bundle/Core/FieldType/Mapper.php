@@ -149,6 +149,9 @@ class Mapper extends AbstractRelationFormMapper
         $names           = $fieldDefinition->getNames();
         $label           = $fieldDefinition->getName($formConfig->getOption('mainLanguageCode')) ?: reset($names);
 
+        $settings = $fieldDefinition->getFieldSettings();
+        $validator = $fieldDefinition->getValidatorConfiguration();
+
         $fieldForm
             ->add(
                 $formConfig->getFormFactory()->createBuilder()
@@ -159,10 +162,10 @@ class Mapper extends AbstractRelationFormMapper
                             'required'                         => $fieldDefinition->isRequired,
                             'label'                            => $label,
                             'label_attr'                       => ['class' => 'form-control-label'],
-                            'browse_location'                  => $fieldDefinition->getFieldSettings()['defaultBrowseLocation'],
-                            'selection_limit'                  => $fieldDefinition->getFieldSettings()['selectionLimit'],
-                            'allowed_content_type_identifiers' => $fieldDefinition->getValidatorConfiguration()['relationValidator']['allowedContentTypes'],
-                            'sub_attributes'                   => $fieldDefinition->getFieldSettings()['attributeDefinitions'],
+                            'browse_location'                  => $settings['defaultBrowseLocation'],
+                            'selection_limit'                  => $settings['selectionLimit'],
+                            'allowed_content_type_identifiers' => $validator['relationValidator']['allowedContentTypes'],
+                            'sub_attributes'                   => $settings['attributeDefinitions'],
                             'data_class'                       => null,
                         ]
                     )

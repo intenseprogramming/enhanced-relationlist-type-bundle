@@ -17,8 +17,6 @@ use eZ\Publish\Core\FieldType\ValidationError;
 use eZ\Publish\Core\FieldType\Value as CoreValue;
 use eZ\Publish\SPI\FieldType\Nameable;
 use eZ\Publish\SPI\FieldType\Value as SpiValue;
-use eZ\Publish\SPI\Persistence\Content\FieldValue as PersistenceValue;
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Group;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
@@ -156,23 +154,56 @@ class Type extends FieldType implements Nameable
      *
      * @param mixed $hash
      *
-     * @return SpiValue
+     * @return Value
      */
     public function fromHash($hash)
     {
-        if (is_string($hash)) {
-            $hash = json_decode($hash, true);
-        }
-
-        if (is_array($hash['relations'] ?? false) || is_array($hash['groups'] ?? false)) {
+        if (is_array($hash) && !empty($hash)) {
             $relations = [];
-            if (is_array($hash['relations'] ?? false)) {
-                $relations = $hash['relations'];
+            $groups    = [];
+
+            if (is_array($hash['relations'] ?? false) && !empty($hash['relations'])) {
+                foreach ($hash['relations'] as $datum) {
+                    $relation = [
+                        'contentId'  => $datum['contentId'],
+                        'attributes' => [],
+                    ];
+
+                    foreach ($datum['attributes'] as $identifier => $attribute) {
+                        $relation['attributes'][$identifier] =
+                            $this->relationAttributeTransformer->fromPersistentValue(
+                                $attribute['value'],
+                                $attribute['type']
+                            );
+                    }
+
+                    $relations[] = new Relation($relation);
+                }
             }
 
-            $groups = [];
-            if (is_array($hash['groups'] ?? false)) {
-                $groups = $hash['groups'];
+            if (is_array($hash['groups'] ?? false) && !empty($hash['groups'])) {
+                foreach ($hash['groups'] as $groupIdentifier => $group) {
+                    $groupRelations = [];
+
+                    foreach ($group['relations'] ?? [] as $datum) {
+                        $relation = [
+                            'contentId'  => $datum['contentId'],
+                            'attributes' => [],
+                        ];
+
+                        foreach ($datum['attributes'] as $identifier => $attribute) {
+                            $relation['attributes'][$identifier] =
+                                $this->relationAttributeTransformer->fromPersistentValue(
+                                    $attribute['value'],
+                                    $attribute['type']
+                                );
+                        }
+
+                        $groupRelations[] = new Relation($relation);
+                    }
+
+                    $groups[$groupIdentifier] = new Group($groupIdentifier, $groupRelations);
+                }
             }
 
             return new Value($relations, $groups);
@@ -212,7 +243,10 @@ class Type extends FieldType implements Nameable
         }
 
         foreach ($value->groups ?? [] as $groupName => $group) {
-            $hash['groups'][$groupName] = [];
+            $hash['groups'][$groupName] = [
+                'name'      => $groupName,
+                'relations' => [],
+            ];
 
             foreach ($group->relations as $relation) {
                 $subHash = [
@@ -227,74 +261,11 @@ class Type extends FieldType implements Nameable
                     ];
                 }
 
-                $hash['groups'][$groupName][] = $subHash;
+                $hash['groups'][$groupName]['relations'][] = $subHash;
             }
         }
 
         return $hash;
-    }
-
-    /**
-     * Converts a persistence $fieldValue to a Value.
-     *
-     * @param \eZ\Publish\SPI\Persistence\Content\FieldValue $fieldValue
-     *
-     * @return Value
-     */
-    public function fromPersistenceValue(PersistenceValue $fieldValue)
-    {
-        if (is_array($fieldValue->data) && !empty($fieldValue->data)) {
-            $relations = [];
-            $groups    = [];
-
-            if (is_array($fieldValue->data['relations'] ?? false) && !empty($fieldValue->data['relations'])) {
-                foreach ($fieldValue->data['relations'] as $datum) {
-                    $relation = [
-                        'contentId'  => $datum['contentId'],
-                        'attributes' => [],
-                    ];
-
-                    foreach ($datum['attributes'] as $identifier => $attribute) {
-                        $relation['attributes'][$identifier] =
-                            $this->relationAttributeTransformer->fromPersistentValue(
-                                $attribute['value'],
-                                $attribute['type']
-                            );
-                    }
-
-                    $relations[] = new Relation($relation);
-                }
-            }
-
-            if (is_array($fieldValue->data['groups'] ?? false) && !empty($fieldValue->data['groups'])) {
-                foreach ($fieldValue->data['groups'] as $groupIdentifier => $group) {
-                    $groupRelations = [];
-
-                    foreach ($group['relations'] ?? [] as $datum) {
-                        $relation = [
-                            'contentId'  => $datum['contentId'],
-                            'attributes' => [],
-                        ];
-
-                        foreach ($datum['attributes'] as $identifier => $attribute) {
-                            $relation['attributes'][$identifier] =
-                                $this->relationAttributeTransformer->fromPersistentValue(
-                                    $attribute['value'],
-                                    $attribute['type']
-                                );
-                        }
-
-                        $groupRelations[] = new Relation($relation);
-                    }
-
-                    $groups[$groupIdentifier] = new Group($groupIdentifier, $groupRelations);
-                }
-            }
-
-            return new Value($relations, $groups);
-        }
-
-        return $this->getEmptyValue();
     }
 
     /**
@@ -332,6 +303,20 @@ class Type extends FieldType implements Nameable
                     ],
                     "[$validatorIdentifier]"
                 );
+            } elseif (!isset($this->validatorConfigurationSchema[$validatorIdentifier]['default'])) {
+                foreach (array_keys($constraints) as $constraintIdentifier) {
+                    if (!isset($this->validatorConfigurationSchema[$validatorIdentifier][$constraintIdentifier])) {
+                        $validationErrors[] = new ValidationError(
+                            "Validator '%validator%'.%constraint% is unknown",
+                            null,
+                            [
+                                'validator'  => $validatorIdentifier,
+                                'constraint' => $constraintIdentifier,
+                            ],
+                            "[$validatorIdentifier][$constraintIdentifier]"
+                        );
+                    }
+                }
             }
         }
 
@@ -392,21 +377,8 @@ class Type extends FieldType implements Nameable
      */
     public function validate(FieldDefinition $fieldDefinition, SPIValue $value)
     {
-        $validationErrors = [];
-
+        $validationErrors     = [];
         $attributeDefinitions = $fieldDefinition->getFieldSettings()['attributeDefinitions'];
-
-        foreach ($value->relations as $relation) {
-            foreach ($relation->attributes as $key => $attribute) {
-                if ($attribute instanceof AbstractValue) {
-                    $relation->attributes[$key] =
-                        $this->relationAttributeTransformer->convertAbstractValue(
-                            $attribute,
-                            $attributeDefinitions[$key]['type']
-                        );
-                }
-            }
-        }
 
         $relationIndex   = 0;
         $attributeErrors = [];

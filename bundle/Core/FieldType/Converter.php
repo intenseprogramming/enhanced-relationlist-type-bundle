@@ -110,10 +110,13 @@ class Converter implements ConverterInterface
             /** @var DOMElement $group */
             foreach ($groups->item(0)->getElementsByTagName('group') as $group) {
                 $groupName                              = $group->getAttribute('name');
-                $fieldValue->data['groups'][$groupName] = [];
+                $fieldValue->data['groups'][$groupName] = [
+                    'name'      => $groupName,
+                    'relations' => [],
+                ];
 
                 foreach ($group->getElementsByTagName('relation') as $relation) {
-                    $fieldValue->data['groups'][$groupName][] = $this->resolveRelationElement($relation);
+                    $fieldValue->data['groups'][$groupName]['relations'][] = $this->resolveRelationElement($relation);
                 }
             }
         }

@@ -1,0 +1,25 @@
+language: php
+
+matrix:
+    include:
+        - php: 7.1
+        - php: 7.2
+        - php: nightly
+
+cache:
+    directories:
+        - $HOME/.composer/cache/files
+
+branches:
+    only:
+        - master
+        - develop
+
+before_install:
+    - composer selfupdate
+    # composer install (without .lock) consumes lots of memory.
+    - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+    - travis_retry composer install --prefer-dist --no-interaction
+
+script:
+    - vendor/bin/phpunit -c phpunit.xml --coverage-text

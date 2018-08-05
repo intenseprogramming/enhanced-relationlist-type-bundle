@@ -12,6 +12,11 @@
   },
   "authors": [
     {
+      "name": "Steve Konrad",
+      "email": "skonrad@wingmail.net",
+      "homepage": "http://www.intense-programming.de"
+    },
+    {
       "name": "IntenseProgramming",
       "homepage": "http://www.intense-programming.de"
     }

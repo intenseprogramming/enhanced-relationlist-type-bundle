@@ -156,7 +156,7 @@ class RelationAttributeExtension extends Twig_Extension
     public function renderAttributeDefinition(FieldDefinition $fieldDefinition, $attributeDefinition, $params)
     {
         return $this->attributeBlockRenderer
-            ->load('@IntProgEnhancedRelationList/erl_attributes_definition.html.twig')
+            ->load('IntProgEnhancedRelationListBundle::erl_attributes_definition.html.twig')
             ->renderBlock(
                 $attributeDefinition['type'] . '_relation_attribute_definition',
                 [
@@ -184,7 +184,7 @@ class RelationAttributeExtension extends Twig_Extension
     public function renderAttributeDefinitionInput(FieldDefinition $fieldDefinition, $attributeDefinition, $params)
     {
         return $this->attributeBlockRenderer
-            ->load('@IntProgEnhancedRelationList/erl_attributes_definition_edit.html.twig')
+            ->load('IntProgEnhancedRelationListBundle::erl_attributes_definition_edit.html.twig')
             ->renderBlock(
                 $attributeDefinition['type'] . '_relation_attribute_definition_edit',
                 [

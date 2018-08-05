@@ -16,7 +16,6 @@ use eZ\Publish\SPI\Persistence\Content\Field;
 use eZ\Publish\SPI\Persistence\Content\Type as FieldType;
 use eZ\Publish\SPI\Persistence\Content\Type\Handler;
 use eZ\Publish\SPI\Persistence\Content\VersionInfo;
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 
 /**
@@ -186,14 +185,12 @@ class Storage extends GatewayBasedStorage
                 continue;
             }
 
-            $abstractValue = new AbstractValue(null);
-            $relation['attributes'][$identifier] =
-                [
-                    'value' => $this->repository->toPersistentValue(
-                        $this->repository->convertAbstractValue($abstractValue, $attributeDefinition['type'])
-                    ),
-                    'type'  => $attributeDefinition['type'],
-                ];
+            $relation['attributes'][$identifier] = [
+                'value' => $this->repository->toPersistentValue(
+                    $this->repository->getEmptyValue($attributeDefinition['type'])
+                ),
+                'type'  => $attributeDefinition['type'],
+            ];
         }
 
         foreach (array_keys($relation['attributes']) as $identifier) {

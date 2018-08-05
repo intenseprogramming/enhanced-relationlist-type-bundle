@@ -16,11 +16,6 @@ use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\Boolean as Misma
 
 class IntegerTest extends TestCase
 {
-    public function testFromAbstractValue()
-    {
-        $this->markTestSkipped('Is deprecated!');
-    }
-
     public function testFromHash()
     {
         $integer = new Integer();
@@ -56,5 +51,12 @@ class IntegerTest extends TestCase
         $this->assertNotEmpty($integer->validate(new Value(['value' => 200]), ['settings' => ['max' => 150]]));
         $this->assertNotEmpty($integer->validate(new Value(['value' => 200]), ['settings' => ['min' => 250]]));
         $this->assertNotEmpty($integer->validate(new Value(['value' => 'test']), []));
+    }
+
+    public function testGetEmptyValue()
+    {
+        $integer = new Integer();
+
+        $this->assertTrue($integer->isEmpty($integer->getEmptyValue()), 'Empty value should be marked as empty.');
     }
 }

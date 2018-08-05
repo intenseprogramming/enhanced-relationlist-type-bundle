@@ -11,7 +11,6 @@
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
 use eZ\Publish\Core\FieldType\Value as BaseValue;
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Group;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
 
@@ -45,14 +44,6 @@ class Value extends BaseValue
         $this->groups    = [];
 
         foreach ($relations as $relation) {
-            if (is_array($relation) && isset($relation['contentId']) && isset($relation['attributes'])) {
-                foreach ($relation['attributes'] as $attributeIndex => $value) {
-                    $relation['attributes'][$attributeIndex] = new AbstractValue($value);
-                }
-
-                $relation = new Relation($relation);
-            }
-
             if (!($relation instanceof Relation)) {
                 continue;
             }
@@ -62,7 +53,7 @@ class Value extends BaseValue
 
         foreach ($groups as $groupName => $group) {
             if (!($group instanceof Group)) {
-                $group = new Group($groupName, $group);
+                continue;
             }
 
             $this->groups[$group->name] = $group;

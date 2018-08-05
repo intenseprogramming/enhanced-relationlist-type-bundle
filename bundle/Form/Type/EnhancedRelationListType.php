@@ -12,8 +12,6 @@ namespace IntProg\EnhancedRelationListBundle\Form\Type;
 
 use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\ContentTypeService;
-use eZ\Publish\API\Repository\Exceptions\NotFoundException;
-use eZ\Publish\API\Repository\FieldTypeService;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldValueTransformer;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
@@ -42,27 +40,19 @@ class EnhancedRelationListType extends AbstractType
     /** @var RelationAttributeRepository $transformer */
     protected $transformer;
 
-    /** @var FieldTypeService $fieldTypeService */
-    private $fieldTypeService;
-
     /**
      * EnhancedRelationListType constructor.
      *
-     * @param FieldTypeService            $fieldTypeService
      * @param ContentService              $contentService
-     * @param ContentTypeService          $contentTypeService
      * @param RelationAttributeRepository $transformer
      */
     public function __construct(
-        FieldTypeService $fieldTypeService,
         ContentService $contentService,
-        ContentTypeService $contentTypeService,
         RelationAttributeRepository $transformer
-    ) {
-        $this->fieldTypeService   = $fieldTypeService;
-        $this->contentService     = $contentService;
-        $this->contentTypeService = $contentTypeService;
-        $this->transformer        = $transformer;
+    )
+    {
+        $this->contentService = $contentService;
+        $this->transformer    = $transformer;
     }
 
     /**
@@ -111,20 +101,6 @@ class EnhancedRelationListType extends AbstractType
                 $options['sub_attributes']
             )
         );
-    }
-
-    /**
-     * Builds the form view.
-     *
-     * @param FormView      $view
-     * @param FormInterface $form
-     * @param array         $options
-     *
-     * @return void
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        parent::buildView($view, $form, $options);
     }
 
     /**

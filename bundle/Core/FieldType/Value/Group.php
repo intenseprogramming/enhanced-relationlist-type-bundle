@@ -11,7 +11,6 @@
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
 
 use eZ\Publish\API\Repository\Values\ValueObject;
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 
 /**
  * Class Group.
@@ -33,14 +32,6 @@ class Group extends ValueObject
         $this->name = $name;
 
         foreach ($relations as $relation) {
-            if (is_array($relation) && isset($relation['contentId']) && isset($relation['attributes'])) {
-                foreach ($relation['attributes'] as $attributeIndex => $value) {
-                    $relation['attributes'][$attributeIndex] = new AbstractValue($value);
-                }
-
-                $relation = new Relation($relation);
-            }
-
             if (!($relation instanceof Relation)) {
                 continue;
             }

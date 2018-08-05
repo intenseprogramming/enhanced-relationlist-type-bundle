@@ -10,7 +10,7 @@
 
 namespace IntProg\EnhancedRelationListBundle\Core;
 
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
+use eZ\Publish\SPI\FieldType\ValidationError;
 
 /**
  * Class RelationAttributeConverter.
@@ -21,17 +21,6 @@ use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
  */
 abstract class RelationAttributeConverter
 {
-    /**
-     * Generates a value from abstract value.
-     *
-     * @param AbstractValue $abstractValue
-     *
-     * @return mixed
-     *
-     * @deprecated will be removed in first stable release.
-     */
-    abstract public function fromAbstractValue(AbstractValue $abstractValue);
-
     /**
      * Generates a hash for the attribute value.
      *
@@ -46,7 +35,7 @@ abstract class RelationAttributeConverter
      *
      * @param $hash
      *
-     * @return mixed
+     * @return RelationAttributeBase
      */
     abstract public function fromHash($hash);
 
@@ -56,7 +45,7 @@ abstract class RelationAttributeConverter
      * @param RelationAttributeBase $attribute
      * @param array                 $definition
      *
-     * @return mixed
+     * @return array|ValidationError[]
      */
     abstract public function validate(RelationAttributeBase $attribute, $definition);
 
@@ -65,7 +54,14 @@ abstract class RelationAttributeConverter
      *
      * @param RelationAttributeBase $attribute
      *
-     * @return mixed
+     * @return boolean
      */
     abstract public function isEmpty(RelationAttributeBase $attribute);
+
+    /**
+     * Returns an empty value of the type.
+     *
+     * @return RelationAttributeBase
+     */
+    abstract public function getEmptyValue();
 }

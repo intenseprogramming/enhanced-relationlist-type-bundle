@@ -48,11 +48,6 @@ class RelationAttributeRepositoryTest extends TestCase
         $this->assertCount(1, $this->getTransformer()->validate(new Integer(), 'integer', ['required' => true]));
     }
 
-    public function testConvertAbstractValue()
-    {
-        $this->markTestSkipped('Is deprecated!');
-    }
-
     protected function getTransformer()
     {
         return new RelationAttributeRepository($this->getConverters());

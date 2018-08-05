@@ -11,7 +11,6 @@
 namespace IntProg\EnhancedRelationListBundle\Service;
 
 use eZ\Publish\Core\FieldType\ValidationError;
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeConverter;
 
@@ -48,18 +47,15 @@ class RelationAttributeRepository
     }
 
     /**
-     * Generates a value from abstract value.
+     * Returns an empty value for the requested type.
      *
-     * @param AbstractValue $abstractValue
-     * @param string        $targetType
+     * @param $targetType
      *
-     * @return mixed
-     *
-     * @deprecated will be removed in first stable release.
+     * @return RelationAttributeBase
      */
-    public function convertAbstractValue(AbstractValue $abstractValue, $targetType)
+    public function getEmptyValue($targetType)
     {
-        return $this->converters[$targetType]->fromAbstractValue($abstractValue);
+        return $this->converters[$targetType]->getEmptyValue();
     }
 
     /**

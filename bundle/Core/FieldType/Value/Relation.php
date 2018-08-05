@@ -11,7 +11,6 @@
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
 
 use eZ\Publish\API\Repository\Values\ValueObject;
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
 
 /**
@@ -38,15 +37,16 @@ class Relation extends ValueObject
     {
         parent::__construct($properties);
 
-        $this->attributes = array_map(
-            function ($attribute) {
-                if ($attribute instanceof RelationAttributeBase) {
-                    return $attribute;
-                }
+        $attributes = [];
 
-                return new AbstractValue($attribute);
-            },
-            $this->attributes ?? []
-        );
+        foreach ($this->attributes as $identifier => $attribute) {
+            if (!($attribute instanceof RelationAttributeBase)) {
+                continue;
+            }
+
+            $attributes[$identifier] = $attribute;
+        }
+
+        $this->attributes = $attributes;
     }
 }

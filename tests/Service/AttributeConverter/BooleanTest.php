@@ -16,11 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 class BooleanTest extends TestCase
 {
-    public function testFromAbstractValue()
-    {
-        $this->markTestSkipped('Is deprecated!');
-    }
-
     public function testFromHash()
     {
         $boolean = new Boolean();
@@ -52,5 +47,12 @@ class BooleanTest extends TestCase
         $boolean = new Boolean();
 
         $this->assertEmpty($boolean->validate(new Value(['value' => false]), []));
+    }
+
+    public function testGetEmptyValue()
+    {
+        $boolean = new Boolean();
+
+        $this->assertTrue($boolean->isEmpty($boolean->getEmptyValue()), 'Empty value should be marked as empty.');
     }
 }

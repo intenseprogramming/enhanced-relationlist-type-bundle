@@ -16,11 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 class SelectionTest extends TestCase
 {
-    public function testFromAbstractValue()
-    {
-        $this->markTestSkipped('Is deprecated!');
-    }
-
     public function testFromHash()
     {
         $selection = new Selection();
@@ -52,5 +47,12 @@ class SelectionTest extends TestCase
         $selection = new Selection();
 
         $this->assertEmpty($selection->validate(new Value(['selection' => false]), []));
+    }
+
+    public function testGetEmptyValue()
+    {
+        $selection = new Selection();
+
+        $this->assertTrue($selection->isEmpty($selection->getEmptyValue()), 'Empty value should be marked as empty.');
     }
 }

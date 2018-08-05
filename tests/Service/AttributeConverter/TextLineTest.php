@@ -16,11 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 class TextLineTest extends TestCase
 {
-    public function testFromAbstractValue()
-    {
-        $this->markTestSkipped('Is deprecated!');
-    }
-
     public function testFromHash()
     {
         $textLine = new TextLine();
@@ -54,5 +49,12 @@ class TextLineTest extends TestCase
         $this->assertEmpty($textLine->validate(new Value(['value' => 'test string']), []));
         $this->assertNotEmpty($textLine->validate(new Value(['value' => 'test string']), ['settings' => ['minLength' => 50]]));
         $this->assertNotEmpty($textLine->validate(new Value(['value' => 'test string']), ['settings' => ['maxLength' => 5]]));
+    }
+
+    public function testGetEmptyValue()
+    {
+        $textLine = new TextLine();
+
+        $this->assertTrue($textLine->isEmpty($textLine->getEmptyValue()), 'Empty value should be marked as empty.');
     }
 }

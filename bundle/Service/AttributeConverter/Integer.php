@@ -11,7 +11,6 @@
 namespace IntProg\EnhancedRelationListBundle\Service\AttributeConverter;
 
 use eZ\Publish\Core\FieldType\ValidationError;
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\Integer as IntegerValue;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeConverter;
@@ -25,20 +24,6 @@ use IntProg\EnhancedRelationListBundle\Core\RelationAttributeConverter;
  */
 class Integer extends RelationAttributeConverter
 {
-    /**
-     * Generates a value from abstract value.
-     *
-     * @param AbstractValue $abstractValue
-     *
-     * @return mixed
-     *
-     * @deprecated will be removed in first stable release.
-     */
-    public function fromAbstractValue(AbstractValue $abstractValue)
-    {
-        return $this->fromHash($abstractValue->value);
-    }
-
     /**
      * Generates a hash for the attribute value.
      *
@@ -60,7 +45,7 @@ class Integer extends RelationAttributeConverter
      *
      * @param $hash
      *
-     * @return mixed
+     * @return RelationAttributeBase
      */
     public function fromHash($hash)
     {
@@ -73,7 +58,7 @@ class Integer extends RelationAttributeConverter
      * @param RelationAttributeBase $attribute
      * @param array                 $definition
      *
-     * @return mixed
+     * @return array|ValidationError[]
      */
     public function validate(RelationAttributeBase $attribute, $definition)
     {
@@ -106,7 +91,7 @@ class Integer extends RelationAttributeConverter
      *
      * @param RelationAttributeBase $attribute
      *
-     * @return mixed
+     * @return boolean
      */
     public function isEmpty(RelationAttributeBase $attribute)
     {
@@ -115,5 +100,15 @@ class Integer extends RelationAttributeConverter
         }
 
         return true;
+    }
+
+    /**
+     * Returns an empty value of the type.
+     *
+     * @return RelationAttributeBase
+     */
+    public function getEmptyValue()
+    {
+        return new IntegerValue();
     }
 }

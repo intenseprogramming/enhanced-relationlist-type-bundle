@@ -10,7 +10,6 @@
 
 namespace IntProg\EnhancedRelationListBundle\Service\AttributeConverter;
 
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\Selection as SelectionValue;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeConverter;
@@ -24,20 +23,6 @@ use IntProg\EnhancedRelationListBundle\Core\RelationAttributeConverter;
  */
 class Selection extends RelationAttributeConverter
 {
-    /**
-     * Generates a value from abstract value.
-     *
-     * @param AbstractValue $abstractValue
-     *
-     * @return mixed
-     *
-     * @deprecated will be removed in first stable release.
-     */
-    public function fromAbstractValue(AbstractValue $abstractValue)
-    {
-        return $this->fromHash($abstractValue->value);
-    }
-
     /**
      * Generates a hash for the attribute value.
      *
@@ -59,7 +44,7 @@ class Selection extends RelationAttributeConverter
      *
      * @param $hash
      *
-     * @return mixed
+     * @return RelationAttributeBase
      */
     public function fromHash($hash)
     {
@@ -76,7 +61,7 @@ class Selection extends RelationAttributeConverter
      * @param RelationAttributeBase $attribute
      * @param array                 $definition
      *
-     * @return mixed
+     * @return array
      */
     public function validate(RelationAttributeBase $attribute, $definition)
     {
@@ -88,7 +73,7 @@ class Selection extends RelationAttributeConverter
      *
      * @param RelationAttributeBase $attribute
      *
-     * @return mixed
+     * @return boolean
      */
     public function isEmpty(RelationAttributeBase $attribute)
     {
@@ -97,5 +82,15 @@ class Selection extends RelationAttributeConverter
         }
 
         return true;
+    }
+
+    /**
+     * Returns an empty value of the type.
+     *
+     * @return RelationAttributeBase
+     */
+    public function getEmptyValue()
+    {
+        return new SelectionValue();
     }
 }

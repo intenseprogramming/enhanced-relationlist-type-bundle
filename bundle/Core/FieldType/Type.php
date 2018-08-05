@@ -21,7 +21,6 @@ use eZ\Publish\SPI\Persistence\Content\FieldValue as PersistenceValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\AbstractValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Group;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
-use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\SystemGroup;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 
 /**
@@ -500,6 +499,16 @@ class Type extends FieldType implements Nameable
             array_values(array_unique($relations[ApiRelation::FIELD]));
 
         return array_filter($relations);
+    }
+
+    /**
+     * Returns whether the field type is searchable.
+     *
+     * @return bool
+     */
+    public function isSearchable()
+    {
+        return true;
     }
 
     /**

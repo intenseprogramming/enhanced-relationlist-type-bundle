@@ -34,15 +34,28 @@ class SearchField implements Indexable
      */
     public function getIndexData(Field $field, FieldDefinition $fieldDefinition)
     {
+        $relationContentIds = [];
+
+        foreach ($field->value->data['relations'] as $relation) {
+            $relationContentIds[] = $relation['contentId'];
+        }
+        foreach ($field->value->data['groups'] as $group) {
+            foreach ($group['relations'] as $relation) {
+                $relationContentIds[] = $relation['contentId'];
+            }
+        }
+
+        $relationContentIds = array_unique($relationContentIds, SORT_NUMERIC);
+
         return array(
             new Search\Field(
                 'value',
-                [], // TODO: generate array of relation ids.
+                $relationContentIds,
                 new Search\FieldType\MultipleStringField()
             ),
             new Search\Field(
                 'sort_value',
-                implode('-', []), // TODO: generate array of relation ids.
+                implode('-', $relationContentIds),
                 new Search\FieldType\StringField()
             ),
         );

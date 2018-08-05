@@ -24,6 +24,11 @@ class Boolean extends RelationAttributeBase
     /** @var integer $value */
     public $value;
 
+    /**
+     * Boolean constructor.
+     *
+     * @param array $properties
+     */
     public function __construct(array $properties = [])
     {
         parent::__construct($properties);

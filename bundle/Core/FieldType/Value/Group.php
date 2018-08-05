@@ -48,5 +48,4 @@ class Group extends ValueObject
             $this->relations[] = $relation;
         }
     }
-
 }

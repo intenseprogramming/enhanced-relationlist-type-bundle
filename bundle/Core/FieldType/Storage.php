@@ -10,6 +10,7 @@
 
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
+use eZ\Publish\API\Repository\Exceptions\NotFoundException;
 use eZ\Publish\SPI\FieldType\GatewayBasedStorage;
 use eZ\Publish\SPI\Persistence\Content\Field;
 use eZ\Publish\SPI\Persistence\Content\Type as FieldType;
@@ -48,14 +49,32 @@ class Storage extends GatewayBasedStorage
         $this->contentTypeHandler = $contentTypeHandler;
         $this->repository         = $repository;
         $this->languages          = $languages;
-
     }
 
+    /**
+     * Method not in use.
+     *
+     * @param VersionInfo $versionInfo
+     * @param Field       $field
+     * @param array       $context
+     *
+     * @return void
+     */
     public function storeFieldData(VersionInfo $versionInfo, Field $field, array $context)
     {
-        return;
     }
 
+    /**
+     * Cleans up the storage data (not external source used).
+     *
+     * @param VersionInfo $versionInfo
+     * @param Field       $field
+     * @param array       $context
+     *
+     * @return void
+     *
+     * @throws NotFoundException
+     */
     public function getFieldData(VersionInfo $versionInfo, Field $field, array $context)
     {
         $fieldDefinition = $this->contentTypeHandler->getFieldDefinition(
@@ -110,21 +129,52 @@ class Storage extends GatewayBasedStorage
         $field->value->data['groups'] = $groupValue;
     }
 
+    /**
+     * Method not in use.
+     *
+     * @param VersionInfo $versionInfo
+     * @param array       $fieldIds
+     * @param array       $context
+     *
+     * @return void
+     */
     public function deleteFieldData(VersionInfo $versionInfo, array $fieldIds, array $context)
     {
         return;
     }
 
+    /**
+     * Method not in use.
+     *
+     * @return true
+     */
     public function hasFieldData()
     {
         return true;
     }
 
+    /**
+     * Method not in use.
+     *
+     * @param VersionInfo $versionInfo
+     * @param Field       $field
+     * @param array       $context
+     *
+     * @return bool|\eZ\Publish\SPI\Search\Field[]
+     */
     public function getIndexData(VersionInfo $versionInfo, Field $field, array $context)
     {
         return false;
     }
 
+    /**
+     * Normalizes a relation by adding missing attributes and removing undefined attributes.
+     *
+     * @param array $relation
+     * @param array $attributeDefinitions
+     *
+     * @return array
+     */
     protected function normalizeRelation(array $relation, array $attributeDefinitions)
     {
         foreach ($attributeDefinitions as $identifier => $attributeDefinition) {

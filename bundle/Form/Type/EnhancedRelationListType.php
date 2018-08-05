@@ -58,27 +58,38 @@ class EnhancedRelationListType extends AbstractType
         ContentService $contentService,
         ContentTypeService $contentTypeService,
         RelationAttributeRepository $transformer
-    )
-    {
+    ) {
         $this->fieldTypeService   = $fieldTypeService;
         $this->contentService     = $contentService;
         $this->contentTypeService = $contentTypeService;
         $this->transformer        = $transformer;
     }
 
+    /**
+     * Returns the name of the form type.
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the name of the parent type.
+     *
+     * @return string
      */
     public function getParent()
     {
         return TextType::class;
     }
 
+    /**
+     * Returns the prefix of the template block name for this type.
+     *
+     * @return string
+     */
     public function getBlockPrefix()
     {
         return 'intprogenhancedrelationlist';
@@ -91,14 +102,11 @@ class EnhancedRelationListType extends AbstractType
      * @param array                $options
      *
      * @return void
-     *
-     * @throws NotFoundException
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addModelTransformer(
             new FieldValueTransformer(
-                $this->fieldTypeService->getFieldType('intprogenhancedrelationlist'),
                 $this->transformer,
                 $options['sub_attributes']
             )
@@ -106,13 +114,28 @@ class EnhancedRelationListType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * Builds the form view.
+     *
+     * @param FormView      $view
+     * @param FormInterface $form
+     * @param array         $options
+     *
+     * @return void
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);
     }
 
+    /**
+     * Finishes the form view.
+     *
+     * @param FormView      $view
+     * @param FormInterface $form
+     * @param array         $options
+     *
+     * @return void
+     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['limit']                            = $options['selection_limit'];
@@ -144,7 +167,9 @@ class EnhancedRelationListType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * Configures the options for this type.
+     *
+     * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {

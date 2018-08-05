@@ -28,8 +28,6 @@ class FieldDefinitionAttributesTransformer implements DataTransformerInterface
      * @param mixed $value The value in the original representation
      *
      * @return mixed The value in the transformed representation
-     *
-     * @throws TransformationFailedException when the transformation fails
      */
     public function transform($value)
     {
@@ -42,8 +40,6 @@ class FieldDefinitionAttributesTransformer implements DataTransformerInterface
      * @param mixed $value The value in the transformed representation
      *
      * @return mixed The value in the original representation
-     *
-     * @throws TransformationFailedException when the transformation fails
      */
     public function reverseTransform($value)
     {

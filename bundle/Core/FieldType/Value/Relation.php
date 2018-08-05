@@ -29,6 +29,11 @@ class Relation extends ValueObject
     /** @var array|RelationAttributeBase[] */
     public $attributes;
 
+    /**
+     * Relation constructor.
+     *
+     * @param array $properties
+     */
     public function __construct(array $properties = [])
     {
         parent::__construct($properties);

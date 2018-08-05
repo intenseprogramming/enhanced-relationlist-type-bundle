@@ -41,26 +41,38 @@ class EnhancedRelationListFieldDefinitionAttributesType extends AbstractType
         $this->attributeRepository = $attributeRepository;
     }
 
+    /**
+     * Returns the name of the form type.
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the name of the parent type.
+     *
+     * @return string
      */
     public function getParent()
     {
         return HiddenType::class;
     }
 
+    /**
+     * Returns the prefix of the template block name for this type.
+     *
+     * @return string
+     */
     public function getBlockPrefix()
     {
         return 'intprogenhancedrelationlist_definition_attributes';
     }
 
     /**
-     * Adds the model transformer.
+     * Builds the form.
      *
      * @param FormBuilderInterface $builder
      * @param array                $options
@@ -74,6 +86,15 @@ class EnhancedRelationListFieldDefinitionAttributesType extends AbstractType
         );
     }
 
+    /**
+     * Builds the form view.
+     *
+     * @param FormView      $view
+     * @param FormInterface $form
+     * @param array         $options
+     *
+     * @return void
+     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         parent::buildView($view, $form, $options);

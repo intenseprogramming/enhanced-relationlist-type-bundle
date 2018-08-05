@@ -26,19 +26,31 @@ use Symfony\Component\Form\FormView;
  */
 class EnhancedRelationListFieldDefinitionGroupsType extends AbstractType
 {
+    /**
+     * Returns the name of the form type.
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the name of the parent type.
+     *
+     * @return string
      */
     public function getParent()
     {
         return HiddenType::class;
     }
 
+    /**
+     * Returns the prefix of the template block name for this type.
+     *
+     * @return string
+     */
     public function getBlockPrefix()
     {
         return 'intprogenhancedrelationlist_definition_groups';
@@ -60,7 +72,13 @@ class EnhancedRelationListFieldDefinitionGroupsType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * Finishes the form view.
+     *
+     * @param FormView      $view
+     * @param FormInterface $form
+     * @param array         $options
+     *
+     * @return void
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {

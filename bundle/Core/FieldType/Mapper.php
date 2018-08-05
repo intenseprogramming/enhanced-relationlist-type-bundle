@@ -31,6 +31,14 @@ use Symfony\Component\Form\FormInterface;
  */
 class Mapper extends AbstractRelationFormMapper
 {
+    /**
+     * Adds the form fields for the field definition edit.
+     *
+     * @param FormInterface       $fieldDefinitionForm
+     * @param FieldDefinitionData $data
+     *
+     * @return void
+     */
     public function mapFieldDefinitionForm(FormInterface $fieldDefinitionForm, FieldDefinitionData $data)
     {
         $fieldDefinitionForm
@@ -126,6 +134,14 @@ class Mapper extends AbstractRelationFormMapper
             );
     }
 
+    /**
+     * Adds the form field to the field value edit.
+     *
+     * @param FormInterface $fieldForm
+     * @param FieldData     $data
+     *
+     * @return void
+     */
     public function mapFieldValueForm(FormInterface $fieldForm, FieldData $data)
     {
         $fieldDefinition = $data->fieldDefinition;

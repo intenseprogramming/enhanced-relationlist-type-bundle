@@ -18,6 +18,8 @@ use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
  * @package   IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute
  * @author    Konrad, Steve <s.konrad@wingmail.net>
  * @copyright 2018 Intense Programming
+ *
+ * @deprecated will be removed in first stable release.
  */
 class AbstractValue extends RelationAttributeBase
 {

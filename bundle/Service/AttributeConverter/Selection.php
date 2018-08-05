@@ -24,11 +24,27 @@ use IntProg\EnhancedRelationListBundle\Core\RelationAttributeConverter;
  */
 class Selection extends RelationAttributeConverter
 {
+    /**
+     * Generates a value from abstract value.
+     *
+     * @param AbstractValue $abstractValue
+     *
+     * @return mixed
+     *
+     * @deprecated will be removed in first stable release.
+     */
     public function fromAbstractValue(AbstractValue $abstractValue)
     {
         return $this->fromHash($abstractValue->value);
     }
 
+    /**
+     * Generates a hash for the attribute value.
+     *
+     * @param RelationAttributeBase $attribute
+     *
+     * @return mixed
+     */
     public function toHash(RelationAttributeBase $attribute)
     {
         if ($attribute instanceof SelectionValue) {
@@ -38,6 +54,13 @@ class Selection extends RelationAttributeConverter
         return null;
     }
 
+    /**
+     * Generates an attribute value from hash.
+     *
+     * @param $hash
+     *
+     * @return mixed
+     */
     public function fromHash($hash)
     {
         if (!is_array($hash) && is_numeric($hash)) {
@@ -47,11 +70,26 @@ class Selection extends RelationAttributeConverter
         return new SelectionValue(['selection' => $hash]);
     }
 
+    /**
+     * Validates the attribute value against the definition.
+     *
+     * @param RelationAttributeBase $attribute
+     * @param array                 $definition
+     *
+     * @return mixed
+     */
     public function validate(RelationAttributeBase $attribute, $definition)
     {
         return [];
     }
 
+    /**
+     * Returns true if the value is empty.
+     *
+     * @param RelationAttributeBase $attribute
+     *
+     * @return mixed
+     */
     public function isEmpty(RelationAttributeBase $attribute)
     {
         if ($attribute instanceof SelectionValue) {

@@ -25,11 +25,27 @@ use IntProg\EnhancedRelationListBundle\Core\RelationAttributeConverter;
  */
 class TextLine extends RelationAttributeConverter
 {
+    /**
+     * Generates a value from abstract value.
+     *
+     * @param AbstractValue $abstractValue
+     *
+     * @return mixed
+     *
+     * @deprecated will be removed in first stable release.
+     */
     public function fromAbstractValue(AbstractValue $abstractValue)
     {
         return $this->fromHash($abstractValue->value);
     }
 
+    /**
+     * Generates a hash for the attribute value.
+     *
+     * @param RelationAttributeBase $attribute
+     *
+     * @return mixed
+     */
     public function toHash(RelationAttributeBase $attribute)
     {
         if ($attribute instanceof TextLineValue) {
@@ -39,29 +55,51 @@ class TextLine extends RelationAttributeConverter
         return null;
     }
 
+    /**
+     * Generates an attribute value from hash.
+     *
+     * @param $hash
+     *
+     * @return mixed
+     */
     public function fromHash($hash)
     {
         return new TextLineValue(['value' => $hash]);
     }
 
+    /**
+     * Validates the attribute value against the definition.
+     *
+     * @param RelationAttributeBase $attribute
+     * @param array                 $definition
+     *
+     * @return mixed
+     */
     public function validate(RelationAttributeBase $attribute, $definition)
     {
         $errors = [];
 
         if ($attribute instanceof TextLineValue) {
-                $min = $definition['settings']['minLength'] ?? null;
-                $max = $definition['settings']['maxLength'] ?? null;
+            $min = $definition['settings']['minLength'] ?? null;
+            $max = $definition['settings']['maxLength'] ?? null;
 
-                if ($min !== false && $min > mb_strlen($attribute->value)) {
-                    $errors[] = new ValidationError('Value must contain at least %min% characters.', null, ['%min%' => $min]);
-                } elseif ($max !== null && $max < mb_strlen($attribute->value)) {
-                    $errors[] = new ValidationError('Value can only contain up to %max% characters.', null, ['%max%' => $max]);
-                }
+            if ($min !== false && $min > mb_strlen($attribute->value)) {
+                $errors[] = new ValidationError('Value must contain at least %min% characters.', null, ['%min%' => $min]);
+            } elseif ($max !== null && $max < mb_strlen($attribute->value)) {
+                $errors[] = new ValidationError('Value can only contain up to %max% characters.', null, ['%max%' => $max]);
+            }
         }
 
         return $errors;
     }
 
+    /**
+     * Returns true if the value is empty.
+     *
+     * @param RelationAttributeBase $attribute
+     *
+     * @return mixed
+     */
     public function isEmpty(RelationAttributeBase $attribute)
     {
         if ($attribute instanceof TextLineValue) {

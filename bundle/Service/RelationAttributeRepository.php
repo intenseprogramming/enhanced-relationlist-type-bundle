@@ -37,26 +37,65 @@ class RelationAttributeRepository
         $this->converters = $converters;
     }
 
+    /**
+     * Returns the available attribute converters.
+     *
+     * @return array|RelationAttributeConverter[]
+     */
     public function getConverters()
     {
         return $this->converters;
     }
 
+    /**
+     * Generates a value from abstract value.
+     *
+     * @param AbstractValue $abstractValue
+     * @param string        $targetType
+     *
+     * @return mixed
+     *
+     * @deprecated will be removed in first stable release.
+     */
     public function convertAbstractValue(AbstractValue $abstractValue, $targetType)
     {
         return $this->converters[$targetType]->fromAbstractValue($abstractValue);
     }
 
+    /**
+     * Generates an attribute value from hash.
+     *
+     * @param mixed  $value
+     * @param string $targetType
+     *
+     * @return RelationAttributeBase
+     */
     public function fromPersistentValue($value, $targetType)
     {
         return $this->converters[$targetType]->fromHash($value);
     }
 
+    /**
+     * Generates a has from attribute value.
+     *
+     * @param RelationAttributeBase $attribute
+     *
+     * @return mixed
+     */
     public function toPersistentValue(RelationAttributeBase $attribute)
     {
         return $this->converters[$attribute->getTypeIdentifier()]->toHash($attribute);
     }
 
+    /**
+     * Validates the attribute value against the definition.
+     *
+     * @param RelationAttributeBase $attribute
+     * @param string                $identifier
+     * @param array|mixed           $definition
+     *
+     * @return array|mixed
+     */
     public function validate(RelationAttributeBase $attribute, $identifier, $definition)
     {
         if ($definition['required'] ?? false) {
@@ -66,7 +105,7 @@ class RelationAttributeRepository
                         'The attribute "%identifier%" is required.',
                         null,
                         [
-                            '%identifier%' => $identifier
+                            '%identifier%' => $identifier,
                         ]
                     ),
                 ];

@@ -77,12 +77,12 @@ class RelationAttributeExtension extends Twig_Extension
     }
 
     /**
-     * TODO: Insert description for renderAttribute.
+     * Renders the attribute.
      *
      * @param Field                 $field
      * @param RelationAttributeBase $attribute
      * @param array                 $attributeDefinition
-     * @param                       $params
+     * @param array                 $params
      *
      * @return string
      *
@@ -105,12 +105,12 @@ class RelationAttributeExtension extends Twig_Extension
     }
 
     /**
-     * TODO: Insert description for renderAttributeInput.
+     * Renders the input field for the attribute.
      *
      * @param Field $field
-     * @param       $value
+     * @param array $value
      * @param array $attributeDefinition
-     * @param       $params
+     * @param array $params
      *
      * @return string
      *
@@ -140,11 +140,11 @@ class RelationAttributeExtension extends Twig_Extension
     }
 
     /**
-     * TODO: Insert description for renderAttributeDefinition.
+     * Renders the attribute definition.
      *
      * @param FieldDefinition $fieldDefinition
-     * @param                 $attributeDefinition
-     * @param                 $params
+     * @param array           $attributeDefinition
+     * @param array           $params
      *
      * @return string
      *
@@ -168,11 +168,11 @@ class RelationAttributeExtension extends Twig_Extension
     }
 
     /**
-     * TODO: Insert description for renderAttributeDefinitionInput.
+     * Renders the input fields for an attribute definition.
      *
      * @param FieldDefinition $fieldDefinition
-     * @param                 $attributeDefinition
-     * @param                 $params
+     * @param array           $attributeDefinition
+     * @param array           $params
      *
      * @return string
      *

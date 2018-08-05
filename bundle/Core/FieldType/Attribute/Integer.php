@@ -24,6 +24,11 @@ class Integer extends RelationAttributeBase
     /** @var integer $value */
     public $value;
 
+    /**
+     * Integer constructor.
+     *
+     * @param array $properties
+     */
     public function __construct(array $properties = [])
     {
         parent::__construct($properties);

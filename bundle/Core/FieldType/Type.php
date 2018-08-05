@@ -36,6 +36,7 @@ class Type extends FieldType implements Nameable
     /** @var RelationAttributeRepository $relationAttributeTransformer */
     protected $relationAttributeTransformer;
 
+    /** @var array $settingsSchema */
     protected $settingsSchema = [
         'attributeDefinitions'     => [
             'type'    => 'array',
@@ -73,6 +74,7 @@ class Type extends FieldType implements Nameable
         ],
     ];
 
+    /** @var array $validatorConfigurationSchema */
     protected $validatorConfigurationSchema = [
         'relationValidator' => [
             'allowedContentTypes' => [
@@ -102,11 +104,9 @@ class Type extends FieldType implements Nameable
         foreach ($this->getSettingsSchema() as $key => $value) {
             if (!isset($value['default'])) {
                 foreach ($value as $subKey => $subValue) {
-                    if (isset($fieldSettings[$key][$subKey])) {
-                        continue;
+                    if (!isset($fieldSettings[$key][$subKey])) {
+                        $fieldSettings[$key][$subKey] = $subValue['default'];
                     }
-
-                    $fieldSettings[$key][$subKey] = $subValue['default'];
                 }
 
                 continue;
@@ -408,8 +408,6 @@ class Type extends FieldType implements Nameable
                 }
             }
         }
-
-        // TODO: Check if content types of relations are allowed. Would be nice.
 
         $relationIndex   = 0;
         $attributeErrors = [];

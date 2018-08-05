@@ -186,12 +186,8 @@ class Converter implements ConverterInterface
             $groupNode = $doc->createElement('group');
             $groupNode->setAttribute('identifier', $identifier);
 
-            if (is_array($names)) {
-                foreach ($names as $languageCode => $name) {
-                    $groupNode->setAttribute($languageCode, $name);
-                }
-            } else {
-                $groupNode->setAttribute('name', $names);
+            foreach ($names as $languageCode => $name) {
+                $groupNode->setAttribute($languageCode, $name);
             }
 
             $groupsNode->appendChild($groupNode);
@@ -311,15 +307,11 @@ class Converter implements ConverterInterface
             $fieldSettings['groupSettings']['groups'] = [];
             /** @var DOMElement $groupElement */
             foreach ($groupSettingElement->getElementsByTagName('group') as $groupElement) {
-                if ($groupElement->hasAttribute('name')) {
-                    $groupValue = $groupElement->getAttribute('name');
-                } else {
-                    $groupValue = [];
-                    /** @var DOMAttr $attribute */
-                    foreach ($groupElement->attributes as $attribute) {
-                        if ($attribute->name != 'identifier') {
-                            $groupValue[$attribute->name] = $attribute->value;
-                        }
+                $groupValue = [];
+                /** @var DOMAttr $attribute */
+                foreach ($groupElement->attributes as $attribute) {
+                    if ($attribute->name != 'identifier') {
+                        $groupValue[$attribute->name] = $attribute->value;
                     }
                 }
 
@@ -382,8 +374,7 @@ class Converter implements ConverterInterface
     protected function resolveRelationElement(DOMElement $element)
     {
         $relation = [
-            'contentId'  => $element->getAttribute('content-id'),
-            'group'      => null,
+            'contentId'  => (integer) $element->getAttribute('content-id'),
             'attributes' => [],
         ];
 

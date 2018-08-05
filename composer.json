@@ -1,9 +1,15 @@
 {
   "name": "intprog/enhanced-relationlist-type-bundle",
-  "description": "This bundle contains the enhanced relation list field type for eZ Platform version 2.",
+  "description": "This bundle contains the enhanced relation list field type for eZ Platform version 2.x",
   "homepage": "http://www.intense-programming.com",
   "type": "ezplatform-bundle",
   "license": "MIT",
+  "archive": {
+    "exclude": [
+      "tests",
+      "phpunit*.xml"
+    ]
+  },
   "authors": [
     {
       "name": "IntenseProgramming",

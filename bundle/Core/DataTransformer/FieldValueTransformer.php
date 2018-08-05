@@ -57,6 +57,10 @@ class FieldValueTransformer extends EzFieldValueTransformer
             ];
 
             foreach ($relation->attributes as $identifier => $attribute) {
+                if (!isset($this->configuration[$identifier])) {
+                    continue;
+                }
+
                 $relationValue['attributes'][$identifier] = $this->transformer->toPersistentValue($attribute);
             }
 
@@ -73,6 +77,10 @@ class FieldValueTransformer extends EzFieldValueTransformer
                 ];
 
                 foreach ($relation->attributes as $identifier => $attribute) {
+                    if (!isset($this->configuration[$identifier])) {
+                        continue;
+                    }
+
                     $relationValue['attributes'][$identifier] = $this->transformer->toPersistentValue($attribute);
                 }
 
@@ -88,7 +96,7 @@ class FieldValueTransformer extends EzFieldValueTransformer
      *
      * @param mixed $value
      *
-     * @return \eZ\Publish\SPI\FieldType\Value
+     * @return Value
      */
     public function reverseTransform($value)
     {
@@ -113,6 +121,8 @@ class FieldValueTransformer extends EzFieldValueTransformer
 
             foreach ($relation['attributes'] ?? [] as $identifier => $attribute) {
                 if (!isset($this->configuration[$identifier])) {
+                    unset($relation['attributes'][$identifier]);
+
                     continue;
                 }
 

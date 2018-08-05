@@ -62,10 +62,10 @@ class Value extends BaseValue
 
         foreach ($groups as $groupName => $group) {
             if (!($group instanceof Group)) {
-                $group = new Group($group);
+                $group = new Group($groupName, $group);
             }
 
-            $this->groups[$groupName] = $group;
+            $this->groups[$group->name] = $group;
         }
     }
 

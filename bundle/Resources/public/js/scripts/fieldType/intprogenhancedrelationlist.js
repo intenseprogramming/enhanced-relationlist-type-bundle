@@ -223,7 +223,7 @@
                     <td class="erl-drag-column erl-drag-handle">
                         <i class="drag-icon" />
                     </td>
-                    <td class="slim"><label class="slim-content"><input type="checkbox"></label></td>
+                    <td class="slim"><label class="slim-content"><input class="erl-remove-control" type="checkbox"></label></td>
                     <td data-value-path="contentId">
                         ${item.ContentInfo.Content.Name}
                         <input type="hidden" value="${item.ContentInfo.Content._id}">
@@ -237,15 +237,14 @@
 
             addBtn[methodName]('disabled', true);
         };
-        const updateTrashBtnState = (event) => {
-            if (!event.target.hasAttribute('type') || event.target.type !== 'checkbox') {
-                return;
+        const updateTrashBtnState = () => {
+            const anySelected = findDeleteCheckboxes().some(item => {return item.checked === true});
+
+            if (anySelected) {
+                trashBtn.removeAttribute('disabled');
+            } else {
+                trashBtn.setAttribute('disabled', 'disabled');
             }
-
-            const anySelected = findDeleteCheckboxes().some(item => item.checked === true);
-            const methodName = anySelected ? 'removeAttribute' : 'setAttribute';
-
-            trashBtn[methodName]('disabled', true);
         };
         const removeItem = (event) => {
             event.preventDefault();
@@ -256,12 +255,14 @@
 
             updateJson();
             updateAddBtnState();
+            updateTrashBtnState();
         };
         const findDeleteCheckboxes = () => {
             return [...relationsContainer.querySelectorAll('.erl-remove-control[type="checkbox"]')];
         };
         const attachRowEventHandlers = () => {
             fieldContainer.querySelectorAll(SELECTOR_INPUT).forEach((item) => {item.addEventListener('change', updateJson);});
+            findDeleteCheckboxes().forEach((checkbox) => {checkbox.addEventListener('change', updateTrashBtnState)});
 
             if (sortHandler) {
                 sortHandler.destroy();
@@ -293,7 +294,6 @@
         ].forEach(btn => btn.addEventListener('click', addGroup, false));
 
         trashBtn.addEventListener('click', removeItem, false);
-        relationsContainer.addEventListener('change', updateTrashBtnState, false);
 
         // validator.init();
 

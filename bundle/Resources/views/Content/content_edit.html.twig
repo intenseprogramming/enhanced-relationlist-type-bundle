@@ -87,6 +87,9 @@
             {{ erl_render_attribute_input(fieldDefinition, attributeDefinition, null, []) }}
         </td>
     {% endfor %}
+    {% if attributeDefinitions is empty %}
+        <th> </th>
+    {% endif %}
 {% endspaceless %}
 {% endmacro %}
 

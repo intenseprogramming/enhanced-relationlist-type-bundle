@@ -39,7 +39,7 @@ class Relation extends ValueObject
 
         $attributes = [];
 
-        foreach ($this->attributes as $identifier => $attribute) {
+        foreach ($this->attributes ?? [] as $identifier => $attribute) {
             if (!($attribute instanceof RelationAttributeBase)) {
                 continue;
             }

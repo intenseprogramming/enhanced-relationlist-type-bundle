@@ -1,5 +1,6 @@
 
 [![Build Status](https://travis-ci.org/intenseprogramming/enhanced-relationlist-type-bundle.svg?branch=master)](https://travis-ci.org/intenseprogramming/enhanced-relationlist-type-bundle)
+[![codecov](https://codecov.io/gh/intenseprogramming/enhanced-relationlist-type-bundle/branch/master/graph/badge.svg)](https://codecov.io/gh/intenseprogramming/enhanced-relationlist-type-bundle)
 
 # IntProg Enhanced Relation List Type Bundle
 

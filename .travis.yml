@@ -22,4 +22,7 @@ before_install:
     - travis_retry composer install --prefer-dist --no-interaction
 
 script:
-    - vendor/bin/phpunit -c phpunit-no-coverage.xml --coverage-text
+    - vendor/bin/phpunit -c phpunit-no-coverage.xml --coverage-clover=clover.xml
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)

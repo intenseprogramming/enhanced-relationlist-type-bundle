@@ -13,38 +13,14 @@ Additionally the relations may be grouped (via predefined or on the fly created 
 
 The behavior of the relation list is completely controlled by the field definition (settings/validation).
 
+Refer to [the general information](doc/GENERAL.md) and [usage documentation](doc/USAGE.md) for more information.
+
 ## Installation
 
-#### Install the bundle
+The installation uses composer and the general concept for adding bundles to a symfony installation.
 
-Get the bundle using composer
-
-```
-composer require intprog/enhanced-relationlist-type-bundle
-```
-
-#### Enable the bundle in kernel
- 
-Add the bundle to registerBundles in your Kernel.
- 
-```php
-// app/AppKernel.php
-public function registerBundles()
-{
-    $bundles = [
-        // ...
-        new IntProg\EnhancedRelationListBundle\IntProgEnhancedRelationListBundle(),
-        // ...
-    ];
-    
-    // ...
-}
-```
-
-#### Add the field type
-
-Create new content type with the attribute `Content relations (enhanced)` or add it to an available content type.
+Refer to [the installation document](doc/INSTALLATION.md) for more information.
 
 ## Configuration
 
-All settings are defined when editing/creating the content type containing the field.
+Refer to [the installation document](doc/CONFIGURATION.md) on how to configure fields of this type.

@@ -357,9 +357,10 @@ class Converter implements ConverterInterface
         $relationNode->setAttribute('content-id', $relation['contentId']);
 
         foreach ($relation['attributes'] as $identifier => $attribute) {
-            $attributeNode = $document->createElement('attribute', json_encode($attribute['value']));
+            $attributeNode = $document->createElement('attribute');
             $attributeNode->setAttribute('identifier', $identifier);
             $attributeNode->setAttribute('type', $attribute['type']);
+            $attributeNode->textContent = json_encode($attribute['value']);
 
             $relationNode->appendChild($attributeNode);
         }

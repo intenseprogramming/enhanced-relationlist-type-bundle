@@ -11,7 +11,6 @@
 namespace IntProg\EnhancedRelationListBundle\Core\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 
 /**
  * Class FieldDefinitionAttributesTransformer.

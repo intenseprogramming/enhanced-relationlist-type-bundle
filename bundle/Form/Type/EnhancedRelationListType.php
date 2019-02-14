@@ -12,6 +12,7 @@ namespace IntProg\EnhancedRelationListBundle\Form\Type;
 
 use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\ContentTypeService;
+use eZ\Publish\SPI\FieldType\ValidationError;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldValueTransformer;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
@@ -133,13 +134,23 @@ class EnhancedRelationListType extends AbstractType
             json_decode($form->getNormData(), true)
         );
 
-        $data            = $form->getData();
-        $attributeErrors = [];
+        $data       = $form->getData();
+        $rowsErrors = [];
         if ($data instanceof Value) {
-            $attributeErrors = $data->attributeErrors;
+            foreach ($data->attributeErrors as $index => $attributeErrors) {
+                $rowErrors = [];
+                foreach ($attributeErrors as $attributeIdentifier => $attributeError) {
+                    foreach ($attributeError as $error) {
+                        if ($error instanceof ValidationError) {
+                            $rowErrors[$attributeIdentifier][] = (string) $error->getTranslatableMessage();
+                        }
+                    }
+                }
+                $rowsErrors[$index] = $rowErrors;
+            }
         }
 
-        $view->vars['attribute_errors'] = $attributeErrors;
+        $view->vars['attribute_errors'] = $rowsErrors;
     }
 
     /**

@@ -1,0 +1,171 @@
+
+table.erl-table {
+    background-color: transparent;
+    border-spacing: 0 2px !important;
+    border-collapse: separate;
+    table-layout: fixed;
+    margin-top: -2px;
+    margin-bottom: 1rem;
+}
+
+.ez-table-header.erl-table-header .add-flyout-container {
+    position: relative;
+
+    .add-flyout {
+        box-shadow: 0.2rem 0.2rem 0.3rem;
+        position: absolute;
+        width: 20rem;
+        right: 2rem;
+        top: 3rem;
+        background: #f15a10;
+        border-radius: .25rem;
+        padding: .5rem;
+
+        .button-connector {
+            position: absolute;
+            top: -0.3rem;
+            right: 1.25rem;
+            width: 2rem;
+            height: 0.3rem;
+            background: #f15a10;
+        }
+        .description {
+            text-align: center;
+            margin-bottom: .5rem;
+        }
+
+        .action-button-container {
+            display: grid;
+
+            .add-group-button {
+                grid-column: 1;
+            }
+            .add-relation-button {
+                grid-column: 2;
+            }
+        }
+    }
+}
+
+table.erl-table, .enhanced-relation-list-react-container .drag-clone-container {
+    th {
+        border-bottom: 0;
+    }
+
+    tr>td, tr>th {
+        background-color: #f5f5f5;
+
+        &.unselectable {
+            user-select: none;
+        }
+    }
+    tr>td {
+        border-top: 1px solid #888;
+        border-bottom: 1px solid #888;
+        padding-top: .25rem;
+        padding-bottom: .25rem;
+    }
+    tr .erl-drag-column, tr .erl-no-drag-column {
+        width: 28px;
+        padding: 0;
+    }
+    tr .erl-drag-column.erl-drag-handle {
+        border-top-left-radius: 1em;
+        border-bottom-left-radius: 1em;
+        background-color: #ccc;
+        cursor: move;
+    }
+    tr .erl-drag-column.erl-drag-handle .drag-icon {
+        color: #333;
+        display: flex;
+        content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 30"><path d="M 14 3 L 9 8 L 19 8 L 14 3 z M 4 11 L 4 12 L 24 12 L 24 11 L 4 11 z M 4 15 L 4 16 L 24 16 L 24 15 L 4 15 z M 4 19 L 4 20 L 24 20 L 24 19 L 4 19 z M 14 27 L 9 23 L 19 23 L 14 27 z"/></svg>');
+    }
+
+    tr .slim {
+        width: 20px;
+        padding: 0 14px;
+    }
+    tr .slim>.slim-content {
+        padding: 0;
+    }
+
+    .form-control, label {
+        margin-bottom: 0;
+    }
+
+    tr.erl-relation-group td {
+        background: #ddd;
+    }
+
+    .erl-attribute-container {
+        position: relative;
+    }
+    .erl-attribute-container .error-bubble {
+        position: absolute;
+        top: 1px;
+        left: 1px;
+        height: 1em;
+        width: 1em;
+        background-color: #f44;
+        border-radius: 1em;
+        display: none;
+    }
+    .erl-attribute-container.has-error .error-bubble {
+        z-index: 1;
+        display: block;
+    }
+    .erl-attribute-container .error-bubble .error-container {
+        padding: 0.5em;
+        pointer-events: none;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        width: max-content;
+        max-width: 25em;
+
+        background: #fceaec;
+        border-radius: 0.25em;
+        border: 1px #f44 solid;
+        position: absolute;
+        bottom: .5em;
+        left: .5em;
+
+        -webkit-transition: opacity .25s ease-in-out;
+        -moz-transition: opacity .25s ease-in-out;
+        -o-transition: opacity .25s ease-in-out;
+        transition: opacity .25s ease-in-out;
+    }
+    .erl-attribute-container .error-bubble:hover .error-container {
+        display: block;
+        pointer-events: auto;
+        filter: alpha(opacity=100);
+        opacity: 1;
+    }
+    .erl-attribute-container .error-bubble .error-container ul {
+        padding: 0 0 0 1.6em;
+        margin: 0;
+    }
+
+    .erl-attribute-item *[data-erl-language-code], .erl-group-item *[data-erl-language-code] {
+        display: none;
+    }
+    .erl-attribute-item *[data-erl-language-code].active, .erl-group-item *[data-erl-language-code].active {
+        display: unset;
+    }
+
+    .erl-selection-attribute-edit .input-group {
+        margin-bottom: .25rem;
+    }
+    .erl-selection-attribute-edit .input-group:last-child {
+        margin-bottom: 0;
+    }
+}
+
+table.erl-table.drag-clone-container {
+    margin: 0;
+    border-spacing: 0 !important;
+
+    tr {
+        display: table;
+        table-layout: fixed;
+    }
+}

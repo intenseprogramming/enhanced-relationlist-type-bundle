@@ -1,0 +1,3 @@
+templates_theme_paths:
+    standard:
+        - '%kernel.root_dir%/../vendor/intprog/enhanced-relationlist-type-bundle/bundle/Resources/views'

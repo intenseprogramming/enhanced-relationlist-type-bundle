@@ -10,6 +10,8 @@
 
 namespace IntProg\EnhancedRelationListBundle\Form\Type;
 
+use eZ\Publish\API\Repository\Exceptions\NotFoundException;
+use eZ\Publish\API\Repository\LanguageService;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldDefinitionGroupsTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -26,6 +28,16 @@ use Symfony\Component\Form\FormView;
  */
 class EnhancedRelationListFieldDefinitionGroupsType extends AbstractType
 {
+    protected $languageService;
+
+    protected $languages;
+
+    public function __construct(LanguageService $languageService, array $languages)
+    {
+        $this->languageService = $languageService;
+        $this->languages       = $languages;
+    }
+
     /**
      * Returns the name of the form type.
      *
@@ -82,6 +94,22 @@ class EnhancedRelationListFieldDefinitionGroupsType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
+
+        $languageMap = [];
+        foreach ($this->languages as $languageCode) {
+            try {
+                $language = $this->languageService->loadLanguage($languageCode);
+            } catch (NotFoundException $exception) {
+                continue;
+            }
+
+            $languageMap[] = [
+                'code' => $language->languageCode,
+                'name' => $language->name,
+            ];
+        }
+
+        $view->vars['languageMap']             = $languageMap;
         $view->vars['array_data'] = json_decode($form->getNormData(), true);
     }
 }

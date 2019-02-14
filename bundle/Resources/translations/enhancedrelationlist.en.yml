@@ -1,0 +1,13 @@
+# global
+header.relation: Relations
+table.header.relation: Relation
+
+# content edit
+content_edit.add.flyout.description: Do you want to add a new group or relation to the list?
+content_edit.add.flyout.add_group: Add Group
+content_edit.add.flyout.add_relation: Add Relation
+
+table.column.group_name: "Group name:"
+
+# udw
+udw.title: Select content

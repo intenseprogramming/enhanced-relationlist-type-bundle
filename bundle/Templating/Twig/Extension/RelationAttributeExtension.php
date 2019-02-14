@@ -13,9 +13,13 @@ namespace IntProg\EnhancedRelationListBundle\Templating\Twig\Extension;
 use eZ\Publish\API\Repository\Values\Content\Field;
 use eZ\Publish\API\Repository\Values\ContentType\FieldDefinition;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
-use Twig_Environment;
-use Twig_Extension;
-use Twig_SimpleFunction;
+use Throwable;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * Class RelationAttributeExtension.
@@ -24,9 +28,9 @@ use Twig_SimpleFunction;
  * @author    Konrad, Steve <s.konrad@wingmail.net>
  * @copyright 2018 Intense Programming
  */
-class RelationAttributeExtension extends Twig_Extension
+class RelationAttributeExtension extends AbstractExtension
 {
-    /** @var Twig_Environment */
+    /** @var Environment */
     protected $attributeBlockRenderer;
 
     /**
@@ -37,36 +41,36 @@ class RelationAttributeExtension extends Twig_Extension
     public function getFunctions()
     {
         return [
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'erl_render_attribute',
-                function (Twig_Environment $environment, Field $field, RelationAttributeBase $attribute, $attributeDefinition, array $params = []) {
+                function (Environment $environment, Field $field, RelationAttributeBase $attribute, $attributeDefinition, array $params = []) {
                     $this->attributeBlockRenderer = $environment;
 
                     return $this->renderAttribute($field, $attribute, $attributeDefinition, $params);
                 },
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'erl_render_attribute_input',
-                function (Twig_Environment $environment, Field $field, $attributeDefinition, $value, $params = []) {
+                function (Environment $environment, Field $field, $attributeDefinition, $value, $params = []) {
                     $this->attributeBlockRenderer = $environment;
 
                     return $this->renderAttributeInput($field, $value, $attributeDefinition, $params);
                 },
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'erl_render_attribute_definition',
-                function (Twig_Environment $environment, FieldDefinition $fieldDefinition, $attributeDefinition, array $params = []) {
+                function (Environment $environment, FieldDefinition $fieldDefinition, $attributeDefinition, array $params = []) {
                     $this->attributeBlockRenderer = $environment;
 
                     return $this->renderAttributeDefinition($fieldDefinition, $attributeDefinition, $params);
                 },
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
-            new Twig_SimpleFunction(
+            new TwigFunction(
                 'erl_render_attribute_definition_input',
-                function (Twig_Environment $environment, FieldDefinition $fieldDefinition, $attributeDefinition, $params = []) {
+                function (Environment $environment, FieldDefinition $fieldDefinition, $attributeDefinition, $params = []) {
                     $this->attributeBlockRenderer = $environment;
 
                     return $this->renderAttributeDefinitionInput($fieldDefinition, $attributeDefinition, $params);
@@ -86,10 +90,10 @@ class RelationAttributeExtension extends Twig_Extension
      *
      * @return string
      *
-     * @throws \Throwable
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Throwable
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function renderAttribute(Field $field, RelationAttributeBase $attribute, array $attributeDefinition, $params)
     {
@@ -114,10 +118,10 @@ class RelationAttributeExtension extends Twig_Extension
      *
      * @return string
      *
-     * @throws \Throwable
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Throwable
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function renderAttributeInput(Field $field, $value, array $attributeDefinition, $params)
     {
@@ -148,10 +152,10 @@ class RelationAttributeExtension extends Twig_Extension
      *
      * @return string
      *
-     * @throws \Throwable
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Throwable
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function renderAttributeDefinition(FieldDefinition $fieldDefinition, $attributeDefinition, $params)
     {
@@ -176,10 +180,10 @@ class RelationAttributeExtension extends Twig_Extension
      *
      * @return string
      *
-     * @throws \Throwable
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws Throwable
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function renderAttributeDefinitionInput(FieldDefinition $fieldDefinition, $attributeDefinition, $params)
     {

@@ -10,6 +10,8 @@
 
 namespace IntProg\EnhancedRelationListBundle\Form\Type;
 
+use eZ\Publish\API\Repository\Exceptions\NotFoundException;
+use eZ\Publish\API\Repository\LanguageService;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldDefinitionAttributesTransformer;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 use Symfony\Component\Form\AbstractType;
@@ -30,14 +32,27 @@ class EnhancedRelationListFieldDefinitionAttributesType extends AbstractType
     /** @var RelationAttributeRepository $attributeRepository */
     protected $attributeRepository;
 
+    /** @var LanguageService $languageService */
+    protected $languageService;
+
+    protected $languages;
+
     /**
      * EnhancedRelationListFieldDefinitionAttributesType constructor.
      *
      * @param RelationAttributeRepository $attributeRepository
+     * @param LanguageService             $languageService
+     * @param array                       $languages
      */
-    public function __construct(RelationAttributeRepository $attributeRepository)
+    public function __construct(
+        RelationAttributeRepository $attributeRepository,
+        LanguageService $languageService,
+        array $languages
+    )
     {
         $this->attributeRepository = $attributeRepository;
+        $this->languageService     = $languageService;
+        $this->languages           = $languages;
     }
 
     /**
@@ -98,6 +113,21 @@ class EnhancedRelationListFieldDefinitionAttributesType extends AbstractType
     {
         parent::buildView($view, $form, $options);
 
+        $languageMap = [];
+        foreach ($this->languages as $languageCode) {
+            try {
+                $language = $this->languageService->loadLanguage($languageCode);
+            } catch (NotFoundException $exception) {
+                continue;
+            }
+
+            $languageMap[] = [
+                'code' => $language->languageCode,
+                'name' => $language->name,
+            ];
+        }
+
+        $view->vars['languageMap']             = $languageMap;
         $view->vars['availableAttributeTypes'] = array_keys($this->attributeRepository->getConverters());
         $view->vars['attributesData']          = $form->getData();
     }

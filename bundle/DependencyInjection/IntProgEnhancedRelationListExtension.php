@@ -60,6 +60,7 @@ class IntProgEnhancedRelationListExtension extends Extension implements PrependE
         $configsDir = __DIR__ . '/../Resources/config/';
         $configs    = [
             'twig.yml'               => 'twig',
+            'ezdesign.yml'               => 'ezdesign',
             'ez_field_templates.yml' => 'ezpublish',
         ];
 
@@ -68,5 +69,16 @@ class IntProgEnhancedRelationListExtension extends Extension implements PrependE
             $container->prependExtensionConfig($namespace, $config);
             $container->addResource(new FileResource($configsDir . $file));
         }
+
+        $container->prependExtensionConfig(
+            'bazinga_js_translation',
+            [
+                'active_domains' => [
+                    'enhancedrelationlist',
+                    'enhancedrelationlist_definition_attribute',
+                    'enhancedrelationlist_definition_group',
+                ]
+            ]
+        );
     }
 }

@@ -58,11 +58,11 @@ class Mapper implements FieldDefinitionFormMapperInterface, FieldValueFormMapper
     {
         $fieldDefinitionForm
             ->add(
-                'selectionDefaultLocation',
+                'defaultBrowseLocation',
                 HiddenType::class,
                 [
                     'required'      => false,
-                    'property_path' => 'fieldSettings[selectionDefaultLocation]',
+                    'property_path' => 'fieldSettings[defaultBrowseLocation]',
                     'label'         => 'field_definition.intprogenhancedrelationlist.selection_default_location',
                 ]
             )

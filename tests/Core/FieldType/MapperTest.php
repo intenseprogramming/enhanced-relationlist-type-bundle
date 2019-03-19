@@ -10,6 +10,8 @@
 
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
+use eZ\Publish\API\Repository\Values\ContentType\ContentType;
+use eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup;
 use eZ\Publish\Core\Repository\ContentTypeService;
 use eZ\Publish\Core\Repository\Values\ContentType\FieldDefinition;
 use EzSystems\RepositoryForms\Data\Content\FieldData;
@@ -25,7 +27,14 @@ class MapperTest extends TestCase
     public function testMapFieldDefinitionForm()
     {
         $contentTypeService = $this->createMock(ContentTypeService::class);
-        $contentTypeService->expects($this->once())->method('loadContentTypeGroups')->willReturn([]);
+        $contentTypeService->expects($this->once())->method('loadContentTypeGroups')->willReturn([
+            $this->createMock(ContentTypeGroup::class)
+        ]);
+        $contentTypeService->expects($this->once())->method('loadContentTypes')->willReturn([
+            $this->createContentTypeMock('foo', 'Foo'),
+            $this->createContentTypeMock('bar', 'Bar'),
+            $this->createContentTypeMock('baz', 'Baz'),
+        ]);
 
         $fieldForm = $this->createMock(Form::class);
         $fieldForm->expects($this->exactly(9))->method('add')->willReturn($fieldForm);
@@ -132,5 +141,22 @@ class MapperTest extends TestCase
                 ],
             ],
         ]);
+    }
+
+    /**
+     * Returns mock of the ContentType.
+     *
+     * @param string $identifier
+     * @param string $name
+     *
+     * @return ContentType
+     */
+    private function createContentTypeMock(string $identifier, string $name): ContentType
+    {
+        $contentType = $this->createMock(ContentType::class);
+        $contentType->expects($this->once())->method('getName')->willReturn($name);
+        $contentType->expects($this->once())->method('__get')->with('identifier')->willReturn($identifier);
+
+        return $contentType;
     }
 }

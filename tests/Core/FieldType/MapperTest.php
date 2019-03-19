@@ -10,6 +10,8 @@
 
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
+use eZ\Publish\API\Repository\Values\ContentType\ContentType;
+use eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup;
 use eZ\Publish\Core\Repository\ContentTypeService;
 use eZ\Publish\Core\Repository\Values\ContentType\FieldDefinition;
 use EzSystems\RepositoryForms\Data\Content\FieldData;
@@ -25,7 +27,12 @@ class MapperTest extends TestCase
     public function testMapFieldDefinitionForm()
     {
         $contentTypeService = $this->createMock(ContentTypeService::class);
-        $contentTypeService->expects($this->once())->method('loadContentTypeGroups')->willReturn([]);
+        $contentTypeService->expects($this->once())->method('loadContentTypeGroups')->willReturn([
+            $this->createMock(ContentTypeGroup::class)
+        ]);
+        $contentTypeService->expects($this->once())->method('loadContentTypes')->willReturn([
+            $this->createMock(ContentType::class)
+        ]);
 
         $fieldForm = $this->createMock(Form::class);
         $fieldForm->expects($this->exactly(9))->method('add')->willReturn($fieldForm);

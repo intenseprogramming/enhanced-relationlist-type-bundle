@@ -10,9 +10,11 @@
 
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
+use eZ\Publish\API\Repository\ContentTypeService;
 use EzSystems\RepositoryForms\Data\Content\FieldData;
 use EzSystems\RepositoryForms\Data\FieldDefinitionData;
-use EzSystems\RepositoryForms\FieldType\Mapper\AbstractRelationFormMapper;
+use EzSystems\RepositoryForms\FieldType\FieldDefinitionFormMapperInterface;
+use EzSystems\RepositoryForms\FieldType\FieldValueFormMapperInterface;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionAttributesType;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionGroupsType;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListType;
@@ -29,8 +31,21 @@ use Symfony\Component\Form\FormInterface;
  * @author    Konrad, Steve <s.konrad@wingmail.net>
  * @copyright 2018 Intense Programming
  */
-class Mapper extends AbstractRelationFormMapper
+class Mapper implements FieldDefinitionFormMapperInterface, FieldValueFormMapperInterface
 {
+    /** @var ContentTypeService Used to fetch list of available content types */
+    private $contentTypeService;
+
+    /**
+     * Mapper constructor.
+     *
+     * @param ContentTypeService $contentTypeService
+     */
+    public function __construct(ContentTypeService $contentTypeService)
+    {
+        $this->contentTypeService = $contentTypeService;
+    }
+
     /**
      * Adds the form fields for the field definition edit.
      *
@@ -173,4 +188,22 @@ class Mapper extends AbstractRelationFormMapper
                     ->getForm()
             );
     }
+
+   /**
+     * Fill a hash with all content types and their identifiers.
+     *
+     * @return array
+     */
+   private function getContentTypesHash(): array
+   {
+       $contentTypeHash = [];
+       foreach ($this->contentTypeService->loadContentTypeGroups() as $contentTypeGroup) {
+           foreach ($this->contentTypeService->loadContentTypes($contentTypeGroup) as $contentType) {
+               $contentTypeHash[$contentType->getName()] = $contentType->identifier;
+           }
+       }
+       ksort($contentTypeHash);
+
+       return $contentTypeHash;
+   }
 }

@@ -31,9 +31,7 @@ class MapperTest extends TestCase
             $this->createMock(ContentTypeGroup::class)
         ]);
         $contentTypeService->expects($this->once())->method('loadContentTypes')->willReturn([
-            $this->createContentTypeMock('foo', 'Foo'),
-            $this->createContentTypeMock('bar', 'Bar'),
-            $this->createContentTypeMock('baz', 'Baz'),
+            $this->createMock(ContentType::class)
         ]);
 
         $fieldForm = $this->createMock(Form::class);
@@ -141,22 +139,5 @@ class MapperTest extends TestCase
                 ],
             ],
         ]);
-    }
-
-    /**
-     * Returns mock of the ContentType.
-     *
-     * @param string $identifier
-     * @param string $name
-     *
-     * @return ContentType
-     */
-    private function createContentTypeMock(string $identifier, string $name): ContentType
-    {
-        $contentType = $this->createMock(ContentType::class);
-        $contentType->expects($this->once())->method('getName')->willReturn($name);
-        $contentType->expects($this->once())->method('__get')->with('identifier')->willReturn($identifier);
-
-        return $contentType;
     }
 }

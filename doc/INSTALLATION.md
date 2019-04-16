@@ -27,15 +27,26 @@ public function registerBundles()
 }
 ```
 
-Add the bundle to the list of assetic bundles.
+## Add required nodejs packages to your installation
 
-```yaml
-assetic:
-    # ...
-    bundles:
-        # ...
-        - IntProgEnhancedRelationListBundle
-        # ...
+```
+npm install array-move@^2.1.0 react-sortable-hoc@^1.8.3
+```
+
+or
+
+```
+yarn add array-move@^2.1.0 react-sortable-hoc@^1.8.3 --save
+```
+
+## Build the javascript and style assets
+
+This bundle is no longer using assetic (as of 1.1.x). Assets are build with encore (default since ezplatform 2.5.x).
+
+Have a look at the [official documentation](https://doc.ezplatform.com/en/2.5/releases/updating_ez_platform/).
+
+```
+yarn encore prod
 ```
 
 ## Add the field type

@@ -51,29 +51,11 @@ class RelationAttributeExtension extends AbstractExtension
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
             new TwigFunction(
-                'erl_render_attribute_input',
-                function (Environment $environment, Field $field, $attributeDefinition, $value, $params = []) {
-                    $this->attributeBlockRenderer = $environment;
-
-                    return $this->renderAttributeInput($field, $value, $attributeDefinition, $params);
-                },
-                ['is_safe' => ['html'], 'needs_environment' => true]
-            ),
-            new TwigFunction(
                 'erl_render_attribute_definition',
                 function (Environment $environment, FieldDefinition $fieldDefinition, $attributeDefinition, array $params = []) {
                     $this->attributeBlockRenderer = $environment;
 
                     return $this->renderAttributeDefinition($fieldDefinition, $attributeDefinition, $params);
-                },
-                ['is_safe' => ['html'], 'needs_environment' => true]
-            ),
-            new TwigFunction(
-                'erl_render_attribute_definition_input',
-                function (Environment $environment, FieldDefinition $fieldDefinition, $attributeDefinition, $params = []) {
-                    $this->attributeBlockRenderer = $environment;
-
-                    return $this->renderAttributeDefinitionInput($fieldDefinition, $attributeDefinition, $params);
                 },
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
@@ -109,41 +91,6 @@ class RelationAttributeExtension extends AbstractExtension
     }
 
     /**
-     * Renders the input field for the attribute.
-     *
-     * @param Field $field
-     * @param array $value
-     * @param array $attributeDefinition
-     * @param array $params
-     *
-     * @return string
-     *
-     * @throws Throwable
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function renderAttributeInput(Field $field, $value, array $attributeDefinition, $params)
-    {
-        $errors = [];
-        if (isset($params['errors'])) {
-            $errors = $params['errors'];
-            unset($params['errors']);
-        }
-
-        return $this->attributeBlockRenderer->load('IntProgEnhancedRelationListBundle::erl_attributes_edit.html.twig')->renderBlock(
-            $attributeDefinition['type'] . '_relation_attribute_edit',
-            [
-                'value'      => $value,
-                'definition' => $attributeDefinition,
-                'field'      => $field,
-                'parameters' => $params,
-                'hasErrors'  => !empty($errors),
-            ]
-        );
-    }
-
-    /**
      * Renders the attribute definition.
      *
      * @param FieldDefinition $fieldDefinition
@@ -163,34 +110,6 @@ class RelationAttributeExtension extends AbstractExtension
             ->load('IntProgEnhancedRelationListBundle::erl_attributes_definition.html.twig')
             ->renderBlock(
                 $attributeDefinition['type'] . '_relation_attribute_definition',
-                [
-                    'definition'      => $attributeDefinition,
-                    'fieldDefinition' => $fieldDefinition,
-                    'parameters'      => $params,
-                ]
-            );
-    }
-
-    /**
-     * Renders the input fields for an attribute definition.
-     *
-     * @param FieldDefinition $fieldDefinition
-     * @param array           $attributeDefinition
-     * @param array           $params
-     *
-     * @return string
-     *
-     * @throws Throwable
-     * @throws LoaderError
-     * @throws RuntimeError
-     * @throws SyntaxError
-     */
-    public function renderAttributeDefinitionInput(FieldDefinition $fieldDefinition, $attributeDefinition, $params)
-    {
-        return $this->attributeBlockRenderer
-            ->load('IntProgEnhancedRelationListBundle::erl_attributes_definition_edit.html.twig')
-            ->renderBlock(
-                $attributeDefinition['type'] . '_relation_attribute_definition_edit',
                 [
                     'definition'      => $attributeDefinition,
                     'fieldDefinition' => $fieldDefinition,

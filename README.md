@@ -1,5 +1,6 @@
 
 [![Build Status](https://travis-ci.org/intenseprogramming/enhanced-relationlist-type-bundle.svg?branch=master)](https://travis-ci.org/intenseprogramming/enhanced-relationlist-type-bundle)
+[![Packagist](https://img.shields.io/packagist/dt/intprog/enhanced-relationlist-type-bundle.svg?style=popout)](https://packagist.org/packages/intprog/enhanced-relationlist-type-bundle)
 [![codecov](https://codecov.io/gh/intenseprogramming/enhanced-relationlist-type-bundle/branch/master/graph/badge.svg)](https://codecov.io/gh/intenseprogramming/enhanced-relationlist-type-bundle)
 
 # IntProg Enhanced Relation List Type Bundle
@@ -23,4 +24,4 @@ Refer to [the installation document](doc/INSTALLATION.md) for more information.
 
 ## Configuration
 
-Refer to [the installation document](doc/CONFIGURATION.md) on how to configure fields of this type.
+Refer to [the configuration document](doc/CONFIGURATION.md) on how to configure fields of this type.

@@ -94,7 +94,6 @@ class EnhancedRelationListFieldDefinitionGroupsType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-
         $languageMap = [];
         foreach ($this->languages as $languageCode) {
             try {
@@ -109,7 +108,7 @@ class EnhancedRelationListFieldDefinitionGroupsType extends AbstractType
             ];
         }
 
-        $view->vars['languageMap']             = $languageMap;
-        $view->vars['array_data'] = json_decode($form->getNormData(), true);
+        $view->vars['languageMap'] = $languageMap;
+        $view->vars['array_data']  = json_decode($form->getNormData(), true);
     }
 }

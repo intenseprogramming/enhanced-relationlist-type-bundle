@@ -1,4 +1,4 @@
 form_themes:
-    - 'IntProgEnhancedRelationListBundle:Content:content_edit.html.twig'
-    - 'IntProgEnhancedRelationListBundle:ContentType:enhanced_relation_list_attributes.html.twig'
-    - 'IntProgEnhancedRelationListBundle:ContentType:enhanced_relation_list_groups.html.twig'
+    - '@ezdesign/enhanced_relation_list/content/content_edit.html.twig'
+    - '@ezdesign/enhanced_relation_list/content_type/enhanced_relation_list_attributes.html.twig'
+    - '@ezdesign/enhanced_relation_list/content_type/enhanced_relation_list_groups.html.twig'

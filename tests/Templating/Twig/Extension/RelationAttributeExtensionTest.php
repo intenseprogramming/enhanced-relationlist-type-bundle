@@ -46,7 +46,7 @@ class RelationAttributeExtensionTest extends TestCase
         $twig     = $this->createMock(Twig_Environment::class);
         $template = $this->createMock(Twig_Template::class);
 
-        $twig->expects($this->once())->method('load')->with('IntProgEnhancedRelationListBundle::erl_attributes.html.twig')->willReturn($template);
+        $twig->expects($this->once())->method('load')->with('@ezdesign/enhanced_relation_list/erl_attributes.html.twig')->willReturn($template);
         $template->expects($this->once())->method('renderBlock')->with('integer_relation_attribute', [
             'attribute'  => $integer,
             'definition' => $definition,
@@ -73,7 +73,7 @@ class RelationAttributeExtensionTest extends TestCase
         $twig     = $this->createMock(Twig_Environment::class);
         $template = $this->createMock(Twig_Template::class);
 
-        $twig->expects($this->once())->method('load')->with('IntProgEnhancedRelationListBundle::erl_attributes_definition.html.twig')->willReturn($template);
+        $twig->expects($this->once())->method('load')->with('@ezdesign/enhanced_relation_list/erl_attributes_definition.html.twig')->willReturn($template);
         $template->expects($this->once())->method('renderBlock')->with('integer_relation_attribute_definition', [
             'definition'      => $definition,
             'fieldDefinition' => $fieldDefinition,

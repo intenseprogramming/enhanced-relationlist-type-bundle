@@ -2,17 +2,17 @@ system:
     default:
         fielddefinition_edit_templates:
             -
-                template: "IntProgEnhancedRelationListBundle:ContentType:field_types.html.twig"
+                template: "@ezdesign/enhanced_relation_list/content_type/field_types.html.twig"
                 priority: 1
         field_templates:
             -
-                template: "IntProgEnhancedRelationListBundle::content_fields.html.twig"
+                template: "@ezdesign/enhanced_relation_list/content_fields.html.twig"
                 priority: 1
         content_view:
             element_simple_link:
                 default:
                     controller: 'EzPlatformAdminUiBundle:ContentView:locationView'
-                    template: 'IntProgEnhancedRelationListBundle::simple_link.html.twig'
+                    template: '@ezdesign/enhanced_relation_list/simple_link.html.twig'
                     match: true
         fielddefinition_settings_templates:
-            - {template: '@IntProgEnhancedRelationList/fielddefinition_settings.html.twig', priority: 0}
+            - {template: '@ezdesign/enhanced_relation_list/fielddefinition_settings.html.twig', priority: 0}

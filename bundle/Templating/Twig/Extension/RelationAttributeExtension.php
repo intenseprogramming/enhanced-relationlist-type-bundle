@@ -79,7 +79,7 @@ class RelationAttributeExtension extends AbstractExtension
      */
     public function renderAttribute(Field $field, RelationAttributeBase $attribute, array $attributeDefinition, $params)
     {
-        return $this->attributeBlockRenderer->load('IntProgEnhancedRelationListBundle::erl_attributes.html.twig')->renderBlock(
+        return $this->attributeBlockRenderer->load('@ezdesign/enhanced_relation_list/erl_attributes.html.twig')->renderBlock(
             $attributeDefinition['type'] . '_relation_attribute',
             [
                 'attribute'  => $attribute,
@@ -107,7 +107,7 @@ class RelationAttributeExtension extends AbstractExtension
     public function renderAttributeDefinition(FieldDefinition $fieldDefinition, $attributeDefinition, $params)
     {
         return $this->attributeBlockRenderer
-            ->load('IntProgEnhancedRelationListBundle::erl_attributes_definition.html.twig')
+            ->load('@ezdesign/enhanced_relation_list/erl_attributes_definition.html.twig')
             ->renderBlock(
                 $attributeDefinition['type'] . '_relation_attribute_definition',
                 [

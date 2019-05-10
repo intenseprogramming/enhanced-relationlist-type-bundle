@@ -11,13 +11,13 @@ services:
         parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
         public: false
         arguments:
-            $template: '@@ezdesign/enhanced_relation_list/javascripts.html.twig'
+            $template: '@@ezdesign/enhanced_relation_list/assets/javascripts.html.twig'
         tags:
             - { name: ezplatform.admin_ui.component, group: 'script-body' }
     intprog.enhanced-relation-list.ezadminui.component.stylesheets:
         parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
         public: false
         arguments:
-            $template: "@@ezdesign/enhanced_relation_list/stylesheets.html.twig"
+            $template: "@@ezdesign/enhanced_relation_list/assets/stylesheets.html.twig"
         tags:
             - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }

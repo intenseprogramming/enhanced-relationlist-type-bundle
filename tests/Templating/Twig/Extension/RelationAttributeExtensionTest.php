@@ -33,9 +33,7 @@ class RelationAttributeExtensionTest extends TestCase
         }
 
         $this->assertTrue(in_array('erl_render_attribute', $functionNames));
-        $this->assertTrue(in_array('erl_render_attribute_input', $functionNames));
         $this->assertTrue(in_array('erl_render_attribute_definition', $functionNames));
-        $this->assertTrue(in_array('erl_render_attribute_definition_input', $functionNames));
     }
 
     public function testRenderAttribute()
@@ -66,35 +64,6 @@ class RelationAttributeExtensionTest extends TestCase
         }
     }
 
-    public function testRenderAttributeInput()
-    {
-        $field      = new Field();
-        $integer    = ['value' => null];
-        $definition = ['type' => 'integer'];
-        $extension  = new RelationAttributeExtension();
-
-        $twig     = $this->createMock(Twig_Environment::class);
-        $template = $this->createMock(Twig_Template::class);
-
-        $twig->expects($this->once())->method('load')->with('IntProgEnhancedRelationListBundle::erl_attributes_edit.html.twig')->willReturn($template);
-        $template->expects($this->once())->method('renderBlock')->with('integer_relation_attribute_edit', [
-            'value'      => $integer,
-            'definition' => $definition,
-            'field'      => $field,
-            'parameters' => [],
-            'hasErrors'  => true,
-        ]);
-
-        /** @var Twig_SimpleFunction $function */
-        foreach ($extension->getFunctions() as $function) {
-            if ($function->getName() == 'erl_render_attribute_input') {
-                $callable = $function->getCallable();
-
-                $callable($twig, $field, $definition, $integer, ['errors' => ['some error']]);
-            }
-        }
-    }
-
     public function testRenderAttributeDefinition()
     {
         $fieldDefinition = new FieldDefinition();
@@ -114,32 +83,6 @@ class RelationAttributeExtensionTest extends TestCase
         /** @var Twig_SimpleFunction $function */
         foreach ($extension->getFunctions() as $function) {
             if ($function->getName() == 'erl_render_attribute_definition') {
-                $callable = $function->getCallable();
-
-                $callable($twig, $fieldDefinition, $definition, []);
-            }
-        }
-    }
-
-    public function testRenderAttributeDefinitionInput()
-    {
-        $fieldDefinition = new FieldDefinition();
-        $definition      = ['type' => 'integer'];
-        $extension       = new RelationAttributeExtension();
-
-        $twig     = $this->createMock(Twig_Environment::class);
-        $template = $this->createMock(Twig_Template::class);
-
-        $twig->expects($this->once())->method('load')->with('IntProgEnhancedRelationListBundle::erl_attributes_definition_edit.html.twig')->willReturn($template);
-        $template->expects($this->once())->method('renderBlock')->with('integer_relation_attribute_definition_edit', [
-            'definition'      => $definition,
-            'fieldDefinition' => $fieldDefinition,
-            'parameters'      => [],
-        ]);
-
-        /** @var Twig_SimpleFunction $function */
-        foreach ($extension->getFunctions() as $function) {
-            if ($function->getName() == 'erl_render_attribute_definition_input') {
                 $callable = $function->getCallable();
 
                 $callable($twig, $fieldDefinition, $definition, []);

@@ -12,6 +12,7 @@ integer.name: Integer
 selection.name: Selection
 string.name: String
 
+erl.attribute.type.no-settings: 'No settings available.'
 erl.attribute.type.integer.min-value: 'Lower boundary'
 erl.attribute.type.integer.min-value.none: 'None'
 erl.attribute.type.integer.max-value: 'Upper boundary'

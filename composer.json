@@ -1,43 +1,45 @@
 {
-  "name": "intprog/enhanced-relationlist-type-bundle",
-  "description": "This bundle contains the enhanced relation list field type for eZ Platform version 2.x",
-  "homepage": "http://www.intense-programming.com",
-  "type": "ezplatform-bundle",
-  "license": "MIT",
-  "archive": {
-    "exclude": [
-      "tests",
-      "phpunit*.xml"
-    ]
-  },
-  "authors": [
-    {
-      "name": "Steve Konrad",
-      "email": "skonrad@wingmail.net",
-      "homepage": "http://www.intense-programming.com"
+    "name": "intprog/enhanced-relationlist-type-bundle",
+    "description": "This bundle contains the enhanced relation list field type for eZ Platform version 2.x",
+    "homepage": "http://www.intense-programming.com",
+    "type": "ezplatform-bundle",
+    "license": "MIT",
+    "archive": {
+        "exclude": [
+            "tests",
+            "phpunit*.xml"
+        ]
     },
-    {
-      "name": "IntenseProgramming",
-      "homepage": "http://www.intense-programming.com"
+    "authors": [
+        {
+            "name": "Steve Konrad",
+            "email": "skonrad@wingmail.net",
+            "homepage": "http://www.intense-programming.com"
+        },
+        {
+            "name": "IntenseProgramming",
+            "homepage": "http://www.intense-programming.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ezsystems/ezpublish-kernel": "~7.5",
+        "ezsystems/ezplatform-admin-ui": "~1.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "IntProg\\EnhancedRelationListBundle\\": "bundle/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1.x-dev",
+            "dev-1.0": "1.0.x-dev"
+        }
     }
-  ],
-  "require": {
-    "php": "^7.1",
-    "ext-dom": "*",
-    "ext-json": "*",
-    "ezsystems/ezpublish-kernel": "~7.0",
-    "ezsystems/ezplatform-admin-ui": "~1.1"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "~7.0"
-  },
-  "autoload": {
-    "psr-4": {"IntProg\\EnhancedRelationListBundle\\": "bundle/"}
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "1.1.x-dev",
-      "dev-1.0": "1.0.x-dev"
-    }
-  }
 }

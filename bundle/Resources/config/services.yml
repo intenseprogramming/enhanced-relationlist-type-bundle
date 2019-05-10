@@ -7,20 +7,17 @@ services:
         tags:
             - { name: twig.extension }
 
-    intprog.erl.ezadminui.component.javascripts:
+    intprog.enhanced-relation-list.ezadminui.component.javascripts:
         parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
         public: false
         arguments:
-        - '@twig'
-        - '@@IntProgEnhancedRelationList/admin/javascripts.html.twig'
+            $template: '@@ezdesign/enhanced_relation_list/javascripts.html.twig'
         tags:
-        - { name: ezplatform.admin_ui.component, group: 'script-body' }
-
-    intprog.erl.ezadminui.component.stylesheets:
+            - { name: ezplatform.admin_ui.component, group: 'script-body' }
+    intprog.enhanced-relation-list.ezadminui.component.stylesheets:
         parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
         public: false
         arguments:
-        - "@twig"
-        - "@@IntProgEnhancedRelationList/admin/stylesheets.html.twig"
+            $template: "@@ezdesign/enhanced_relation_list/stylesheets.html.twig"
         tags:
-        - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }
+            - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }

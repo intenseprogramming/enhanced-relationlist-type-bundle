@@ -88,7 +88,7 @@ class TextLine extends RelationAttributeConverter
     public function isEmpty(RelationAttributeBase $attribute)
     {
         if ($attribute instanceof TextLineValue) {
-            return empty($attribute->value);
+            return mb_strlen(trim($attribute->value)) === 0;
         }
 
         return true;

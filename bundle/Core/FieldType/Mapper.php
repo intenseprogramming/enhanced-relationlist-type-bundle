@@ -189,21 +189,21 @@ class Mapper implements FieldDefinitionFormMapperInterface, FieldValueFormMapper
             );
     }
 
-   /**
+    /**
      * Fill a hash with all content types and their identifiers.
      *
      * @return array
      */
-   private function getContentTypesHash(): array
-   {
-       $contentTypeHash = [];
-       foreach ($this->contentTypeService->loadContentTypeGroups() as $contentTypeGroup) {
-           foreach ($this->contentTypeService->loadContentTypes($contentTypeGroup) as $contentType) {
-               $contentTypeHash[$contentType->getName()] = $contentType->identifier;
-           }
-       }
-       ksort($contentTypeHash);
+    private function getContentTypesHash(): array
+    {
+        $contentTypeHash = [];
+        foreach ($this->contentTypeService->loadContentTypeGroups() as $contentTypeGroup) {
+            foreach ($this->contentTypeService->loadContentTypes($contentTypeGroup) as $contentType) {
+                $contentTypeHash[$contentType->getName()] = $contentType->identifier;
+            }
+        }
+        ksort($contentTypeHash);
 
-       return $contentTypeHash;
-   }
+        return $contentTypeHash;
+    }
 }

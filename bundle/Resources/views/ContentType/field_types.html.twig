@@ -4,80 +4,99 @@
 {% trans_default_domain 'enhancedrelationlist_attribute' %}
 
 {% block intprogenhancedrelationlist_field_definition_edit %}
-    <div class="ezobjectrelationlist-settings selection-default-location">
-        {{- form_label(form.defaultBrowseLocation) -}}
-        {{- form_errors(form.defaultBrowseLocation) -}}
-        {{- form_widget(form.defaultBrowseLocation) -}}
+    <div class="form-group">
+        <div class="ezobjectrelationlist-settings selection-default-location">
+            {{- form_label(form.defaultBrowseLocation) -}}
+            {{- form_errors(form.defaultBrowseLocation) -}}
+            {{- form_widget(form.defaultBrowseLocation) -}}
 
-        <div class="mt-1">
-            <button data-universaldiscovery-title="{{"field_definition.ezobjectrelationlist.selection_root_udw_title"|trans({}, "ezrepoforms_content_type")}}"
-                    class="ez-button-tree pure-button ez-font-icon ez-button ez-relation-pick-root-button btn btn-secondary btn--udw-relation-default-location"
-                    data-relation-root-input-selector="#{{form.defaultBrowseLocation.vars.id}}"
-                    data-relation-selected-root-name-selector="#{{form.defaultBrowseLocation.vars.id}}-selected-root-name"
-                    data-starting-location-id="1"
+            <div class="mt-1">
+                <button data-universaldiscovery-title="{{"field_definition.ezobjectrelationlist.selection_root_udw_title"|trans({}, "ezrepoforms_content_type")}}"
+                        class="ez-button-tree pure-button ez-font-icon ez-button ez-relation-pick-root-button btn btn-secondary btn--udw-relation-default-location"
+                        data-relation-root-input-selector="#{{form.defaultBrowseLocation.vars.id}}"
+                        data-relation-selected-root-name-selector="#{{form.defaultBrowseLocation.vars.id}}-selected-root-name"
+                        data-starting-location-id="1"
                     data-udw-config="{{ ez_udw_config('single') }}"
-            >{{"field_definition.ezobjectrelationlist.selection_root_udw_button"|trans({}, "ezrepoforms_content_type")}}</button>
+                        data-udw-config="{{ ez_udw_config('single') }}"
+                >{{"field_definition.ezobjectrelationlist.selection_root_udw_button"|trans({}, "ezrepoforms_content_type")}}</button>
+            </div>
+            <div id="{{form.defaultBrowseLocation.vars.id}}-selected-root-name">
+                {% if form.defaultBrowseLocation.vars.value is not empty %}
+                    {{ render( controller( "ez_content:viewLocation", {'locationId': form.defaultBrowseLocation.vars.value, 'viewType': '_platformui_content_name'} ) ) }}
+                {% endif %}
+            </div>
         </div>
-        <div id="{{form.defaultBrowseLocation.vars.id}}-selected-root-name">
-            {% if form.defaultBrowseLocation.vars.value is not empty %}
-                {{ render( controller( "ez_content:viewLocation", {'locationId': form.defaultBrowseLocation.vars.value, 'viewType': '_platformui_content_name'} ) ) }}
-            {% endif %}
+    </div>
+
+    <div class="form-group">
+        <div class="intprogenhancedrelationlist-settings selection-content-types">
+            {{- form_label(form.selectionContentTypes) -}}
+            {{- form_errors(form.selectionContentTypes) -}}
+            {{- form_widget(form.selectionContentTypes) -}}
         </div>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings selection-content-types">
-        {{- form_label(form.selectionContentTypes) -}}
-        {{- form_errors(form.selectionContentTypes) -}}
-        {{- form_widget(form.selectionContentTypes) -}}
+    <div class="form-group">
+        <div class="intprogenhancedrelationlist-settings selection-limit">
+            {{- form_label(form.selectionLimit) -}}
+            {{- form_errors(form.selectionLimit) -}}
+            {{- form_widget(form.selectionLimit) -}}
+        </div>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings selection-limit">
-        {{- form_label(form.selectionLimit) -}}
-        {{- form_errors(form.selectionLimit) -}}
-        {{- form_widget(form.selectionLimit) -}}
+    <div class="form-group">
+        <div class="intprogenhancedrelationlist-settings selection-allow-duplicates mb-2">
+            {{- form_label(form.selectionAllowDuplicates) -}}
+            {{- form_errors(form.selectionAllowDuplicates) -}}
+            {{- form_widget(form.selectionAllowDuplicates) -}}
+            <br>
+            <small><em>{{ 'intprogenhancedrelationilist.definition.selection-allow-duplicates.description'|trans }}</em></small>
+        </div>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings selection-allow-duplicates mb-2">
-        {{- form_label(form.selectionAllowDuplicates) -}}
-        {{- form_errors(form.selectionAllowDuplicates) -}}
-        {{- form_widget(form.selectionAllowDuplicates) -}}
-        <br>
-        <small><em>{{ 'intprogenhancedrelationilist.definition.selection-allow-duplicates.description'|trans }}</em></small>
+    <div class="form-group">
+        <div class="intprogenhancedrelationlist-settings group-position-fixed mb-2">
+            {{- form_label(form.groupSettingsPositionFixed) -}}
+            {{- form_errors(form.groupSettingsPositionFixed) -}}
+            {{- form_widget(form.groupSettingsPositionFixed) -}}
+            <br>
+            <small><em>{{ 'intprogenhancedrelationilist.definition.group-position-fixed.description'|trans }}</em></small>
+        </div>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings group-position-fixed mb-2">
-        {{- form_label(form.groupSettingsPositionFixed) -}}
-        {{- form_errors(form.groupSettingsPositionFixed) -}}
-        {{- form_widget(form.groupSettingsPositionFixed) -}}
-        <br>
-        <small><em>{{ 'intprogenhancedrelationilist.definition.group-position-fixed.description'|trans }}</em></small>
+    <div class="form-group">
+        <div class="intprogenhancedrelationlist-settings group-extendable mb-2">
+            {{- form_label(form.groupSettingsExtendable) -}}
+            {{- form_errors(form.groupSettingsExtendable) -}}
+            {{- form_widget(form.groupSettingsExtendable) -}}
+            <br>
+            <small><em>{{ 'intprogenhancedrelationilist.definition.group-extendable.description'|trans }}</em></small>
+        </div>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings group-extendable mb-2">
-        {{- form_label(form.groupSettingsExtendable) -}}
-        {{- form_errors(form.groupSettingsExtendable) -}}
-        {{- form_widget(form.groupSettingsExtendable) -}}
-        <br>
-        <small><em>{{ 'intprogenhancedrelationilist.definition.group-extendable.description'|trans }}</em></small>
+    <div class="form-group">
+        <div class="intprogenhancedrelationlist-settings group-allow-ungrouped mb-3">
+            {{- form_label(form.groupSettingsAllowUngrouped) -}}
+            {{- form_errors(form.groupSettingsAllowUngrouped) -}}
+            {{- form_widget(form.groupSettingsAllowUngrouped) -}}
+            <br>
+            <small><em>{{ 'intprogenhancedrelationilist.definition.allow-ungrouped.description'|trans }}</em></small>
+        </div>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings group-allow-ungrouped mb-3">
-        {{- form_label(form.groupSettingsAllowUngrouped) -}}
-        {{- form_errors(form.groupSettingsAllowUngrouped) -}}
-        {{- form_widget(form.groupSettingsAllowUngrouped) -}}
-        <br>
-        <small><em>{{ 'intprogenhancedrelationilist.definition.allow-ungrouped.description'|trans }}</em></small>
+    <div class="form-group" style="width: 100%">
+        <div class="intprogenhancedrelationlist-settings attributes mb-2">
+            {{- form_label(form.attributes) -}}
+            {{- form_errors(form.attributes) -}}
+            {{- form_widget(form.attributes) -}}
+        </div>
     </div>
 
-    <div class="intprogenhancedrelationlist-settings attributes mb-2">
-        {{- form_label(form.attributes) -}}
-        {{- form_errors(form.attributes) -}}
-        {{- form_widget(form.attributes) -}}
-    </div>
-
-    <div class="intprogenhancedrelationlist-settings groups">
-        {{- form_label(form.groups) -}}
-        {{- form_errors(form.groups) -}}
-        {{- form_widget(form.groups) -}}
+    <div class="form-group" style="width: 100%">
+        <div class="intprogenhancedrelationlist-settings groups">
+            {{- form_label(form.groups) -}}
+            {{- form_errors(form.groups) -}}
+            {{- form_widget(form.groups) -}}
+        </div>
     </div>
 {% endblock %}

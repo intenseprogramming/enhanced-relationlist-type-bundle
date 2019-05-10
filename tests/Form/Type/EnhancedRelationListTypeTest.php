@@ -108,7 +108,9 @@ class EnhancedRelationListTypeTest extends TestCase
         ]));
 
         $value                  = new Value([]);
-        $validationErrors                    = [new ValidationError('some error')];
+        $validationErrors       = [
+            ['attribute_identifier' => [new ValidationError('some error %replace%', null, ['%replace%' => 'replaced'])]]
+        ];
         $value->attributeErrors = $validationErrors;
 
         $form->expects($this->once())->method('getData')->willReturn($value);
@@ -149,7 +151,9 @@ class EnhancedRelationListTypeTest extends TestCase
                         'group' => 'some_group',
                     ],
                 ],
-                'attribute_errors'                 => $validationErrors,
+                'attribute_errors'                 => [
+                    ['attribute_identifier' => ['some error replaced']]
+                ],
             ],
             $view->vars
         );

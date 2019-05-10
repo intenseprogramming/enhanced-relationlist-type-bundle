@@ -6,15 +6,17 @@ services:
         tags:
             - { name: form.type }
 
-    IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListRowType:
+    IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionGroupsType:
         arguments:
-            - '@ezpublish.api.service.content'
-            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
+            - '@ezpublish.api.service.language'
+            - '$languages$'
         tags:
             - { name: form.type }
 
     IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionAttributesType:
         arguments:
             - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
+            - '@ezpublish.api.service.language'
+            - '$languages$'
         tags:
             - { name: form.type }

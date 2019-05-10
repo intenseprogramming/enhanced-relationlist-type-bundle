@@ -423,7 +423,7 @@ class Type extends FieldType implements Nameable
 
         $selectionLimit = $fieldDefinition->getFieldSettings()['selectionLimit'];
         if ($selectionLimit && $selectionLimit < $relationIndex) {
-            new ValidationError(
+            $validationErrors[] = new ValidationError(
                 'Only %allowed% relation(s) allowed. %given% given.',
                 null,
                 [

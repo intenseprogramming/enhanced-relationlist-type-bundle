@@ -10,14 +10,15 @@
 
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
-use eZ\Publish\API\Repository\Values\ContentType\ContentType;
-use eZ\Publish\API\Repository\Values\ContentType\ContentTypeGroup;
 use eZ\Publish\Core\Repository\ContentTypeService;
+use eZ\Publish\Core\Repository\Values\ContentType\ContentType;
+use eZ\Publish\Core\Repository\Values\ContentType\ContentTypeGroup;
 use eZ\Publish\Core\Repository\Values\ContentType\FieldDefinition;
 use EzSystems\RepositoryForms\Data\Content\FieldData;
 use EzSystems\RepositoryForms\Data\FieldDefinitionData;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListType;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormFactory;
@@ -26,16 +27,36 @@ class MapperTest extends TestCase
 {
     public function testMapFieldDefinitionForm()
     {
+        $contentTypeGroup = new ContentTypeGroup();
+        $contentType1 = new ContentType(['identifier' => 'type_1', 'names' => ['eng-GB' => 'test c']]);
+        $contentType2 = new ContentType(['identifier' => 'type_2', 'names' => ['eng-GB' => 'test b']]);
+        $contentType3 = new ContentType(['identifier' => 'type_3', 'names' => ['eng-GB' => 'test a']]);
+
         $contentTypeService = $this->createMock(ContentTypeService::class);
-        $contentTypeService->expects($this->once())->method('loadContentTypeGroups')->willReturn([
-            $this->createMock(ContentTypeGroup::class)
-        ]);
-        $contentTypeService->expects($this->once())->method('loadContentTypes')->willReturn([
-            $this->createMock(ContentType::class)
-        ]);
+        $contentTypeService->expects($this->once())->method('loadContentTypeGroups')->willReturn([$contentTypeGroup]);
+        $contentTypeService->expects($this->once())->method('loadContentTypes')->willReturn(
+            [$contentType1, $contentType2, $contentType3]
+        );
 
         $fieldForm = $this->createMock(Form::class);
         $fieldForm->expects($this->exactly(9))->method('add')->willReturn($fieldForm);
+        $fieldForm->expects($this->at(1))->method('add')->with(
+            'selectionContentTypes',
+            ChoiceType::class,
+            [
+                'choices'           => [
+                    'test a' => 'type_3',
+                    'test b' => 'type_2',
+                    'test c' => 'type_1',
+                ],
+                'choices_as_values' => true,
+                'expanded'          => false,
+                'multiple'          => true,
+                'required'          => false,
+                'property_path'     => 'validatorConfiguration[relationValidator][allowedContentTypes]',
+                'label'             => 'field_definition.intprogenhancedrelationlist.selection_content_types',
+            ]
+        )->willReturn($fieldForm);
 
         $mapper = new Mapper($contentTypeService);
 

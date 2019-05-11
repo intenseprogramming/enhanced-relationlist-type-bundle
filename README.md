@@ -25,3 +25,9 @@ Refer to [the installation document](doc/INSTALLATION.md) for more information.
 ## Configuration
 
 Refer to [the configuration document](doc/CONFIGURATION.md) on how to configure fields of this type.
+
+## Extending
+
+From 1.1.0 on you are able to inject your own attribute types.
+
+Refer to [the extending document](doc/EXTENDING.md) on how to extend the type.

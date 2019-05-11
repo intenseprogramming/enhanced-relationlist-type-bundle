@@ -6,20 +6,20 @@
 {% block intprogenhancedrelationlist_field %}
     {% import _self as erl_table_macros %}
 
-    {{ erl_table_macros.render_intprogenhancedrelationlist(field.value, fieldSettings, field) }}
+    {{ erl_table_macros.render_intprogenhancedrelationlist(content, field, fieldSettings) }}
 {% endblock %}
 
-{% macro render_intprogenhancedrelationlist(value, fieldSettings, field) %}
+{% macro render_intprogenhancedrelationlist(content, field, fieldSettings) %}
     {% import _self as erl_table_macros %}
 
     {% include '@ezdesign/parts/table_header.html.twig' with {headerText: 'field.attribute.table.head.relations'|trans} %}
     <table class="table mb-0">
         {{ erl_table_macros.table_head_macro(fieldSettings, field) }}
         <tbody>
-        {% for relation in value.relations %}
+        {% for relation in field.value.relations %}
             {{ erl_table_macros.relation_row(field, relation, fieldSettings) }}
         {% endfor %}
-        {% for name,group in value.groups %}
+        {% for name,group in field.value.groups %}
             <tr>
                 <th colspan="{{ 1 + fieldSettings.attributeDefinitions|length }}">
                     {{ fieldSettings.groupSettings.groups[group.name] is defined ?
@@ -29,7 +29,7 @@
             </tr>
             {% if group.relations is not empty %}
                 {% for relation in group.relations %}
-                    {{ erl_table_macros.relation_row(field, relation, fieldSettings) }}
+                    {{ erl_table_macros.relation_row(content, field, relation, fieldSettings) }}
                 {% endfor %}
             {% else %}
                 <tr><td colspan="{{ 1 + fieldSettings.attributeDefinitions|length }}"><em>{{ 'field.attribute.table.empty'|trans }}</em></td></tr>
@@ -56,15 +56,15 @@
     </thead>
 {% endmacro %}
 
-{% macro relation_row(field, relation, fieldSettings) %}
+{% macro relation_row(content, field, relation, fieldSettings) %}
     <tr>
         <td>
             {{ render(controller('ez_content:viewAction', {'contentId': relation.contentId, 'viewType': 'element_simple_link', 'layout': false})) }}
         </td>
-        {% for identifier,definition in fieldSettings.attributeDefinitions %}
+        {% for identifier in relation.attributes|keys %}
             <td>
                 {% if relation.attributes[identifier] is defined %}
-                    {{ erl_render_attribute(field, relation.attributes[identifier], definition) }}
+                    {{ erl_render_relation_attribute(content, field, relation, identifier) }}
                 {% endif %}
             </td>
         {% endfor %}

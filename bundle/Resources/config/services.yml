@@ -4,6 +4,10 @@ services:
             - []
 
     IntProg\EnhancedRelationListBundle\Templating\Twig\Extension\RelationAttributeExtension:
+        arguments:
+            - '@intprog.enhanced-relation-list.templating.attribute_block_renderer'
+            - '@ezpublish.persistence.connection'
+            - '@ezpublish.api.service.content'
         tags:
             - { name: twig.extension }
 

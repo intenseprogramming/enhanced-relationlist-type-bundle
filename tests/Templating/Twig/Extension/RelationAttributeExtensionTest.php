@@ -10,21 +10,34 @@
 
 namespace IntProg\EnhancedRelationListBundle\Templating\Twig\Extension;
 
+use Closure;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Statement;
 use eZ\Publish\API\Repository\Values\Content\Field;
+use eZ\Publish\Core\Repository\ContentService;
+use eZ\Publish\Core\Repository\Values\Content\Content;
+use eZ\Publish\Core\Repository\Values\ContentType\ContentType;
 use eZ\Publish\Core\Repository\Values\ContentType\FieldDefinition;
+use eZ\Publish\SPI\Persistence\Content\ContentInfo;
+use eZ\Publish\SPI\Persistence\Content\VersionInfo;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\Integer;
+use IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
+use IntProg\EnhancedRelationListBundle\Templating\Twig\AttributeBlockRenderer;
 use PHPUnit\Framework\TestCase;
-use Twig_Environment;
-use Twig_SimpleFunction;
-use Twig_Template;
+use Twig\Environment;
+use Twig\TwigFunction;
 
 class RelationAttributeExtensionTest extends TestCase
 {
     public function testGetFunctions()
     {
-        $extension = new RelationAttributeExtension();
+        $connection     = $this->createMock(Connection::class);
+        $blockRenderer  = $this->createMock(AttributeBlockRenderer::class);
+        $contentService = $this->createMock(ContentService::class);
 
-        /** @var Twig_SimpleFunction[] $functions */
+        $extension = new RelationAttributeExtension($blockRenderer, $connection, $contentService);
+
+        /** @var TwigFunction[] $functions */
         $functions     = $extension->getFunctions();
         $functionNames = [];
 
@@ -33,60 +46,183 @@ class RelationAttributeExtensionTest extends TestCase
         }
 
         $this->assertTrue(in_array('erl_render_attribute', $functionNames));
+        $this->assertTrue(in_array('erl_render_relation_attribute', $functionNames));
         $this->assertTrue(in_array('erl_render_attribute_definition', $functionNames));
+        $this->assertTrue(in_array('erl_render_relation_attribute_definition', $functionNames));
     }
 
     public function testRenderAttribute()
     {
-        $field      = new Field();
-        $integer    = new Integer();
-        $definition = ['type' => 'integer'];
-        $extension  = new RelationAttributeExtension();
+        $environment    = $this->createMock(Environment::class);
+        $connection     = $this->createMock(Connection::class);
+        $statement      = $this->createMock(Statement::class);
+        $contentService = $this->createMock(ContentService::class);
+        $blockRenderer  = $this->createMock(AttributeBlockRenderer::class);
 
-        $twig     = $this->createMock(Twig_Environment::class);
-        $template = $this->createMock(Twig_Template::class);
-
-        $twig->expects($this->once())->method('load')->with('@ezdesign/enhanced_relation_list/erl_attributes.html.twig')->willReturn($template);
-        $template->expects($this->once())->method('renderBlock')->with('integer_relation_attribute', [
-            'attribute'  => $integer,
-            'definition' => $definition,
-            'field'      => $field,
-            'parameters' => [],
+        $content           = new Content([
+            'versionInfo' => new VersionInfo([
+                'contentInfo' => new ContentInfo([
+                    'id' => 123,
+                ]),
+            ]),
+            'contentType' => new ContentType([
+                'fieldDefinitions' => [
+                    new FieldDefinition([
+                        'identifier'    => 'relation_field',
+                        'fieldSettings' => [
+                            'attributeDefinitions' => [
+                                'integer' => ['the field settings'],
+                            ],
+                        ],
+                    ]),
+                ],
+            ]),
+        ]);
+        $attribute1        = new Integer(['value' => 123]);
+        $attribute2        = new Integer(['value' => 124]);
+        $unmappedAttribute = new Integer(['value' => 124]);
+        $field             = new Field([
+            'id'                 => 1234,
+            'fieldDefIdentifier' => 'relation_field',
+            'value'              => new Value(
+                [
+                    new Value\Relation([
+                        'contentId'  => 443,
+                        'attributes' => [
+                            'integer' => $attribute1,
+                        ],
+                    ]),
+                ],
+                [
+                    new Value\Group(
+                        'group',
+                        [
+                            new Value\Relation([
+                                'contentId'  => 445,
+                                'attributes' => [
+                                    'integer' => $attribute2,
+                                ],
+                            ]),
+                        ]
+                    ),
+                ]
+            ),
         ]);
 
-        /** @var Twig_SimpleFunction $function */
-        foreach ($extension->getFunctions() as $function) {
-            if ($function->getName() == 'erl_render_attribute') {
-                $callable = $function->getCallable();
+        $blockRenderer->expects($this->at(0))->method('setTwig')->with($environment);
+        $blockRenderer->expects($this->at(1))->method('renderAttributeView')->with(
+            $attribute1,
+            ['the field settings'],
+            ['content' => $content, 'field' => $field]
+        );
+        $blockRenderer->expects($this->at(2))->method('setTwig')->with($environment);
+        $blockRenderer->expects($this->at(3))->method('renderAttributeView')->with(
+            $attribute2,
+            ['the field settings'],
+            ['content' => $content, 'field' => $field]
+        );
+        $connection->expects($this->at(0))->method('prepare')->willReturn($statement);
+        $connection->expects($this->at(1))->method('prepare')->willReturn($statement);
+        $connection->expects($this->at(2))->method('prepare')->willReturn($statement);
+        $statement->expects($this->at(0))->method('execute');
+        $statement->expects($this->at(1))->method('fetchColumn')->willReturn(123);
+        $statement->expects($this->at(2))->method('execute');
+        $statement->expects($this->at(3))->method('fetchColumn')->willReturn(123);
+        $statement->expects($this->at(4))->method('execute');
+        $statement->expects($this->at(5))->method('fetchColumn')->willReturn(123);
+        $contentService->expects($this->at(0))->method('loadContent')->with(123)->willReturn($content);
+        $contentService->expects($this->at(1))->method('loadContent')->with(123)->willReturn($content);
+        $contentService->expects($this->at(2))->method('loadContent')->with(123)->willReturn($content);
 
-                $callable($twig, $field, $integer, $definition);
+        $extension = new RelationAttributeExtension($blockRenderer, $connection, $contentService);
+
+        /** @var TwigFunction[] $functions */
+        $functions = $extension->getFunctions();
+        foreach ($functions as $function) {
+            if ($function->getName() !== 'erl_render_attribute') {
+                continue;
             }
+
+            /** @var Closure $callable */
+            $callable = $function->getCallable();
+            $callable->call($extension, $environment, $field, $attribute1, []);
+            $callable->call($extension, $environment, $field, $attribute2, []);
+
+            $this->expectExceptionMessage(
+                'Attribute O:67:"IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\Integer":1:{s:5:"value";i:124;} does not belong to field #1234'
+            );
+            $callable->call($extension, $environment, $field, $unmappedAttribute, []);
+            break;
+        }
+    }
+
+    public function testRenderRelationAttribute()
+    {
+        $environment    = $this->createMock(Environment::class);
+        $connection     = $this->createMock(Connection::class);
+        $contentService = $this->createMock(ContentService::class);
+        $blockRenderer  = $this->createMock(AttributeBlockRenderer::class);
+
+        $content   = new Content([
+            'versionInfo' => new VersionInfo([
+                'contentInfo' => new ContentInfo([
+                    'id' => 123,
+                ]),
+            ]),
+            'contentType' => new ContentType([
+                'fieldDefinitions' => [
+                    new FieldDefinition([
+                        'identifier'    => 'relation_field',
+                        'fieldSettings' => [
+                            'attributeDefinitions' => [
+                                'integer' => ['the field settings'],
+                            ],
+                        ],
+                    ]),
+                ],
+            ]),
+        ]);
+        $attribute = new Integer(['value' => 123]);
+        $relation  = new Value\Relation([
+            'contentId'  => 444,
+            'attributes' => [
+                'integer' => $attribute,
+            ],
+        ]);
+        $field     = new Field([
+            'id'                 => 1234,
+            'fieldDefIdentifier' => 'relation_field',
+            'value'              => new Value([$relation]),
+        ]);
+
+        $blockRenderer->expects($this->at(0))->method('setTwig')->with($environment);
+        $blockRenderer->expects($this->at(1))->method('renderAttributeView')->with(
+            $attribute,
+            ['the field settings'],
+            ['content' => $content, 'field' => $field]
+        );
+
+        $extension = new RelationAttributeExtension($blockRenderer, $connection, $contentService);
+
+        /** @var TwigFunction[] $functions */
+        $functions = $extension->getFunctions();
+        foreach ($functions as $function) {
+            if ($function->getName() !== 'erl_render_relation_attribute') {
+                continue;
+            }
+
+            /** @var Closure $callable */
+            $callable = $function->getCallable();
+            $callable->call($extension, $environment, $content, $field, $relation, 'integer', []);
+            break;
         }
     }
 
     public function testRenderAttributeDefinition()
     {
-        $fieldDefinition = new FieldDefinition();
-        $definition      = ['type' => 'integer'];
-        $extension       = new RelationAttributeExtension();
+    }
 
-        $twig     = $this->createMock(Twig_Environment::class);
-        $template = $this->createMock(Twig_Template::class);
-
-        $twig->expects($this->once())->method('load')->with('@ezdesign/enhanced_relation_list/erl_attributes_definition.html.twig')->willReturn($template);
-        $template->expects($this->once())->method('renderBlock')->with('integer_relation_attribute_definition', [
-            'definition'      => $definition,
-            'fieldDefinition' => $fieldDefinition,
-            'parameters'      => [],
-        ]);
-
-        /** @var Twig_SimpleFunction $function */
-        foreach ($extension->getFunctions() as $function) {
-            if ($function->getName() == 'erl_render_attribute_definition') {
-                $callable = $function->getCallable();
-
-                $callable($twig, $fieldDefinition, $definition, []);
-            }
-        }
+    public function testRenderRelationAttributeDefinition()
+    {
     }
 }

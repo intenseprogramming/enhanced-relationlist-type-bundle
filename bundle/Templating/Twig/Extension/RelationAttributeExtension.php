@@ -12,10 +12,13 @@ namespace IntProg\EnhancedRelationListBundle\Templating\Twig\Extension;
 
 use Doctrine\DBAL\Driver\Connection;
 use eZ\Publish\API\Repository\ContentService;
+use eZ\Publish\API\Repository\Exceptions\NotFoundException;
+use eZ\Publish\API\Repository\Exceptions\UnauthorizedException;
 use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Field;
 use eZ\Publish\API\Repository\Values\ContentType\FieldDefinition;
 use IntProg\EnhancedRelationListBundle\Core\Exception\MissingAttributeBlockException;
+use IntProg\EnhancedRelationListBundle\Core\Exception\RelationAttributeFieldMismatchException;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
@@ -59,7 +62,11 @@ class RelationAttributeExtension extends AbstractExtension
      * @param Connection             $connection
      * @param ContentService         $contentService
      */
-    public function __construct(AttributeBlockRenderer $attributeBlockRenderer, Connection $connection, ContentService $contentService)
+    public function __construct(
+        AttributeBlockRenderer $attributeBlockRenderer,
+        Connection $connection,
+        ContentService $contentService
+    )
     {
         $this->attributeBlockRenderer = $attributeBlockRenderer;
         $this->connection             = $connection;
@@ -76,19 +83,32 @@ class RelationAttributeExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'erl_render_attribute',
-                function (Environment $environment, Field $field, RelationAttributeBase $attribute, $attributeDefinition, array $params = []) {
-                    user_error('Template function erl_render_attribute is deprecated and will be removed in v2.0. Use erl_render_relation_attribute instead.', E_USER_DEPRECATED);
+                function (
+                    Environment $environment,
+                    Field $field,
+                    RelationAttributeBase $attribute,
+                    $attributeDefinition,
+                    array $params = []
+                ) {
                     $this->attributeBlockRenderer->setTwig($environment);
 
-                    list($content, $attributeIdentifier, $relation) = $this->getAttributeRenderInformation($field, $attribute);
+                    list($content, $attributeIdentifier, $relation) =
+                        $this->getAttributeRenderInformation($field, $attribute);
 
                     return $this->renderAttributeView($content, $field, $relation, $attributeIdentifier, $params);
                 },
-                ['is_safe' => ['html'], 'needs_environment' => true]
+                ['is_safe' => ['html'], 'needs_environment' => true, 'deprecated' => true]
             ),
             new TwigFunction(
                 'erl_render_relation_attribute',
-                function (Environment $environment, Content $content, Field $field, Relation $relation, $attributeIdentifier, array $params = []) {
+                function (
+                    Environment $environment,
+                    Content $content,
+                    Field $field,
+                    Relation $relation,
+                    $attributeIdentifier,
+                    array $params = []
+                ) {
                     $this->attributeBlockRenderer->setTwig($environment);
 
                     return $this->renderAttributeView($content, $field, $relation, $attributeIdentifier, $params);
@@ -103,14 +123,14 @@ class RelationAttributeExtension extends AbstractExtension
                     $attributeDefinition,
                     array $params = []
                 ) {
-                    user_error('Template function erl_render_attribute_definition is deprecated and will be removed in v2.0. Use erl_render_relation_attribute_definition instead.', E_USER_DEPRECATED);
                     $this->attributeBlockRenderer->setTwig($environment);
 
-                    list($attributeIdentifier) = $this->getDefinitionRenderInformation($fieldDefinition, $attributeDefinition);
+                    list($attributeIdentifier) =
+                        $this->getDefinitionRenderInformation($fieldDefinition, $attributeDefinition);
 
                     return $this->renderAttributeDefinition($fieldDefinition, $attributeIdentifier, $params);
                 },
-                ['is_safe' => ['html'], 'needs_environment' => true]
+                ['is_safe' => ['html'], 'needs_environment' => true, 'deprecated' => true]
             ),
             new TwigFunction(
                 'erl_render_relation_attribute_definition',
@@ -145,7 +165,13 @@ class RelationAttributeExtension extends AbstractExtension
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function renderAttributeView(Content $content, Field $field, Relation $relation, $attributeIdentifier, $params)
+    public function renderAttributeView(
+        Content $content,
+        Field $field,
+        Relation $relation,
+        $attributeIdentifier,
+        $params
+    )
     {
         $fieldSettings = $content->getContentType()->getFieldDefinition($field->fieldDefIdentifier)->fieldSettings;
 
@@ -162,7 +188,7 @@ class RelationAttributeExtension extends AbstractExtension
      * Renders the attribute definition.
      *
      * @param FieldDefinition $fieldDefinition
-     * @param string           $attributeIdentifier
+     * @param string          $attributeIdentifier
      * @param array           $params
      *
      * @return string
@@ -185,9 +211,21 @@ class RelationAttributeExtension extends AbstractExtension
         );
     }
 
+    /**
+     * @param Field                 $field
+     * @param RelationAttributeBase $attribute
+     *
+     * @return array
+     *
+     * @throws NotFoundException
+     * @throws UnauthorizedException
+     * @throws RelationAttributeFieldMismatchException
+     *
+     * @deprecated
+     */
     private function getAttributeRenderInformation(Field $field, RelationAttributeBase $attribute)
     {
-        $stmt    = $this->connection->prepare('SELECT contentobject_id FROM ezcontentobject_attribute WHERE id = ' . $field->id);
+        $stmt = $this->connection->prepare('SELECT contentobject_id FROM ezcontentobject_attribute WHERE id = ' . $field->id);
         $stmt->execute();
 
         $content = $this->contentService->loadContent($stmt->fetchColumn());
@@ -208,9 +246,19 @@ class RelationAttributeExtension extends AbstractExtension
             }
         }
 
-        return [$content, null, null];
+        throw new RelationAttributeFieldMismatchException(
+            'Attribute ' . serialize($attribute) . ' does not belong to field #' . $field->id
+        );
     }
 
+    /**
+     * @param FieldDefinition $fieldDefinition
+     * @param                 $attributeDefinition
+     *
+     * @return array
+     *
+     * @deprecated
+     */
     private function getDefinitionRenderInformation(FieldDefinition $fieldDefinition, $attributeDefinition)
     {
         $fieldSettings = $fieldDefinition->fieldSettings;

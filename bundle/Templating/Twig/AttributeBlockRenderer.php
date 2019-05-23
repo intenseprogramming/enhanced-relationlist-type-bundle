@@ -167,6 +167,14 @@ class AttributeBlockRenderer
         array $params
     )
     {
+        $localTemplate = null;
+        if (isset($params['template'])) {
+            // Local override of the template.
+            // This template is put on the top the templates stack.
+            $localTemplate = $params['template'];
+            unset($params['template']);
+        }
+
         $params += ['definition' => $attributeDefinition];
 
         // Getting instance of Twig_Template that will be used to render blocks
@@ -176,7 +184,7 @@ class AttributeBlockRenderer
 
         $blockName = $this->getRenderAttributeDefinitionBlockName($attributeIdentifier);
         $context   = $this->twig->mergeGlobals($params);
-        $blocks    = $this->getBlocksByDefinitionIdentifier($attributeIdentifier);
+        $blocks    = $this->getBlocksByDefinitionIdentifier($attributeIdentifier, $localTemplate);
 
         if (!$this->baseTemplate->hasBlock($blockName, $context, $blocks)) {
             return '';
@@ -208,8 +216,8 @@ class AttributeBlockRenderer
     }
 
     /**
-     * @param string $fieldTypeIdentifier
-     * @param null   $localTemplate
+     * @param string               $fieldTypeIdentifier
+     * @param null|string|Template $localTemplate
      *
      * @return array
      *
@@ -270,7 +278,8 @@ class AttributeBlockRenderer
     }
 
     /**
-     * @param string $definitionIdentifier
+     * @param string               $definitionIdentifier
+     * @param null|string|Template $localTemplate
      *
      * @return array
      *
@@ -278,9 +287,22 @@ class AttributeBlockRenderer
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    private function getBlocksByDefinitionIdentifier(string $definitionIdentifier)
+    private function getBlocksByDefinitionIdentifier(string $definitionIdentifier, $localTemplate = null)
     {
-        return $this->getBlockByName($definitionIdentifier, 'attributeDefinitionViewResources');
+        $fieldBlockName = $this->getRenderAttributeDefinitionBlockName($definitionIdentifier);
+        if ($localTemplate !== null) {
+            // $localTemplate might be a Twig_Template instance already (e.g. using _self Twig keyword)
+            if (!$localTemplate instanceof Template) {
+                $localTemplate = $this->twig->loadTemplate($localTemplate);
+            }
+
+            $block = $this->searchBlock($fieldBlockName, $localTemplate);
+            if ($block !== null) {
+                return [$fieldBlockName => $block];
+            }
+        }
+
+        return $this->getBlockByName($fieldBlockName, 'attributeDefinitionViewResources');
     }
 
     /**

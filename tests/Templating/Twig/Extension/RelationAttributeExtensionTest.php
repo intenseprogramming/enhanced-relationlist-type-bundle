@@ -39,9 +39,16 @@ class RelationAttributeExtensionTest extends TestCase
 
         /** @var TwigFunction[] $functions */
         $functions     = $extension->getFunctions();
+        /** @var TwigFunction[] $functionNames */
         $functionNames = [];
 
         foreach ($functions as $function) {
+            if (in_array($function->getName(), ['erl_render_attribute', 'erl_render_attribute_definition'])) {
+                $this->assertTrue($function->isDeprecated());
+            } else {
+                $this->assertFalse($function->isDeprecated());
+            }
+
             $functionNames[] = $function->getName();
         }
 
@@ -220,9 +227,83 @@ class RelationAttributeExtensionTest extends TestCase
 
     public function testRenderAttributeDefinition()
     {
+        $environment    = $this->createMock(Environment::class);
+        $connection     = $this->createMock(Connection::class);
+        $contentService = $this->createMock(ContentService::class);
+        $blockRenderer  = $this->createMock(AttributeBlockRenderer::class);
+
+        $attributeDefinition = ['the field setting'];
+        $fieldDefinition     = new FieldDefinition([
+            'fieldSettings' => [
+                'attributeDefinitions' => [
+                    'integer' => $attributeDefinition,
+                ],
+            ],
+        ]);
+
+        $blockRenderer->expects($this->at(0))->method('setTwig')->with($environment);
+        $blockRenderer->expects($this->at(1))->method('renderAttributeDefinitionView')->with(
+            'integer',
+            $attributeDefinition,
+            [
+                'fieldDefinition' => $fieldDefinition,
+            ]
+        );
+
+        $extension = new RelationAttributeExtension($blockRenderer, $connection, $contentService);
+
+        /** @var TwigFunction[] $functions */
+        $functions = $extension->getFunctions();
+        foreach ($functions as $function) {
+            if ($function->getName() !== 'erl_render_attribute_definition') {
+                continue;
+            }
+
+            /** @var Closure $callable */
+            $callable = $function->getCallable();
+            $callable->call($extension, $environment, $fieldDefinition, $attributeDefinition, []);
+            break;
+        }
     }
 
     public function testRenderRelationAttributeDefinition()
     {
+        $environment    = $this->createMock(Environment::class);
+        $connection     = $this->createMock(Connection::class);
+        $contentService = $this->createMock(ContentService::class);
+        $blockRenderer  = $this->createMock(AttributeBlockRenderer::class);
+
+        $attributeDefinition = ['the field setting'];
+        $fieldDefinition     = new FieldDefinition([
+            'fieldSettings' => [
+                'attributeDefinitions' => [
+                    'integer' => $attributeDefinition,
+                ],
+            ],
+        ]);
+
+        $blockRenderer->expects($this->at(0))->method('setTwig')->with($environment);
+        $blockRenderer->expects($this->at(1))->method('renderAttributeDefinitionView')->with(
+            'integer',
+            $attributeDefinition,
+            [
+                'fieldDefinition' => $fieldDefinition,
+            ]
+        );
+
+        $extension = new RelationAttributeExtension($blockRenderer, $connection, $contentService);
+
+        /** @var TwigFunction[] $functions */
+        $functions = $extension->getFunctions();
+        foreach ($functions as $function) {
+            if ($function->getName() !== 'erl_render_relation_attribute_definition') {
+                continue;
+            }
+
+            /** @var Closure $callable */
+            $callable = $function->getCallable();
+            $callable->call($extension, $environment, $fieldDefinition, 'integer', []);
+            break;
+        }
     }
 }

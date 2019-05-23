@@ -1,5 +1,6 @@
 # development
 /build
+/clover.xml
 /.phpunit.result.cache
 /.php_cs.cache
 /vendor

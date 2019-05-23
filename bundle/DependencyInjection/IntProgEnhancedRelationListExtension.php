@@ -42,6 +42,7 @@ class IntProgEnhancedRelationListExtension extends Extension implements PrependE
     {
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
+        $loader->load('templating.yml');
         $loader->load('services.yml');
         $loader->load('fieldtypes.yml');
         $loader->load('form.yml');

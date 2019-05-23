@@ -28,7 +28,7 @@ class IntProgEnhancedRelationListExtensionTest extends TestCase
     public function testLoad()
     {
         $container = $this->createMock(ContainerBuilder::class);
-        $container->expects($this->exactly(4))->method('fileExists');
+        $container->expects($this->exactly(5))->method('fileExists');
         $container->expects($this->never())->method('setParameter');
 
         $extension = new IntProgEnhancedRelationListExtension();

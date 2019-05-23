@@ -10,9 +10,19 @@
 
 namespace IntProg\EnhancedRelationListBundle\Templating\Twig\Extension;
 
+use Doctrine\DBAL\Driver\Connection;
+use eZ\Publish\API\Repository\ContentService;
+use eZ\Publish\API\Repository\Exceptions\NotFoundException;
+use eZ\Publish\API\Repository\Exceptions\UnauthorizedException;
+use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\API\Repository\Values\Content\Field;
 use eZ\Publish\API\Repository\Values\ContentType\FieldDefinition;
+use IntProg\EnhancedRelationListBundle\Core\Exception\MissingAttributeBlockException;
+use IntProg\EnhancedRelationListBundle\Core\Exception\RelationAttributeFieldMismatchException;
+use IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
+use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
+use IntProg\EnhancedRelationListBundle\Templating\Twig\AttributeBlockRenderer;
 use Throwable;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -30,8 +40,38 @@ use Twig\TwigFunction;
  */
 class RelationAttributeExtension extends AbstractExtension
 {
-    /** @var Environment */
+    /** @var AttributeBlockRenderer $attributeBlockRenderer */
     protected $attributeBlockRenderer;
+
+    /**
+     * @var Connection $connection
+     * @deprecated
+     */
+    protected $connection;
+
+    /**
+     * @var ContentService $contentService
+     * @deprecated
+     */
+    protected $contentService;
+
+    /**
+     * RelationAttributeExtension constructor.
+     *
+     * @param AttributeBlockRenderer $attributeBlockRenderer
+     * @param Connection             $connection
+     * @param ContentService         $contentService
+     */
+    public function __construct(
+        AttributeBlockRenderer $attributeBlockRenderer,
+        Connection $connection,
+        ContentService $contentService
+    )
+    {
+        $this->attributeBlockRenderer = $attributeBlockRenderer;
+        $this->connection             = $connection;
+        $this->contentService         = $contentService;
+    }
 
     /**
      * Returns a list of functions to add to the existing list.
@@ -43,19 +83,66 @@ class RelationAttributeExtension extends AbstractExtension
         return [
             new TwigFunction(
                 'erl_render_attribute',
-                function (Environment $environment, Field $field, RelationAttributeBase $attribute, $attributeDefinition, array $params = []) {
-                    $this->attributeBlockRenderer = $environment;
+                function (
+                    Environment $environment,
+                    Field $field,
+                    RelationAttributeBase $attribute,
+                    $attributeDefinition,
+                    array $params = []
+                ) {
+                    $this->attributeBlockRenderer->setTwig($environment);
 
-                    return $this->renderAttribute($field, $attribute, $attributeDefinition, $params);
+                    list($content, $attributeIdentifier, $relation) =
+                        $this->getAttributeRenderInformation($field, $attribute);
+
+                    return $this->renderAttributeView($content, $field, $relation, $attributeIdentifier, $params);
+                },
+                ['is_safe' => ['html'], 'needs_environment' => true, 'deprecated' => true]
+            ),
+            new TwigFunction(
+                'erl_render_relation_attribute',
+                function (
+                    Environment $environment,
+                    Content $content,
+                    Field $field,
+                    Relation $relation,
+                    $attributeIdentifier,
+                    array $params = []
+                ) {
+                    $this->attributeBlockRenderer->setTwig($environment);
+
+                    return $this->renderAttributeView($content, $field, $relation, $attributeIdentifier, $params);
                 },
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
             new TwigFunction(
                 'erl_render_attribute_definition',
-                function (Environment $environment, FieldDefinition $fieldDefinition, $attributeDefinition, array $params = []) {
-                    $this->attributeBlockRenderer = $environment;
+                function (
+                    Environment $environment,
+                    FieldDefinition $fieldDefinition,
+                    $attributeDefinition,
+                    array $params = []
+                ) {
+                    $this->attributeBlockRenderer->setTwig($environment);
 
-                    return $this->renderAttributeDefinition($fieldDefinition, $attributeDefinition, $params);
+                    list($attributeIdentifier) =
+                        $this->getDefinitionRenderInformation($fieldDefinition, $attributeDefinition);
+
+                    return $this->renderAttributeDefinition($fieldDefinition, $attributeIdentifier, $params);
+                },
+                ['is_safe' => ['html'], 'needs_environment' => true, 'deprecated' => true]
+            ),
+            new TwigFunction(
+                'erl_render_relation_attribute_definition',
+                function (
+                    Environment $environment,
+                    FieldDefinition $fieldDefinition,
+                    $attributeIdentifier,
+                    array $params = []
+                ) {
+                    $this->attributeBlockRenderer->setTwig($environment);
+
+                    return $this->renderAttributeDefinition($fieldDefinition, $attributeIdentifier, $params);
                 },
                 ['is_safe' => ['html'], 'needs_environment' => true]
             ),
@@ -65,28 +152,35 @@ class RelationAttributeExtension extends AbstractExtension
     /**
      * Renders the attribute.
      *
-     * @param Field                 $field
-     * @param RelationAttributeBase $attribute
-     * @param array                 $attributeDefinition
-     * @param array                 $params
+     * @param Content  $content
+     * @param Field    $field
+     * @param Relation $relation
+     * @param string   $attributeIdentifier
+     * @param array    $params
      *
      * @return string
      *
-     * @throws Throwable
+     * @throws MissingAttributeBlockException
      * @throws LoaderError
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function renderAttribute(Field $field, RelationAttributeBase $attribute, array $attributeDefinition, $params)
+    public function renderAttributeView(
+        Content $content,
+        Field $field,
+        Relation $relation,
+        $attributeIdentifier,
+        $params
+    )
     {
-        return $this->attributeBlockRenderer->load('@ezdesign/enhanced_relation_list/erl_attributes.html.twig')->renderBlock(
-            $attributeDefinition['type'] . '_relation_attribute',
-            [
-                'attribute'  => $attribute,
-                'definition' => $attributeDefinition,
-                'field'      => $field,
-                'parameters' => $params,
-            ]
+        $fieldSettings = $content->getContentType()->getFieldDefinition($field->fieldDefIdentifier)->fieldSettings;
+
+        $params = $params + ['content' => $content, 'field' => $field];
+
+        return $this->attributeBlockRenderer->renderAttributeView(
+            $relation->attributes[$attributeIdentifier],
+            $fieldSettings['attributeDefinitions'][$attributeIdentifier],
+            $params
         );
     }
 
@@ -94,7 +188,7 @@ class RelationAttributeExtension extends AbstractExtension
      * Renders the attribute definition.
      *
      * @param FieldDefinition $fieldDefinition
-     * @param array           $attributeDefinition
+     * @param string          $attributeIdentifier
      * @param array           $params
      *
      * @return string
@@ -104,17 +198,71 @@ class RelationAttributeExtension extends AbstractExtension
      * @throws RuntimeError
      * @throws SyntaxError
      */
-    public function renderAttributeDefinition(FieldDefinition $fieldDefinition, $attributeDefinition, $params)
+    public function renderAttributeDefinition(FieldDefinition $fieldDefinition, $attributeIdentifier, $params)
     {
-        return $this->attributeBlockRenderer
-            ->load('@ezdesign/enhanced_relation_list/erl_attributes_definition.html.twig')
-            ->renderBlock(
-                $attributeDefinition['type'] . '_relation_attribute_definition',
-                [
-                    'definition'      => $attributeDefinition,
-                    'fieldDefinition' => $fieldDefinition,
-                    'parameters'      => $params,
-                ]
-            );
+        $fieldSettings = $fieldDefinition->fieldSettings;
+
+        $params = $params + ['fieldDefinition' => $fieldDefinition];
+
+        return $this->attributeBlockRenderer->renderAttributeDefinitionView(
+            $attributeIdentifier,
+            $fieldSettings['attributeDefinitions'][$attributeIdentifier],
+            $params
+        );
+    }
+
+    /**
+     * @param Field                 $field
+     * @param RelationAttributeBase $attribute
+     *
+     * @return array
+     *
+     * @throws NotFoundException
+     * @throws UnauthorizedException
+     * @throws RelationAttributeFieldMismatchException
+     *
+     * @deprecated
+     */
+    private function getAttributeRenderInformation(Field $field, RelationAttributeBase $attribute)
+    {
+        $stmt = $this->connection->prepare('SELECT contentobject_id FROM ezcontentobject_attribute WHERE id = ' . $field->id);
+        $stmt->execute();
+
+        $content = $this->contentService->loadContent($stmt->fetchColumn());
+
+        /** @var Value $fieldValue */
+        $fieldValue = $field->value;
+
+        foreach ($fieldValue->relations as $relation) {
+            if (in_array($attribute, $relation->attributes, true)) {
+                return [$content, array_search($attribute, $relation->attributes, true), $relation];
+            }
+        }
+        foreach ($fieldValue->groups as $group) {
+            foreach ($group->relations as $relation) {
+                if (in_array($attribute, $relation->attributes, true)) {
+                    return [$content, array_search($attribute, $relation->attributes, true), $relation];
+                }
+            }
+        }
+
+        throw new RelationAttributeFieldMismatchException(
+            'Attribute ' . serialize($attribute) . ' does not belong to field #' . $field->id
+        );
+    }
+
+    /**
+     * @param FieldDefinition $fieldDefinition
+     * @param                 $attributeDefinition
+     *
+     * @return array
+     *
+     * @deprecated
+     */
+    private function getDefinitionRenderInformation(FieldDefinition $fieldDefinition, $attributeDefinition)
+    {
+        $fieldSettings = $fieldDefinition->fieldSettings;
+
+        return [array_search($attributeDefinition, $fieldSettings['attributeDefinitions'])];
     }
 }

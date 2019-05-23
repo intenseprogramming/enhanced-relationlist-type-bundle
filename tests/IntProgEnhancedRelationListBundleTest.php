@@ -10,6 +10,7 @@
 
 namespace IntProg\EnhancedRelationListBundle;
 
+use eZ\Bundle\EzPublishCoreBundle\DependencyInjection\EzPublishCoreExtension;
 use IntProg\EnhancedRelationListBundle\DependencyInjection\Compiler;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -18,10 +19,14 @@ class IntProgEnhancedRelationListBundleTest extends TestCase
 {
     public function testBuild()
     {
+        $mockExtension = $this->createMock(EzPublishCoreExtension::class);
+        $mockExtension->expects($this->once())->method('addConfigParser');
+
         $containerBuilder = $this->createMock(ContainerBuilder::class);
         $containerBuilder->expects($this->once())->method('addCompilerPass')->with(
             new Compiler\RelationAttributePass()
         );
+        $containerBuilder->expects($this->once())->method('getExtension')->with('ezpublish')->willReturn($mockExtension);
 
         $bundle = new IntProgEnhancedRelationListBundle();
 

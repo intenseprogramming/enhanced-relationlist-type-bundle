@@ -11,16 +11,33 @@ services:
         parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
         public: false
         arguments:
-        - '@twig'
-        - '@@IntProgEnhancedRelationList/admin/javascripts.html.twig'
+            - '@twig'
+            - '@@IntProgEnhancedRelationList/admin/javascripts.html.twig'
         tags:
-        - { name: ezplatform.admin_ui.component, group: 'script-body' }
+            - { name: ezplatform.admin_ui.component, group: 'script-body' }
 
     intprog.erl.ezadminui.component.stylesheets:
         parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
         public: false
         arguments:
-        - "@twig"
-        - "@@IntProgEnhancedRelationList/admin/stylesheets.html.twig"
+            - "@twig"
+            - "@@IntProgEnhancedRelationList/admin/stylesheets.html.twig"
         tags:
-        - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }
+            - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }
+
+
+    IntProg\EnhancedRelationListBundle\Service\CacheTagRepository: ~
+    IntProg\EnhancedRelationListBundle\Slots\DeleteContentSlot:
+        lazy: true
+        arguments:
+            - "@ezpublish.api.storage_engine.legacy.dbhandler"
+            - "@ezpublish.cache_pool"
+            - '@IntProg\EnhancedRelationListBundle\Service\CacheTagRepository'
+        tags:
+            - { name: ezpublish.api.slot, signal: ContentService\DeleteContentSignal }
+            - { name: ezpublish.api.slot, signal: TrashService\EmptyTrashSignal }
+            - { name: ezpublish.api.slot, signal: TrashService\DeleteTrashItemSignal }
+
+    IntProg\EnhancedRelationListBundle\Core\Cache\CacheTagCollector:
+        tags:
+            - { name: int.prog.erl.cache.tag_collector }

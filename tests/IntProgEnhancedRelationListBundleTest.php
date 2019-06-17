@@ -19,8 +19,11 @@ class IntProgEnhancedRelationListBundleTest extends TestCase
     public function testBuild()
     {
         $containerBuilder = $this->createMock(ContainerBuilder::class);
-        $containerBuilder->expects($this->once())->method('addCompilerPass')->with(
-            new Compiler\RelationAttributePass()
+        $containerBuilder->expects($this->exactly(2))->method('addCompilerPass')->with(
+            $this->logicalOr(
+                new Compiler\RelationAttributePass(),
+                new Compiler\CacheTagCollectorPass()
+            )
         );
 
         $bundle = new IntProgEnhancedRelationListBundle();

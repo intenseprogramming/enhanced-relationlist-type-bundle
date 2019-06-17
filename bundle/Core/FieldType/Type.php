@@ -30,6 +30,8 @@ use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
  */
 class Type extends FieldType implements Nameable
 {
+    const FIELD_TYPE_IDENTIFIER = 'intprogenhancedrelationlist';
+
     /** @var RelationAttributeRepository $relationAttributeTransformer */
     protected $relationAttributeTransformer;
 
@@ -124,7 +126,7 @@ class Type extends FieldType implements Nameable
      */
     public function getFieldTypeIdentifier()
     {
-        return 'intprogenhancedrelationlist';
+        return self::FIELD_TYPE_IDENTIFIER;
     }
 
     /**

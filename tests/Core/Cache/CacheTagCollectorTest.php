@@ -14,6 +14,10 @@ class CacheTagCollectorTest extends TestCase
         $this->assertIsArray(
             $collector->getTagsOnContentDelete(2)
         );
+        $this->assertEquals(
+            ['content-2'],
+            $collector->getTagsOnContentDelete(2)
+        );
     }
 
     public function testGetFieldTagsOnContentDelete()
@@ -21,6 +25,10 @@ class CacheTagCollectorTest extends TestCase
         $collector = new CacheTagCollector();
 
         $this->assertIsArray(
+            $collector->getFieldTagsOnContentDelete(2)
+        );
+        $this->assertEquals(
+            ['content-fields-2'],
             $collector->getFieldTagsOnContentDelete(2)
         );
     }

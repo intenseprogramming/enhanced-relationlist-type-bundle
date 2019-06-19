@@ -30,7 +30,7 @@ services:
     IntProg\EnhancedRelationListBundle\Slots\DeleteContentSlot:
         lazy: true
         arguments:
-            - "@ezpublish.api.storage_engine.legacy.dbhandler"
+            - "@ezpublish.persistence.connection"
             - "@ezpublish.cache_pool"
             - '@IntProg\EnhancedRelationListBundle\Service\CacheTagRepository'
         tags:

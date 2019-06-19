@@ -2,7 +2,7 @@
 
 namespace IntProg\EnhancedRelationListBundle\Slots;
 
-use eZ\Publish\Core\Persistence\Database\DatabaseHandler;
+use Doctrine\DBAL\Connection;
 use eZ\Publish\Core\SignalSlot\Signal;
 use eZ\Publish\Core\SignalSlot\Slot;
 use eZ\Publish\Core\SignalSlot\Signal\ContentService\DeleteContentSignal;
@@ -26,9 +26,9 @@ class DeleteContentSlot extends Slot
 {
 
     /**
-     * @var DatabaseHandler
+     * @var Connection
      */
-    protected $databaseHandler;
+    protected $databaseConnection;
 
     /**
      * @var InMemoryClearingProxyAdapter
@@ -41,25 +41,24 @@ class DeleteContentSlot extends Slot
     protected $cacheTagRepository;
 
     /**
-     * @param DatabaseHandler              $databaseHandler
+     * @param Connection                   $databaseConnection
      * @param InMemoryClearingProxyAdapter $cacheProxyAdapter
      * @param CacheTagRepository           $cacheTagRepository
      */
     public function __construct(
-        DatabaseHandler $databaseHandler,
+        Connection $databaseConnection,
         InMemoryClearingProxyAdapter $cacheProxyAdapter,
         CacheTagRepository $cacheTagRepository
     ) {
-        $this->databaseHandler    = $databaseHandler;
+        $this->databaseConnection = $databaseConnection;
         $this->cacheProxyAdapter  = $cacheProxyAdapter;
         $this->cacheTagRepository = $cacheTagRepository;
     }
 
     /**
-     * Removes relation
-     *
      * @param Signal $signal
      *
+     * @throws \Doctrine\DBAL\DBALException
      * @throws \Psr\Cache\InvalidArgumentException
      */
     public function receive(Signal $signal)
@@ -78,19 +77,13 @@ class DeleteContentSlot extends Slot
         }
 
         foreach ($contentIdsList as $contentId) {
-            $query = $this->databaseHandler->createSelectQuery();
-            $query
-                ->select('ezcontentobject_attribute.*')
-                ->from('ezcontentobject_attribute')
-                ->where(
-                    sprintf(
-                        "data_type_string = '%s' and data_text like '%%content-id=\"%s\"%%'",
-                        Type::FIELD_TYPE_IDENTIFIER,
-                        $contentId
-                    )
-                );
-
-            $statement = $query->prepare();
+            $statement = $this->databaseConnection->prepare(
+                sprintf(
+                    "SELECT * FROM ezcontentobject_attribute WHERE data_type_string = '%s' and data_text like '%%content-id=\"%s\"%%'",
+                    Type::FIELD_TYPE_IDENTIFIER,
+                    $contentId
+                )
+            );
             $statement->execute();
 
             $cacheTags = [];
@@ -107,26 +100,14 @@ class DeleteContentSlot extends Slot
                     $relationItem->parentNode->removeChild($relationItem);
                 }
 
-                $query = $this->databaseHandler->createUpdateQuery();
-                $query
-                    ->update('ezcontentobject_attribute')
-                    ->set(
-                        'data_text',
-                        $query->bindValue($document->saveXML(), null, PDO::PARAM_STR)
+                $this->databaseConnection->prepare(
+                    sprintf(
+                        "UPDATE ezcontentobject_attribute SET data_text='%s' WHERE id='%s' and version='%s'",
+                        $document->saveXML(),
+                        $row['id'],
+                        $row['version']
                     )
-                    ->where(
-                        $query->expr->lAnd(
-                            $query->expr->eq(
-                                $this->databaseHandler->quoteColumn('id'),
-                                $query->bindValue($row['id'], null, PDO::PARAM_INT)
-                            ),
-                            $query->expr->eq(
-                                $this->databaseHandler->quoteColumn('version'),
-                                $query->bindValue($row['version'], null, PDO::PARAM_INT)
-                            )
-                        )
-                    );
-                $query->prepare()->execute();
+                )->execute();
 
                 foreach ($this->cacheTagRepository->getCollectors() as $collector) {
                     $cacheTags = array_merge(

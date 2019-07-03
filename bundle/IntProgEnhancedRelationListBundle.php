@@ -1,7 +1,7 @@
 <?php
 /**
  * @category   PHP
- * @package    all2e
+ * @package    intprog
  * @version    1
  * @date       20/11/2017 22:23
  * @author     Konrad, Steve <s.konrad@wingmail.net>
@@ -36,5 +36,6 @@ class IntProgEnhancedRelationListBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new Compiler\RelationAttributePass());
+        $container->addCompilerPass(new Compiler\CacheTagCollectorPass());
     }
 }

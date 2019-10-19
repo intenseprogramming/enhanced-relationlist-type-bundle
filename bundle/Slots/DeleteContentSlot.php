@@ -3,17 +3,19 @@
 namespace IntProg\EnhancedRelationListBundle\Slots;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
+use DOMDocument;
+use DOMXPath;
+use eZ\Publish\Core\Persistence\Cache\Adapter\TransactionalInMemoryCacheAdapter;
 use eZ\Publish\Core\SignalSlot\Signal;
-use eZ\Publish\Core\SignalSlot\Slot;
 use eZ\Publish\Core\SignalSlot\Signal\ContentService\DeleteContentSignal;
-use eZ\Publish\Core\SignalSlot\Signal\TrashService\EmptyTrashSignal;
 use eZ\Publish\Core\SignalSlot\Signal\TrashService\DeleteTrashItemSignal;
-use eZ\Publish\Core\Persistence\Cache\Adapter\InMemoryClearingProxyAdapter;
+use eZ\Publish\Core\SignalSlot\Signal\TrashService\EmptyTrashSignal;
+use eZ\Publish\Core\SignalSlot\Slot;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Type;
 use IntProg\EnhancedRelationListBundle\Service\CacheTagRepository;
 use PDO;
-use DOMDocument;
-use DOMXPath;
+use Psr\Cache\InvalidArgumentException;
 
 /**
  * Delete content slot.
@@ -24,14 +26,13 @@ use DOMXPath;
  */
 class DeleteContentSlot extends Slot
 {
-
     /**
      * @var Connection
      */
     protected $databaseConnection;
 
     /**
-     * @var InMemoryClearingProxyAdapter
+     * @var TransactionalInMemoryCacheAdapter
      */
     protected $cacheProxyAdapter;
 
@@ -41,15 +42,16 @@ class DeleteContentSlot extends Slot
     protected $cacheTagRepository;
 
     /**
-     * @param Connection                   $databaseConnection
-     * @param InMemoryClearingProxyAdapter $cacheProxyAdapter
-     * @param CacheTagRepository           $cacheTagRepository
+     * @param Connection                        $databaseConnection
+     * @param TransactionalInMemoryCacheAdapter $cacheProxyAdapter
+     * @param CacheTagRepository                $cacheTagRepository
      */
     public function __construct(
         Connection $databaseConnection,
-        InMemoryClearingProxyAdapter $cacheProxyAdapter,
+        TransactionalInMemoryCacheAdapter $cacheProxyAdapter,
         CacheTagRepository $cacheTagRepository
-    ) {
+    )
+    {
         $this->databaseConnection = $databaseConnection;
         $this->cacheProxyAdapter  = $cacheProxyAdapter;
         $this->cacheTagRepository = $cacheTagRepository;
@@ -58,8 +60,8 @@ class DeleteContentSlot extends Slot
     /**
      * @param Signal $signal
      *
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws DBALException
+     * @throws InvalidArgumentException
      */
     public function receive(Signal $signal)
     {
@@ -67,7 +69,6 @@ class DeleteContentSlot extends Slot
 
         if ($signal instanceof DeleteTrashItemSignal) {
             $contentIdsList[] = $signal->trashItemDeleteResult->contentId;
-
         } elseif ($signal instanceof EmptyTrashSignal) {
             foreach ($signal->trashItemDeleteResultList->items as $item) {
                 $contentIdsList[] = $item->contentId;
@@ -92,7 +93,7 @@ class DeleteContentSlot extends Slot
                 $document = new DOMDocument('1.0', 'utf-8');
                 $document->loadXML($row['data_text']);
 
-                $xpath = new DOMXPath($document);
+                $xpath           = new DOMXPath($document);
                 $xpathExpression = "//relation-list/relations/relation[@content-id='{$contentId}']";
 
                 $relationItems = $xpath->query($xpathExpression);

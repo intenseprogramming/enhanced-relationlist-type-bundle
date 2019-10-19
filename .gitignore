@@ -5,3 +5,4 @@
 /.php_cs.cache
 /vendor
 composer.lock
+clover.xml

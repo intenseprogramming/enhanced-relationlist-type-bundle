@@ -16,6 +16,8 @@ The behavior of the relation list is completely controlled by the field definiti
 
 Refer to [the general information](doc/GENERAL.md) and [usage documentation](doc/USAGE.md) for more information.
 
+:heavy_exclamation_mark: Upgrade in progress! :heavy_exclamation_mark:
+
 ## Installation
 
 The installation uses composer and the general concept for adding bundles to a symfony installation.

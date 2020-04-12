@@ -71,7 +71,6 @@ class Mapper implements FieldDefinitionFormMapperInterface, FieldValueFormMapper
                 ChoiceType::class,
                 [
                     'choices'           => $this->getContentTypesHash(),
-                    'choices_as_values' => true,
                     'expanded'          => false,
                     'multiple'          => true,
                     'required'          => false,

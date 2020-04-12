@@ -13,6 +13,7 @@ namespace IntProg\EnhancedRelationListBundle\Form\Type;
 use eZ\Publish\API\Repository\LanguageService;
 use eZ\Publish\API\Repository\Values\Content\Language;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldDefinitionAttributesTransformer;
 use IntProg\EnhancedRelationListBundle\Service\AttributeConverter;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
@@ -27,18 +28,22 @@ class EnhancedRelationListFieldDefinitionAttributesTypeTest extends TestCase
     private function getLanguageServiceMock()
     {
         $mock = $this->createMock(LanguageService::class);
-        $mock->expects($this->any())->method('loadLanguage')->will($this->returnCallback(function($languageCode) {
+        $mock->method('loadLanguage')->willReturnCallback(static function($languageCode) {
             return new Language(['languageCode' => $languageCode, 'name' => 'stub']);
-        }));
+        });
+
         return $mock;
     }
 
     public function testGetName()
     {
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
+
         $type = new EnhancedRelationListFieldDefinitionAttributesType(
             $this->getTransformer(),
             $this->getLanguageServiceMock(),
-            ['eng-GB']
+            $configResolver
         );
 
         $this->assertEquals('intprogenhancedrelationlist_definition_attributes', $type->getName());
@@ -46,10 +51,13 @@ class EnhancedRelationListFieldDefinitionAttributesTypeTest extends TestCase
 
     public function testGetParent()
     {
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
+
         $type = new EnhancedRelationListFieldDefinitionAttributesType(
             $this->getTransformer(),
             $this->getLanguageServiceMock(),
-            ['eng-GB']
+            $configResolver
         );
 
         $this->assertEquals(HiddenType::class, $type->getParent());
@@ -57,10 +65,13 @@ class EnhancedRelationListFieldDefinitionAttributesTypeTest extends TestCase
 
     public function testGetBlockPrefix()
     {
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
+
         $type = new EnhancedRelationListFieldDefinitionAttributesType(
             $this->getTransformer(),
             $this->getLanguageServiceMock(),
-            ['eng-GB']
+            $configResolver
         );
 
         $this->assertEquals('intprogenhancedrelationlist_definition_attributes', $type->getBlockPrefix());
@@ -68,10 +79,13 @@ class EnhancedRelationListFieldDefinitionAttributesTypeTest extends TestCase
 
     public function testBuildForm()
     {
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
+
         $type    = new EnhancedRelationListFieldDefinitionAttributesType(
             $this->getTransformer(),
             $this->getLanguageServiceMock(),
-            ['eng-GB']
+            $configResolver
         );
         $builder = $this->createMock(FormBuilder::class);
         $builder->expects($this->once())->method('addModelTransformer')->with(new FieldDefinitionAttributesTransformer());
@@ -81,11 +95,14 @@ class EnhancedRelationListFieldDefinitionAttributesTypeTest extends TestCase
 
     public function testMissingButConfiguredLanguage()
     {
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB', 'fre-FR']);
+
         $languageService = $this->createMock(LanguageService::class);
-        $languageService->expects($this->at(0))->method('loadLanguage')->will(
-            $this->returnCallback(function($languageCode) {
+        $languageService->expects($this->at(0))->method('loadLanguage')->willReturnCallback(
+            static function($languageCode) {
                 return new Language(['languageCode' => $languageCode, 'name' => 'stub']);
-            })
+            }
         );
         $languageService->expects($this->at(1))->method('loadLanguage')->will(
             $this->throwException(new NotFoundException('language not found', 'fre-FR'))
@@ -95,7 +112,7 @@ class EnhancedRelationListFieldDefinitionAttributesTypeTest extends TestCase
         $type = new EnhancedRelationListFieldDefinitionAttributesType(
             $this->getTransformer(),
             $languageService,
-            ['eng-GB', 'fre-FR']
+            $configResolver
         );
         $form = $this->createMock(Form::class);
         $form->expects($this->once())->method('getData')->willReturn('data sample');
@@ -121,11 +138,14 @@ class EnhancedRelationListFieldDefinitionAttributesTypeTest extends TestCase
 
     public function testBuildView()
     {
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
+
         $view = new FormView();
         $type = new EnhancedRelationListFieldDefinitionAttributesType(
             $this->getTransformer(),
             $this->getLanguageServiceMock(),
-            ['eng-GB']
+            $configResolver
         );
         $form = $this->createMock(Form::class);
         $form->expects($this->once())->method('getData')->willReturn('data sample');

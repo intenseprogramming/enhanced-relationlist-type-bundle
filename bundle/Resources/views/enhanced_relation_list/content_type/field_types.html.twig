@@ -1,5 +1,5 @@
 
-{% use 'EzPublishCoreBundle::fielddefinition_settings.html.twig' %}
+{% use '@ezdesign/fielddefinition_settings.html.twig' %}
 
 {% trans_default_domain 'enhancedrelationlist_attribute' %}
 
@@ -11,14 +11,14 @@
             {{- form_widget(form.defaultBrowseLocation) -}}
 
             <div class="mt-1">
-                <button data-universaldiscovery-title="{{"field_definition.ezobjectrelationlist.selection_root_udw_title"|trans({}, "ezrepoforms_content_type")}}"
+                <button data-universaldiscovery-title="{{"field_definition.ezobjectrelationlist.selection_root_udw_title"|trans({}, "content_type")}}"
                         class="ez-button-tree pure-button ez-font-icon ez-button ez-relation-pick-root-button btn btn-secondary btn--udw-relation-default-location"
                         data-relation-root-input-selector="#{{form.defaultBrowseLocation.vars.id}}"
                         data-relation-selected-root-name-selector="#{{form.defaultBrowseLocation.vars.id}}-selected-root-name"
                         data-starting-location-id="1"
                     data-udw-config="{{ ez_udw_config('single') }}"
                         data-udw-config="{{ ez_udw_config('single') }}"
-                >{{"field_definition.ezobjectrelationlist.selection_root_udw_button"|trans({}, "ezrepoforms_content_type")}}</button>
+                >{{"field_definition.ezobjectrelationlist.selection_root_udw_button"|trans({}, "content_type")}}</button>
             </div>
             <div id="{{form.defaultBrowseLocation.vars.id}}-selected-root-name">
                 {% if form.defaultBrowseLocation.vars.value is not empty %}

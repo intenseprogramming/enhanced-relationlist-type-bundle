@@ -9,7 +9,7 @@
             <script data-settings type="application/json">{{ fieldSettings|json_encode|raw }}</script>
             <script data-validation type="application/json">{{ validatorConfiguration|json_encode|raw }}</script>
             <script data-errors type="application/json">{{ attribute_errors|json_encode|raw }}</script>
-            <script data-languages type="application/json">{{ ezpublish.configResolver.parameter('languages')|json_encode|raw }}</script>
+            <script data-languages type="application/json">{{ ezplatform.configResolver.parameter('languages')|json_encode|raw }}</script>
         </div>
 
         <div><table class="relation-root-table erl-table table drag-clone-container my-0"><tbody> </tbody></table></div>

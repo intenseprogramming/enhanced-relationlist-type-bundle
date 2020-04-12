@@ -49,7 +49,6 @@ class MapperTest extends TestCase
                     'test b' => 'type_2',
                     'test c' => 'type_1',
                 ],
-                'choices_as_values' => true,
                 'expanded'          => false,
                 'multiple'          => true,
                 'required'          => false,

@@ -11,6 +11,7 @@
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
 use eZ\Publish\API\Repository\Exceptions\NotFoundException;
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use eZ\Publish\SPI\FieldType\GatewayBasedStorage;
 use eZ\Publish\SPI\Persistence\Content\Field;
 use eZ\Publish\SPI\Persistence\Content\Type as FieldType;
@@ -41,13 +42,17 @@ class Storage extends GatewayBasedStorage
      *
      * @param Handler                     $contentTypeHandler
      * @param RelationAttributeRepository $repository
-     * @param array                       $languages
+     * @param ConfigResolverInterface     $configResolver
      */
-    public function __construct(Handler $contentTypeHandler, RelationAttributeRepository $repository, array $languages)
+    public function __construct(
+        Handler $contentTypeHandler,
+        RelationAttributeRepository $repository,
+        ConfigResolverInterface $configResolver
+    )
     {
         $this->contentTypeHandler = $contentTypeHandler;
         $this->repository         = $repository;
-        $this->languages          = $languages;
+        $this->languages          = $configResolver->getParameter('languages');
     }
 
     /**

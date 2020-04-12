@@ -12,6 +12,7 @@ namespace IntProg\EnhancedRelationListBundle\Form\Type;
 
 use eZ\Publish\API\Repository\Exceptions\NotFoundException;
 use eZ\Publish\API\Repository\LanguageService;
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldDefinitionGroupsTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -28,14 +29,22 @@ use Symfony\Component\Form\FormView;
  */
 class EnhancedRelationListFieldDefinitionGroupsType extends AbstractType
 {
+    /** @var LanguageService $languageService */
     protected $languageService;
 
+    /** @var array|string[] $languages */
     protected $languages;
 
-    public function __construct(LanguageService $languageService, array $languages)
+    /**
+     * EnhancedRelationListFieldDefinitionGroupsType constructor.
+     *
+     * @param LanguageService         $languageService
+     * @param ConfigResolverInterface $configResolver
+     */
+    public function __construct(LanguageService $languageService, ConfigResolverInterface $configResolver)
     {
         $this->languageService = $languageService;
-        $this->languages       = $languages;
+        $this->languages       = $configResolver->getParameter('languages');
     }
 
     /**

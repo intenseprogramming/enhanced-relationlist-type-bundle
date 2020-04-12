@@ -136,7 +136,10 @@ class AttributeBlockRenderer
 
         // Getting instance of Twig_Template that will be used to render blocks
         if (is_string($this->baseTemplate)) {
-            $this->baseTemplate = $this->twig->loadTemplate($this->baseTemplate);
+            $this->baseTemplate = $this->twig->loadTemplate(
+                $this->twig->getTemplateClass($this->baseTemplate),
+                $this->baseTemplate
+            );
         }
 
         $blockName = $this->getRenderAttributeBlockName($attribute->getTypeIdentifier());
@@ -179,7 +182,10 @@ class AttributeBlockRenderer
 
         // Getting instance of Twig_Template that will be used to render blocks
         if (is_string($this->baseTemplate)) {
-            $this->baseTemplate = $this->twig->loadTemplate($this->baseTemplate);
+            $this->baseTemplate = $this->twig->loadTemplate(
+                $this->twig->getTemplateClass($this->baseTemplate),
+                $this->baseTemplate
+            );
         }
 
         $blockName = $this->getRenderAttributeDefinitionBlockName($attributeIdentifier);
@@ -231,7 +237,10 @@ class AttributeBlockRenderer
         if ($localTemplate !== null) {
             // $localTemplate might be a Twig_Template instance already (e.g. using _self Twig keyword)
             if (!$localTemplate instanceof Template) {
-                $localTemplate = $this->twig->loadTemplate($localTemplate);
+                $localTemplate = $this->twig->loadTemplate(
+                    $this->twig->getTemplateClass($localTemplate),
+                    $localTemplate
+                );
             }
 
             $block = $this->searchBlock($fieldBlockName, $localTemplate);
@@ -261,7 +270,10 @@ class AttributeBlockRenderer
 
         foreach ($this->{$resourcesName} as &$template) {
             if (!$template instanceof Template) {
-                $template = $this->twig->loadTemplate($template['template']);
+                $template = $this->twig->loadTemplate(
+                    $this->twig->getTemplateClass($template['template']),
+                    $template['template']
+                );
             }
 
             $tpl = $template;
@@ -293,7 +305,10 @@ class AttributeBlockRenderer
         if ($localTemplate !== null) {
             // $localTemplate might be a Twig_Template instance already (e.g. using _self Twig keyword)
             if (!$localTemplate instanceof Template) {
-                $localTemplate = $this->twig->loadTemplate($localTemplate);
+                $localTemplate = $this->twig->loadTemplate(
+                    $this->twig->getTemplateClass($localTemplate),
+                    $localTemplate
+                );
             }
 
             $block = $this->searchBlock($fieldBlockName, $localTemplate);

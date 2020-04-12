@@ -18,6 +18,7 @@ use eZ\Publish\Core\Repository\ContentService;
 use eZ\Publish\Core\Repository\Values\Content\Content;
 use eZ\Publish\Core\Repository\Values\ContentType\ContentType;
 use eZ\Publish\Core\Repository\Values\ContentType\FieldDefinition;
+use eZ\Publish\Core\Repository\Values\ContentType\FieldDefinitionCollection;
 use eZ\Publish\SPI\Persistence\Content\ContentInfo;
 use eZ\Publish\SPI\Persistence\Content\VersionInfo;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\Integer;
@@ -73,7 +74,7 @@ class RelationAttributeExtensionTest extends TestCase
                 ]),
             ]),
             'contentType' => new ContentType([
-                'fieldDefinitions' => [
+                'fieldDefinitions' => new FieldDefinitionCollection([
                     new FieldDefinition([
                         'identifier'    => 'relation_field',
                         'fieldSettings' => [
@@ -82,7 +83,7 @@ class RelationAttributeExtensionTest extends TestCase
                             ],
                         ],
                     ]),
-                ],
+                ]),
             ]),
         ]);
         $attribute1        = new Integer(['value' => 123]);
@@ -177,7 +178,7 @@ class RelationAttributeExtensionTest extends TestCase
                 ]),
             ]),
             'contentType' => new ContentType([
-                'fieldDefinitions' => [
+                'fieldDefinitions' => new FieldDefinitionCollection([
                     new FieldDefinition([
                         'identifier'    => 'relation_field',
                         'fieldSettings' => [
@@ -186,7 +187,7 @@ class RelationAttributeExtensionTest extends TestCase
                             ],
                         ],
                     ]),
-                ],
+                ]),
             ]),
         ]);
         $attribute = new Integer(['value' => 123]);

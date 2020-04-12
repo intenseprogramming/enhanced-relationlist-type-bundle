@@ -56,7 +56,7 @@ class AttributeBlockRendererTest extends TestCase
         $booleanParams     = ['some_parameter' => 'boolean'];
 
         $environment->method('loadTemplate')->willReturnCallback(
-            function ($templateName) use ($templateList) {
+            function ($ignored, $templateName) use ($templateList) {
                 return $templateList[$templateName];
             }
         );
@@ -125,7 +125,7 @@ class AttributeBlockRendererTest extends TestCase
         $booleanParams     = ['some_parameter' => 'boolean'];
 
         $environment->method('loadTemplate')->willReturnCallback(
-            function ($templateName) use ($templateList) {
+            function ($ignored, $templateName) use ($templateList) {
                 return $templateList[$templateName];
             }
         );
@@ -190,7 +190,7 @@ class AttributeBlockRendererTest extends TestCase
         $integerParams        = ['some_parameter' => 'integer'];
 
         $environment->method('loadTemplate')->willReturnCallback(
-            function ($templateName) use ($templateList) {
+            function ($ignored, $templateName) use ($templateList) {
                 return $templateList[$templateName];
             }
         );

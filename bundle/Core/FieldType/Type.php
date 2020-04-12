@@ -15,7 +15,6 @@ use eZ\Publish\API\Repository\Values\ContentType\FieldDefinition;
 use eZ\Publish\Core\FieldType\FieldType;
 use eZ\Publish\Core\FieldType\ValidationError;
 use eZ\Publish\Core\FieldType\Value as CoreValue;
-use eZ\Publish\SPI\FieldType\Nameable;
 use eZ\Publish\SPI\FieldType\Value as SpiValue;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Group;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value\Relation;
@@ -28,7 +27,7 @@ use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
  * @author    Konrad, Steve <s.konrad@wingmail.net>
  * @copyright 2018 Intense Programming
  */
-class Type extends FieldType implements Nameable
+class Type extends FieldType
 {
     /** @var RelationAttributeRepository $relationAttributeTransformer */
     protected $relationAttributeTransformer;
@@ -130,11 +129,13 @@ class Type extends FieldType implements Nameable
     /**
      * Returns a human readable string representation from the given $value.
      *
-     * @param SpiValue $value
+     * @param SpiValue        $value
+     * @param FieldDefinition $fieldDefinition
+     * @param string          $languageCode
      *
      * @return string
      */
-    public function getName(SpiValue $value)
+    public function getName(SpiValue $value, FieldDefinition $fieldDefinition, string $languageCode): string
     {
         return (string) $value;
     }

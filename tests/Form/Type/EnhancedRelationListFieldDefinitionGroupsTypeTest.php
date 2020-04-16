@@ -13,6 +13,7 @@ namespace IntProg\EnhancedRelationListBundle\Form\Type;
 use eZ\Publish\API\Repository\LanguageService;
 use eZ\Publish\API\Repository\Values\Content\Language;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldDefinitionGroupsTransformer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -26,9 +27,9 @@ class EnhancedRelationListFieldDefinitionGroupsTypeTest extends TestCase
     {
         $builder = $this->createMock(LanguageService::class);
 
-        $builder->expects($this->any())->method('loadLanguage')->willReturnCallback(
-            function ($languageCode) {
-                if ($languageCode != 'eng-GB') {
+        $builder->method('loadLanguage')->willReturnCallback(
+            static function ($languageCode) {
+                if ($languageCode !== 'eng-GB') {
                     throw new NotFoundException('not found', $languageCode);
                 }
 
@@ -46,28 +47,40 @@ class EnhancedRelationListFieldDefinitionGroupsTypeTest extends TestCase
 
     public function testGetName()
     {
-        $type = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), ['eng-GB']);
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
+
+        $type = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), $configResolver);
 
         $this->assertEquals('intprogenhancedrelationlist_definition_groups', $type->getName());
     }
 
     public function testGetParent()
     {
-        $type = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), ['eng-GB']);
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
+
+        $type = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), $configResolver);
 
         $this->assertEquals(HiddenType::class, $type->getParent());
     }
 
     public function testGetBlockPrefix()
     {
-        $type = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), ['eng-GB']);
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
+
+        $type = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), $configResolver);
 
         $this->assertEquals('intprogenhancedrelationlist_definition_groups', $type->getBlockPrefix());
     }
 
     public function testBuildForm()
     {
-        $type    = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), ['eng-GB']);
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
+
+        $type    = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), $configResolver);
         $builder = $this->createMock(FormBuilder::class);
         $builder->expects($this->once())->method('addModelTransformer')->with(new FieldDefinitionGroupsTransformer());
 
@@ -76,8 +89,11 @@ class EnhancedRelationListFieldDefinitionGroupsTypeTest extends TestCase
 
     public function testFinishView()
     {
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB', 'fre-FR']);
+
         $view = new FormView();
-        $type = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), ['eng-GB', 'ger-DE']);
+        $type = new EnhancedRelationListFieldDefinitionGroupsType($this->getLanguageServiceMock(), $configResolver);
         $form = $this->createMock(Form::class);
         $normData  = ['some', 'array'];
         $form->expects($this->once())->method('getNormData')->willReturn(json_encode($normData));

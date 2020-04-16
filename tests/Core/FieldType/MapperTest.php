@@ -14,8 +14,8 @@ use eZ\Publish\Core\Repository\ContentTypeService;
 use eZ\Publish\Core\Repository\Values\ContentType\ContentType;
 use eZ\Publish\Core\Repository\Values\ContentType\ContentTypeGroup;
 use eZ\Publish\Core\Repository\Values\ContentType\FieldDefinition;
-use EzSystems\RepositoryForms\Data\Content\FieldData;
-use EzSystems\RepositoryForms\Data\FieldDefinitionData;
+use EzSystems\EzPlatformAdminUi\Form\Data\FieldDefinitionData;
+use EzSystems\EzPlatformContentForms\Data\Content\FieldData;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListType;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -49,7 +49,6 @@ class MapperTest extends TestCase
                     'test b' => 'type_2',
                     'test c' => 'type_1',
                 ],
-                'choices_as_values' => true,
                 'expanded'          => false,
                 'multiple'          => true,
                 'required'          => false,

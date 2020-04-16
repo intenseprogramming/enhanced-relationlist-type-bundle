@@ -12,6 +12,7 @@ namespace IntProg\EnhancedRelationListBundle\Form\Type;
 
 use eZ\Publish\Core\FieldType\ValidationError;
 use eZ\Publish\Core\Repository\ContentService;
+use eZ\Publish\Core\Repository\Values\Content\Content;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldValueTransformer;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Value;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
@@ -56,8 +57,9 @@ class EnhancedRelationListTypeTest extends TestCase
         ]));
         $form->expects($this->once())->method('getData')->willReturn(new Value([]));
 
+        $content        = new Content();
         $contentService = $this->createMock(ContentService::class);
-        $contentService->expects($this->once())->method('loadContent')->with(12)->willReturn('content target');
+        $contentService->expects($this->once())->method('loadContent')->with(12)->willReturn($content);
 
         $type = new EnhancedRelationListType(
             $contentService,
@@ -85,7 +87,7 @@ class EnhancedRelationListTypeTest extends TestCase
                     [
                         'contentId' => 12,
                         'vars'      => [
-                            'content' => 'content target',
+                            'content' => $content,
                         ],
                     ],
                     [
@@ -115,8 +117,9 @@ class EnhancedRelationListTypeTest extends TestCase
 
         $form->expects($this->once())->method('getData')->willReturn($value);
 
+        $content        = new Content();
         $contentService = $this->createMock(ContentService::class);
-        $contentService->expects($this->once())->method('loadContent')->with(12)->willReturn('content target');
+        $contentService->expects($this->once())->method('loadContent')->with(12)->willReturn($content);
 
         $type = new EnhancedRelationListType(
             $contentService,
@@ -144,7 +147,7 @@ class EnhancedRelationListTypeTest extends TestCase
                     [
                         'contentId' => 12,
                         'vars'      => [
-                            'content' => 'content target',
+                            'content' => $content,
                         ],
                     ],
                     [

@@ -12,6 +12,7 @@ namespace IntProg\EnhancedRelationListBundle\Form\Type;
 
 use eZ\Publish\API\Repository\Exceptions\NotFoundException;
 use eZ\Publish\API\Repository\LanguageService;
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use IntProg\EnhancedRelationListBundle\Core\DataTransformer\FieldDefinitionAttributesTransformer;
 use IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository;
 use Symfony\Component\Form\AbstractType;
@@ -35,6 +36,7 @@ class EnhancedRelationListFieldDefinitionAttributesType extends AbstractType
     /** @var LanguageService $languageService */
     protected $languageService;
 
+    /** @var array|string[] $languages */
     protected $languages;
 
     /**
@@ -42,17 +44,17 @@ class EnhancedRelationListFieldDefinitionAttributesType extends AbstractType
      *
      * @param RelationAttributeRepository $attributeRepository
      * @param LanguageService             $languageService
-     * @param array                       $languages
+     * @param ConfigResolverInterface     $configResolver
      */
     public function __construct(
         RelationAttributeRepository $attributeRepository,
         LanguageService $languageService,
-        array $languages
+        ConfigResolverInterface $configResolver
     )
     {
         $this->attributeRepository = $attributeRepository;
         $this->languageService     = $languageService;
-        $this->languages           = $languages;
+        $this->languages           = $configResolver->getParameter('languages');
     }
 
     /**

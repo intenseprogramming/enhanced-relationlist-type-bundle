@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function _onLoad() {
                             input: jsonValueInput,
                             value: JSON.parse(jsonValueInput.value),
                             cloneContainer: cloneContainer,
+                            udwConfig: JSON.parse(fieldContainer.querySelector('script[data-udw-config]').innerText),
                             udwContainer: udwContainer,
                             udwModule: global.eZ.modules.UniversalDiscovery,
                             settings: JSON.parse(fieldContainer.querySelector('script[data-settings]').innerText),

@@ -41,7 +41,7 @@ class TypeTest extends TestCase
         $transformer = $this->getTransformer();
         $type        = new Type($transformer);
 
-        $this->assertEquals('123, 312, 987', $type->getName($this->getSampleValue()), 'Name should be correctly generated.');
+        $this->assertEquals('123, 312, 987', $type->getName($this->getSampleValue(), new FieldDefinition(), 'eng-GB'), 'Name should be correctly generated.');
     }
 
     public function testFromHash()

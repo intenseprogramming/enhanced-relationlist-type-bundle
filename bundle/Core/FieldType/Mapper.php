@@ -11,10 +11,10 @@
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
 use eZ\Publish\API\Repository\ContentTypeService;
-use EzSystems\RepositoryForms\Data\Content\FieldData;
-use EzSystems\RepositoryForms\Data\FieldDefinitionData;
-use EzSystems\RepositoryForms\FieldType\FieldDefinitionFormMapperInterface;
-use EzSystems\RepositoryForms\FieldType\FieldValueFormMapperInterface;
+use EzSystems\EzPlatformAdminUi\FieldType\FieldDefinitionFormMapperInterface;
+use EzSystems\EzPlatformAdminUi\Form\Data\FieldDefinitionData;
+use EzSystems\EzPlatformContentForms\Data\Content\FieldData;
+use EzSystems\EzPlatformContentForms\FieldType\FieldValueFormMapperInterface;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionAttributesType;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionGroupsType;
 use IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListType;
@@ -54,7 +54,7 @@ class Mapper implements FieldDefinitionFormMapperInterface, FieldValueFormMapper
      *
      * @return void
      */
-    public function mapFieldDefinitionForm(FormInterface $fieldDefinitionForm, FieldDefinitionData $data)
+    public function mapFieldDefinitionForm(FormInterface $fieldDefinitionForm, FieldDefinitionData $data): void
     {
         $fieldDefinitionForm
             ->add(
@@ -71,7 +71,6 @@ class Mapper implements FieldDefinitionFormMapperInterface, FieldValueFormMapper
                 ChoiceType::class,
                 [
                     'choices'           => $this->getContentTypesHash(),
-                    'choices_as_values' => true,
                     'expanded'          => false,
                     'multiple'          => true,
                     'required'          => false,

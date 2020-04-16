@@ -3,10 +3,8 @@ services:
         class: IntProg\EnhancedRelationListBundle\Templating\Twig\AttributeBlockRenderer
         calls:
             - [setTwig, ['@twig']]
-            - [setBaseTemplate, ["$enhanced_relation_list.base_template$"]]
-            - [setAttributeViewResources, ["$enhanced_relation_list.attribute_templates$"]]
-            - [setAttributeDefinitionViewResources, ["$enhanced_relation_list.attribute_definition_templates$"]]
         lazy: true
+        autowire: true
 
     intprog.enhanced-relation-list.templating.attribute_block_renderer:
         alias: intprog.enhanced-relation-list.templating.attribute_block_renderer.twig

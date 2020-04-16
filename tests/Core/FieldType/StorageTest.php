@@ -10,6 +10,7 @@
 
 namespace IntProg\EnhancedRelationListBundle\Core\FieldType;
 
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use eZ\Publish\SPI\Persistence\Content\Field;
 use eZ\Publish\SPI\Persistence\Content\FieldTypeConstraints;
 use eZ\Publish\SPI\Persistence\Content\Type as FieldType;
@@ -25,11 +26,13 @@ class StorageTest extends TestCase
 {
     public function testNotUsedMethods()
     {
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn([]);
+
         $contentTypeHandler = $this->createMock(Handler::class);
         $transformer        = new RelationAttributeRepository([]);
-        $languages          = [];
 
-        $storage = new Storage($contentTypeHandler, $transformer, $languages);
+        $storage = new Storage($contentTypeHandler, $transformer, $configResolver);
 
         $this->assertNull($storage->storeFieldData(new VersionInfo(), new Field(), []), 'Should do nothing');
         $this->assertNull($storage->deleteFieldData(new VersionInfo(), [], []), 'Should do nothing');
@@ -91,10 +94,12 @@ class StorageTest extends TestCase
             'selection' => new AttributeConverter\Selection(),
             'string'    => new AttributeConverter\TextLine(),
         ]);
-        $languages   = ['eng-GB'];
+
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturn(['eng-GB']);
 
         $type    = new Type($transformer);
-        $storage = new Storage($contentTypeHandler, $transformer, $languages);
+        $storage = new Storage($contentTypeHandler, $transformer, $configResolver);
 
         $field = new Field([
             'fieldDefinitionId' => 222,

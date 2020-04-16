@@ -10,6 +10,7 @@
 
 namespace IntProg\EnhancedRelationListBundle\Templating\Twig;
 
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use IntProg\EnhancedRelationListBundle\Core\Exception\MissingAttributeBlockException;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
 use Twig\Environment;
@@ -45,14 +46,25 @@ class AttributeBlockRenderer
      *
      * @var Template[]|array
      */
-    private $attributeViewResources = [];
+    private $attributeViewResources;
 
     /**
      * Array of Twig template resources for attribute definition view.
      *
      * @var Template[]|array
      */
-    private $attributeDefinitionViewResources = [];
+    private $attributeDefinitionViewResources;
+
+    public function __construct(ConfigResolverInterface $configResolver)
+    {
+        $this->baseTemplate = $configResolver->getParameter('enhanced_relation_list.base_template');
+
+        $this->attributeViewResources = $configResolver->getParameter('enhanced_relation_list.attribute_templates');
+        usort($this->attributeViewResources, [$this, 'sortResourcesCallback']);
+
+        $this->attributeDefinitionViewResources = $configResolver->getParameter('enhanced_relation_list.attribute_definition_templates');
+        usort($this->attributeDefinitionViewResources, [$this, 'sortResourcesCallback']);
+    }
 
     /**
      * Setter for the twig environment.
@@ -64,32 +76,6 @@ class AttributeBlockRenderer
     public function setTwig(Environment $environment)
     {
         $this->twig = $environment;
-    }
-
-    /**
-     * @param string|Template $baseTemplate
-     */
-    public function setBaseTemplate($baseTemplate)
-    {
-        $this->baseTemplate = $baseTemplate;
-    }
-
-    /**
-     * @param array $attributeViewResources
-     */
-    public function setAttributeViewResources(array $attributeViewResources)
-    {
-        $this->attributeViewResources = (array) $attributeViewResources;
-        usort($this->attributeViewResources, [$this, 'sortResourcesCallback']);
-    }
-
-    /**
-     * @param array $attributeDefinitionViewResources
-     */
-    public function setAttributeDefinitionViewResources(array $attributeDefinitionViewResources)
-    {
-        $this->attributeDefinitionViewResources = (array) $attributeDefinitionViewResources;
-        usort($this->attributeDefinitionViewResources, [$this, 'sortResourcesCallback']);
     }
 
     /**
@@ -136,7 +122,10 @@ class AttributeBlockRenderer
 
         // Getting instance of Twig_Template that will be used to render blocks
         if (is_string($this->baseTemplate)) {
-            $this->baseTemplate = $this->twig->loadTemplate($this->baseTemplate);
+            $this->baseTemplate = $this->twig->loadTemplate(
+                $this->twig->getTemplateClass($this->baseTemplate),
+                $this->baseTemplate
+            );
         }
 
         $blockName = $this->getRenderAttributeBlockName($attribute->getTypeIdentifier());
@@ -179,7 +168,10 @@ class AttributeBlockRenderer
 
         // Getting instance of Twig_Template that will be used to render blocks
         if (is_string($this->baseTemplate)) {
-            $this->baseTemplate = $this->twig->loadTemplate($this->baseTemplate);
+            $this->baseTemplate = $this->twig->loadTemplate(
+                $this->twig->getTemplateClass($this->baseTemplate),
+                $this->baseTemplate
+            );
         }
 
         $blockName = $this->getRenderAttributeDefinitionBlockName($attributeIdentifier);
@@ -231,7 +223,10 @@ class AttributeBlockRenderer
         if ($localTemplate !== null) {
             // $localTemplate might be a Twig_Template instance already (e.g. using _self Twig keyword)
             if (!$localTemplate instanceof Template) {
-                $localTemplate = $this->twig->loadTemplate($localTemplate);
+                $localTemplate = $this->twig->loadTemplate(
+                    $this->twig->getTemplateClass($localTemplate),
+                    $localTemplate
+                );
             }
 
             $block = $this->searchBlock($fieldBlockName, $localTemplate);
@@ -261,7 +256,10 @@ class AttributeBlockRenderer
 
         foreach ($this->{$resourcesName} as &$template) {
             if (!$template instanceof Template) {
-                $template = $this->twig->loadTemplate($template['template']);
+                $template = $this->twig->loadTemplate(
+                    $this->twig->getTemplateClass($template['template']),
+                    $template['template']
+                );
             }
 
             $tpl = $template;
@@ -293,7 +291,10 @@ class AttributeBlockRenderer
         if ($localTemplate !== null) {
             // $localTemplate might be a Twig_Template instance already (e.g. using _self Twig keyword)
             if (!$localTemplate instanceof Template) {
-                $localTemplate = $this->twig->loadTemplate($localTemplate);
+                $localTemplate = $this->twig->loadTemplate(
+                    $this->twig->getTemplateClass($localTemplate),
+                    $localTemplate
+                );
             }
 
             $block = $this->searchBlock($fieldBlockName, $localTemplate);

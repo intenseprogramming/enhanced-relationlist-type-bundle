@@ -9,7 +9,16 @@
             <script data-settings type="application/json">{{ fieldSettings|json_encode|raw }}</script>
             <script data-validation type="application/json">{{ validatorConfiguration|json_encode|raw }}</script>
             <script data-errors type="application/json">{{ attribute_errors|json_encode|raw }}</script>
-            <script data-languages type="application/json">{{ ezpublish.configResolver.parameter('languages')|json_encode|raw }}</script>
+            <script data-languages type="application/json">{{ ezplatform.configResolver.parameter('languages')|json_encode|raw }}</script>
+            <script data-udw-config type="application/json">{%- if limit == 1 %}{{ ez_udw_config('single', {
+                'type': 'object_relation',
+                'starting_location_id' : fieldSettings.defaultBrowseLocation,
+                'allowed_content_types': validatorConfiguration.relationValidator.allowedContentTypes
+            })|raw }}{% else %}{{ ez_udw_config('multiple', {
+                'type': 'object_relation',
+                'starting_location_id' : fieldSettings.defaultBrowseLocation,
+                'allowed_content_types': validatorConfiguration.relationValidator.allowedContentTypes
+            })|raw }}{% endif %}</script>
         </div>
 
         <div><table class="relation-root-table erl-table table drag-clone-container my-0"><tbody> </tbody></table></div>

@@ -23,8 +23,9 @@ services:
 
     IntProg\EnhancedRelationListBundle\Core\FieldType\Storage:
         arguments:
-            - '@ezpublish.spi.persistence.content_type_handler'
-            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
-            - '$languages$'
+            $contentTypeHandler: '@ezpublish.spi.persistence.content_type_handler'
+            $repository: '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
+        lazy: true
+        autowire: true
         tags:
             - { name: ezpublish.fieldType.externalStorageHandler, alias: intprogenhancedrelationlist }

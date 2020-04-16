@@ -7,16 +7,15 @@ services:
             - { name: form.type }
 
     IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionGroupsType:
-        arguments:
-            - '@ezpublish.api.service.language'
-            - '$languages$'
+        lazy: true
+        autowire: true
         tags:
             - { name: form.type }
 
     IntProg\EnhancedRelationListBundle\Form\Type\EnhancedRelationListFieldDefinitionAttributesType:
         arguments:
-            - '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
-            - '@ezpublish.api.service.language'
-            - '$languages$'
+            $attributeRepository: '@IntProg\EnhancedRelationListBundle\Service\RelationAttributeRepository'
+        lazy: true
+        autowire: true
         tags:
             - { name: form.type }

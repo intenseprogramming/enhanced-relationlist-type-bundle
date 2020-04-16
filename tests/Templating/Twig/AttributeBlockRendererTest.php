@@ -10,6 +10,7 @@
 
 namespace IntProg\EnhancedRelationListBundle\Templating\Twig;
 
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\Boolean;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\Integer;
 use IntProg\EnhancedRelationListBundle\Core\FieldType\Attribute\TextLine;
@@ -56,7 +57,7 @@ class AttributeBlockRendererTest extends TestCase
         $booleanParams     = ['some_parameter' => 'boolean'];
 
         $environment->method('loadTemplate')->willReturnCallback(
-            function ($templateName) use ($templateList) {
+            function ($ignored, $templateName) use ($templateList) {
                 return $templateList[$templateName];
             }
         );
@@ -81,14 +82,26 @@ class AttributeBlockRendererTest extends TestCase
             }
         );
 
-        $renderer = new AttributeBlockRenderer();
-        $renderer->setTwig($environment);
-        $renderer->setBaseTemplate('the_base_template');
-        $renderer->setAttributeViewResources([
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturnCallback(static function ($parameter) {
+            switch ($parameter) {
+                case 'enhanced_relation_list.base_template':
+                    return 'the_base_template';
+                case 'enhanced_relation_list.attribute_templates':
+                    return [
             ['template' => 'template_1', 'priority' => 1],
             ['template' => 'template_2', 'priority' => 3],
             ['template' => 'template_3', 'priority' => 2],
-        ]);
+                    ];
+                case 'enhanced_relation_list.attribute_definition_templates':
+                    return [];
+            }
+
+            return null;
+        });
+
+        $renderer = new AttributeBlockRenderer($configResolver);
+        $renderer->setTwig($environment);
 
         $this->assertEquals($integerBlock, $renderer->renderAttributeView($integerAttribute, $integerDefinition, $integerParams));
         $this->assertEquals($stringBlock, $renderer->renderAttributeView($stringAttribute, $stringDefinition, $stringParams));
@@ -125,7 +138,7 @@ class AttributeBlockRendererTest extends TestCase
         $booleanParams     = ['some_parameter' => 'boolean'];
 
         $environment->method('loadTemplate')->willReturnCallback(
-            function ($templateName) use ($templateList) {
+            function ($ignored, $templateName) use ($templateList) {
                 return $templateList[$templateName];
             }
         );
@@ -150,14 +163,26 @@ class AttributeBlockRendererTest extends TestCase
             }
         );
 
-        $renderer = new AttributeBlockRenderer();
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturnCallback(static function ($parameter) {
+            switch ($parameter) {
+                case 'enhanced_relation_list.base_template':
+                    return 'the_base_template';
+                case 'enhanced_relation_list.attribute_templates':
+                    return [];
+                case 'enhanced_relation_list.attribute_definition_templates':
+                    return [
+                        ['template' => 'template_1', 'priority' => 1],
+                        ['template' => 'template_2', 'priority' => 3],
+                        ['template' => 'template_3', 'priority' => 2],
+                    ];
+            }
+
+            return null;
+        });
+
+        $renderer = new AttributeBlockRenderer($configResolver);
         $renderer->setTwig($environment);
-        $renderer->setBaseTemplate('the_base_template');
-        $renderer->setAttributeDefinitionViewResources([
-            ['template' => 'template_1', 'priority' => 1],
-            ['template' => 'template_2', 'priority' => 3],
-            ['template' => 'template_3', 'priority' => 2],
-        ]);
 
         $this->assertEquals($integerBlock, $renderer->renderAttributeDefinitionView('integer', $integerDefinition, $integerParams));
         $this->assertEquals($stringBlock, $renderer->renderAttributeDefinitionView('string', $stringDefinition, $stringParams));
@@ -181,16 +206,33 @@ class AttributeBlockRendererTest extends TestCase
         $attributeBlock = ['integer block'];
         $definitionBlock = ['integer block'];
 
-        $renderer = new AttributeBlockRenderer();
+        $configResolver = $this->createMock(ConfigResolverInterface::class);
+        $configResolver->method('getParameter')->willReturnCallback(static function ($parameter) {
+            switch ($parameter) {
+                case 'enhanced_relation_list.base_template':
+                    return 'the_base_template';
+                case 'enhanced_relation_list.attribute_templates':
+                    return [];
+                case 'enhanced_relation_list.attribute_definition_templates':
+                    return [
+                        ['template' => 'template_1', 'priority' => 1],
+                        ['template' => 'template_2', 'priority' => 3],
+                        ['template' => 'template_3', 'priority' => 2],
+                    ];
+            }
+
+            return null;
+        });
+
+        $renderer = new AttributeBlockRenderer($configResolver);
         $renderer->setTwig($environment);
-        $renderer->setBaseTemplate('the_base_template');
 
         $integerAttribute     = new Integer(['value' => 312]);
         $integerDefinition    = ['attribute_definition'];
         $integerParams        = ['some_parameter' => 'integer'];
 
         $environment->method('loadTemplate')->willReturnCallback(
-            function ($templateName) use ($templateList) {
+            function ($ignored, $templateName) use ($templateList) {
                 return $templateList[$templateName];
             }
         );

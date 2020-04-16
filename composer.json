@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.3",
         "ext-dom": "*",
         "ext-json": "*",
         "ezsystems/ezplatform-kernel": "~1.0",

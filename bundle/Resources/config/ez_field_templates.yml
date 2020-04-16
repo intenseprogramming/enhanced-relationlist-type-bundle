@@ -22,7 +22,12 @@ system:
             element_simple_link:
                 default:
                     controller: 'ez_content:viewAction'
-                    template: '@ezdesign/enhanced_relation_list/simple_link.html.twig'
+                    template: '@ezdesign/enhanced_relation_list/view/default/content/simple_link.html.twig'
+                    match: true
+            element_simple_text:
+                default:
+                    controller: 'ez_content:viewAction'
+                    template: '@ezdesign/enhanced_relation_list/view/default/content/simple_text.html.twig'
                     match: true
         fielddefinition_settings_templates:
             - {template: '@ezdesign/enhanced_relation_list/fielddefinition_settings.html.twig', priority: 0}

@@ -22,7 +22,7 @@
             </div>
             <div id="{{form.defaultBrowseLocation.vars.id}}-selected-root-name">
                 {% if form.defaultBrowseLocation.vars.value is not empty %}
-                    {{ render( controller( "ez_content:viewLocation", {'locationId': form.defaultBrowseLocation.vars.value, 'viewType': '_platformui_content_name'} ) ) }}
+                    {{ render( controller( "ez_content:viewAction", {'locationId': form.defaultBrowseLocation.vars.value, 'viewType': 'element_simple_text', 'layout': false} ) ) }}
                 {% endif %}
             </div>
         </div>

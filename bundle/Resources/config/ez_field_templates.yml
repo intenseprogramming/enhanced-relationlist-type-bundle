@@ -21,7 +21,7 @@ system:
         content_view:
             element_simple_link:
                 default:
-                    controller: 'EzPlatformAdminUiBundle:ContentView:locationView'
+                    controller: 'ez_content:viewAction'
                     template: '@ezdesign/enhanced_relation_list/simple_link.html.twig'
                     match: true
         fielddefinition_settings_templates:

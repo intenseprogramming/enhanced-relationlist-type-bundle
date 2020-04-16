@@ -12,7 +12,7 @@
 {% macro render_intprogenhancedrelationlist(content, field, fieldSettings) %}
     {% import _self as erl_table_macros %}
 
-    {% include '@ezdesign/parts/table_header.html.twig' with {headerText: 'field.attribute.table.head.relations'|trans} %}
+    {% include '@ezdesign/ui/table_header.html.twig' with {header_text: 'field.attribute.table.head.relations'|trans} %}
     <table class="table mb-0">
         {{ erl_table_macros.table_head_macro(fieldSettings, field) }}
         <tbody>

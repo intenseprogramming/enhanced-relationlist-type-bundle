@@ -10,6 +10,7 @@
 
 namespace IntProg\EnhancedRelationListBundle\Templating\Twig;
 
+use eZ\Publish\Core\MVC\ConfigResolverInterface;
 use IntProg\EnhancedRelationListBundle\Core\Exception\MissingAttributeBlockException;
 use IntProg\EnhancedRelationListBundle\Core\RelationAttributeBase;
 use Twig\Environment;
@@ -45,14 +46,25 @@ class AttributeBlockRenderer
      *
      * @var Template[]|array
      */
-    private $attributeViewResources = [];
+    private $attributeViewResources;
 
     /**
      * Array of Twig template resources for attribute definition view.
      *
      * @var Template[]|array
      */
-    private $attributeDefinitionViewResources = [];
+    private $attributeDefinitionViewResources;
+
+    public function __construct(ConfigResolverInterface $configResolver)
+    {
+        $this->baseTemplate = $configResolver->getParameter('enhanced_relation_list.base_template');
+
+        $this->attributeViewResources = $configResolver->getParameter('enhanced_relation_list.attribute_templates');
+        usort($this->attributeViewResources, [$this, 'sortResourcesCallback']);
+
+        $this->attributeDefinitionViewResources = $configResolver->getParameter('enhanced_relation_list.attribute_definition_templates');
+        usort($this->attributeDefinitionViewResources, [$this, 'sortResourcesCallback']);
+    }
 
     /**
      * Setter for the twig environment.
@@ -64,32 +76,6 @@ class AttributeBlockRenderer
     public function setTwig(Environment $environment)
     {
         $this->twig = $environment;
-    }
-
-    /**
-     * @param string|Template $baseTemplate
-     */
-    public function setBaseTemplate($baseTemplate)
-    {
-        $this->baseTemplate = $baseTemplate;
-    }
-
-    /**
-     * @param array $attributeViewResources
-     */
-    public function setAttributeViewResources(array $attributeViewResources)
-    {
-        $this->attributeViewResources = (array) $attributeViewResources;
-        usort($this->attributeViewResources, [$this, 'sortResourcesCallback']);
-    }
-
-    /**
-     * @param array $attributeDefinitionViewResources
-     */
-    public function setAttributeDefinitionViewResources(array $attributeDefinitionViewResources)
-    {
-        $this->attributeDefinitionViewResources = (array) $attributeDefinitionViewResources;
-        usort($this->attributeDefinitionViewResources, [$this, 'sortResourcesCallback']);
     }
 
     /**
